@@ -1,0 +1,279 @@
+[
+  {
+    "name": "TRANG CHỦ",
+    "link": "/"
+  },
+  {
+    "name": "SẢN PHẨM",
+    "megamenu": true,
+    "columns": [
+      {
+        "img": "/img/blog/christopher-campbell-28571-unsplash.jpg",
+        "lists": [
+          {
+            "name": "THEO SẢN PHẨM",
+            "links": [
+              {
+                "name": "Tất cả",
+                "link": "/",
+                "parent": "Home"
+              },
+              {
+                "name": "Sản phẩm mới",
+                "link": "/sanphammoi",
+                "parent": "Home",
+                "new": true
+              },
+              {
+                "name": "Bán chạy nhất",
+                "link": "/banchaynhat",
+                "parent": "Home"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "img": "/img/blog/ian-dooley-347962-unsplash.jpg",
+        "lists": [
+          {
+            "name": "ÁO NAM",
+            "links": [
+              {
+                "name": "Tất cả áo nam",
+                "link": "/tatcaaonam"
+              },
+              {
+                "name": "Áo thun",
+                "link": "/aothun",
+                "new": true
+              },
+              {
+                "name": "Áo sơ mi",
+                "link": "/aosomi"
+              },
+              {
+                "name": "Áo polo",
+                "link": "/aopolo"
+              },
+              {
+                "name": "Áo dài tay",
+                "link": "/aodaitay"
+              },
+              {
+                "name": "Áo khoác",
+                "link": "/aokhoac"
+              },
+              {
+                "name": "Áo Tanktop",
+                "link": "/aotanktop"
+              },
+              {
+                "name": "Áo thể thao",
+                "link": "/aothethao"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "img": "/img/blog/ian-dooley-347942-unsplash.jpg",
+        "lists": [
+          {
+            "name": "QUẦN NAM",
+            "links": [
+              {
+                "name": "Tất cả quần nam",
+                "link": "/tatcaquannam"
+              },
+              {
+                "name": "Quần shorts",
+                "link": "/quanshorts"
+              },
+              {
+                "name": "Quần jeans",
+                "link": "/quanjeans"
+              },
+              {
+                "name": "Quần dài",
+                "link": "/quandai"
+              },
+              {
+                "name": "Quần thể thao",
+                "link": "/quanthethao"
+              },
+              {
+                "name": "Quần lót",
+                "link": "/quanlot"
+              },
+              {
+                "name": "Quần bơi",
+                "link": "/quanboi"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "img": "/img/blog/photo-1534126511673-b6899657816a.jpg",
+        "lists": [
+          {
+            "name": "PHỤ KIỆN NAM",
+            "links": [
+              {
+                "name": "Tất cả phụ kiện",
+                "link": "/tatcaphukien",
+                "new": true
+              },
+              {
+                "name": "Tất/Vớ",
+                "link": "/tatvo",
+                "new": true
+              },
+              {
+                "name": "Mũ/Nón",
+                "link": "/munon",
+                "new": true
+              },
+              {
+                "name": "Túi",
+                "link": "/tui",
+                "new": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ĐỒ LÓT",
+    "groups": [
+      {
+        "name": "Theo sản phẩm",
+        "links": [
+          {
+            "name": "Tất cả",
+            "link": "/tatca"
+          },
+          {
+            "name": "Brief (Tam giác)",
+            "link": "/brieftamgiac"
+          },
+          {
+            "name": "Trunk (Boxer)",
+            "link": "/trunkboxer"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "name": "Boxer Brief (Boxer dài)",
+            "link": "/boxerbriefboxerdai"
+          },
+          {
+            "name": "Long Leg",
+            "link": "/longleg"
+          },
+          {
+            "name": "Boxer Shorts",
+            "link": "/boxershorts",
+            "new": true
+          }
+        ]
+      },
+      {
+        "img": "/img/product/kyle-loftus-596319-unsplash-cropped.jpg"
+      }
+    ]
+  },
+  {
+    "name": "ĐỒ THỂ THAO",
+    "size": "sm",
+    "groups": [
+      {
+        "name": "Theo sản phẩm",
+        "links": [
+          {
+            "name": "Tất cả",
+            "link": "/tatca"
+          },
+          {
+            "name": "Sản phẩm mới",
+            "link": "/sanphammoi"
+          },
+          {
+            "name": "Áo T-shirt",
+            "link": "/aotshirt"
+          },
+          {
+            "name": "Áo Tanktop",
+            "link": "/aotanktop"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "name": "Áo polo",
+            "link": "/aopolo"
+          },
+          {
+            "name": "Áo dài tay",
+            "link": "/aodaitay"
+          },
+          {
+            "name": "Áo khoác",
+            "link": "/aokhoac"
+          }
+        ]
+      },
+      {
+        "img": "/img/product/0950354513_1_1_1.jpg"
+      }
+    ]
+  },
+  {
+    "name": "MẶC HÀNG NGÀY",
+    "links": [
+      {
+        "name": "Theo sản phẩm",
+        "divider": true
+      },
+      {
+        "name": "Tất cả",
+        "link": "/tatca"
+      },
+      {
+        "name": "Sản phẩm mới",
+        "link": "/sanphammoi"
+      },
+      {
+        "name": "Áo T-shirt",
+        "link": "/aotshirt"
+      },
+      {
+        "name": "Áo Tanktop",
+        "link": "/tanktop"
+      },
+      {
+        "name": "Áo polo",
+        "link": "/aopolo"
+      },
+      {
+        "name": "Áo sơ mi",
+        "link": "/aosomi"
+      },
+      {
+        "name": "Áo khoác",
+        "link": "/aokhoac"
+      }
+      ,
+      {
+        "name": "Áo dài tay",
+        "link": "/aokhoac"
+      }
+    ]
+  }
+]
