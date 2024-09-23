@@ -80,11 +80,14 @@ const MainIcons = (props) => {
           </li>
         )}
       </ul>
+      {/* Modal của Icon người dùng */}
       <ModalLogin toggle={() => toggleModal("login")} isOpen={modal.login} />
+      {/* Sidebar của giỏ hàng */}
       <SidebarCart
         toggle={() => toggleModal("sidebarCart")}
         isOpen={modal.sidebarCart}
       />
+      {/* Sidebar phải */}
       <SidebarRight
         toggle={() => toggleModal("sidebarRight")}
         isOpen={modal.sidebarRight}

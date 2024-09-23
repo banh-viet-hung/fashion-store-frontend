@@ -29,10 +29,10 @@ const ModalLogin = (props) => {
         <Tab.Container defaultActiveKey="login">
           <Nav className="flex-row">
             <Nav.Link href="#" className={`nav-link-lg me-4`} eventKey="login">
-              Login
+              Đăng nhập
             </Nav.Link>
             <Nav.Link href="#" className={`nav-link-lg `} eventKey="register">
-              Register
+              Đăng ký
             </Nav.Link>
           </Nav>
           <hr className="mb-3" />
@@ -46,18 +46,18 @@ const ModalLogin = (props) => {
                 <div className="mb-4">
                   <Row>
                     <Col>
-                      <Form.Label htmlFor="loginPassword">Password</Form.Label>
+                      <Form.Label htmlFor="loginPassword">Mật khẩu</Form.Label>
                     </Col>
                     <Col xs="auto">
                       <Form.Text className="small text-primary" href="#" as="a">
-                        Forgot password?
+                        Quên mật khẩu?
                       </Form.Text>
                     </Col>
                   </Row>
                   <Form.Control
                     name="loginPassword"
                     id="loginPassword"
-                    placeholder="Password"
+                    placeholder="Mật khẩu"
                     type="password"
                     required
                   />
@@ -68,15 +68,14 @@ const ModalLogin = (props) => {
                     id="loginRemember"
                     label={
                       <span className="text-sm text-muted">
-                        Remember me for 30 days
+                        Ghi nhớ mật khẩu
                       </span>
                     }
                   />
                 </div>
                 <div className="mb-4">
                   <Button variant="outline-dark w-100">
-                    <FontAwesomeIcon icon={faSignInAlt} className="me-2" /> Log
-                    in
+                    <FontAwesomeIcon icon={faSignInAlt} className="me-2" /> Đăng nhập
                   </Button>
                 </div>
               </Form>
@@ -84,7 +83,7 @@ const ModalLogin = (props) => {
               <div className="text-center">
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip>Connect with Facebook</Tooltip>}
+                  overlay={<Tooltip>Đăng nhập với Facebook</Tooltip>}
                 >
                   <Button
                     variant="outline-primary"
@@ -95,7 +94,7 @@ const ModalLogin = (props) => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip>Connect with Google</Tooltip>}
+                  overlay={<Tooltip>Đăng nhập với Google</Tooltip>}
                 >
                   <Button variant="outline-muted" className="letter-spacing-0">
                     <FontAwesomeIcon icon={faGoogle} className="fa-fw" />
@@ -105,26 +104,25 @@ const ModalLogin = (props) => {
             </Tab.Pane>
             <Tab.Pane className="px-3" eventKey="register">
               <p className="text-muted text-sm">
-                The bedding was hardly able to cover it and seemed ready to
-                slide off any moment. His many legs, pit.{" "}
+                Bạn chưa có tài khoản? Vui lòng nhập thông tin vào biểu mẫu bên dưới và nhấn vào nút "ĐĂNG KÝ".{" "}
               </p>
               <Form>
                 <div className="mb-4">
-                  <Form.Label htmlFor="registerName">Name</Form.Label>
+                  <Form.Label htmlFor="registerName">Tên của bạn</Form.Label>
                   <Form.Control id="registerName" type="text" />
                 </div>
                 <div className="mb-4">
-                  <Form.Label htmlFor="registerEmail">Email</Form.Label>
+                  <Form.Label htmlFor="registerEmail">Email của bạn</Form.Label>
                   <Form.Control id="registerEmail" type="text" />
                 </div>
                 <div className="mb-4">
-                  <Form.Label htmlFor="registerPassword">Password</Form.Label>
+                  <Form.Label htmlFor="registerPassword">Mật khẩu</Form.Label>
                   <Form.Control id="registerPassword" type="password" />
                 </div>
                 <div className="text-center mb-4">
                   <Button variant="outline-dark" className=" w-100">
                     <FontAwesomeIcon icon={faUser} className="me-2" />
-                    Register
+                    Đăng ký
                   </Button>
                 </div>
               </Form>
@@ -132,7 +130,7 @@ const ModalLogin = (props) => {
               <div className="text-center">
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip>Connect with Facebook</Tooltip>}
+                  overlay={<Tooltip>Đăng nhập với Facebook</Tooltip>}
                 >
                   <Button
                     variant="outline-primary"
@@ -143,7 +141,7 @@ const ModalLogin = (props) => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip>Connect with Google</Tooltip>}
+                  overlay={<Tooltip>Đăng nhập với Google</Tooltip>}
                 >
                   <Button variant="outline-muted" className="letter-spacing-0">
                     <FontAwesomeIcon icon={faGoogle} className="fa-fw" />

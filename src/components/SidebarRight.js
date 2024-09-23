@@ -1,4 +1,4 @@
-import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons"
+import { faFacebookF, faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import React from "react"
 
@@ -22,12 +22,12 @@ const SidebarRight = (props) => {
       <Modal.Body className="px-5 pb-5">
         <div>
           <h5 className="mb-5" data-aos="zoom-in" data-aos-delay="50">
-            Varkala
+            Coolman
           </h5>
           <Nav className="flex-column mb-5">
             <Nav.Item active>
               <Nav.Link className="ps-0" href="#">
-                Home
+                Trang chủ
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
@@ -72,20 +72,38 @@ const SidebarRight = (props) => {
           </Nav>
           <ul className="list-inline mb-4">
             <li className="list-inline-item me-2">
-              <FontAwesomeIcon icon={faFacebookF} />
+              <a
+                className="text-reset text-hover-primary"
+                href="https://www.facebook.com/viethungprofile.personal"
+                target="_blank" // // Mở liên kết trong tab mới
+                rel="noopener noreferrer" // Bảo mật khi mở tab mới
+                aria-label="Go to Facebook"
+              >
+                <FontAwesomeIcon icon={faFacebookF} />
+              </a>
             </li>
             <li className="list-inline-item me-2">
-              <FontAwesomeIcon icon={faTwitter} />
+              <a
+                className="text-reset text-hover-primary"
+                href="https://www.youtube.com/watch?v=ttcXp47r8Kg"
+                target="_blank" // Mở liên kết trong tab mới
+                rel="noopener noreferrer" // Bảo mật khi mở tab mới
+                aria-label="Go to Youtube"
+              >
+                <FontAwesomeIcon icon={faYoutube} />
+              </a>
             </li>
             <li className="list-inline-item me-2">
               <Icon className="me-2" icon="calls-1" />
-              020-800-456-747
+              037-2590-536
             </li>
           </ul>
           <p className="text-sm text-muted mb-0">
-            Samsa was a travelling salesman - and above it there hung a picture
-            that he had recently cut out of an illustrated magazine and housed
-            in a nice, gilded frame.
+            Địa chỉ: Trường Đại học Sư phạm kỹ thuật TP.HCM.
+            <br />
+            Email: banhviet.hung123@gmail.com
+            <br />
+            Chịu trách nhiệm quản lý nội dung: Bành Viết Hùng
           </p>
         </div>
       </Modal.Body>

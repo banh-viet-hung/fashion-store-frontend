@@ -33,23 +33,23 @@ export default ServicesBlock
 
 const services = [
   {
-    name: "Free shipping & return",
-    text: "Free Shipping over $300",
+    name: "Giao hàng nhanh chóng",
+    text: "Từ 3 - 5 ngày làm việc",
     icon: "delivery-time-1",
   },
   {
-    name: "Money back guarantee",
-    text: "30 Days Money Back Guarantee",
+    name: "Tiết kiệm",
+    text: "Cam kết giá tốt nhất thị trường",
     icon: "money-1",
   },
   {
-    name: "Best prices",
-    text: "Always the best prices",
+    name: "Ngập tràn ưu đãi",
+    text: "Khuyến mãi hàng tuần",
     icon: "special-price-1",
   },
   {
-    name: "020-800-456-747",
-    text: "24/7 Available Support",
+    name: "037-2590-536",
+    text: "Hổ trợ 24/7",
     icon: "customer-support-1",
   },
 ]

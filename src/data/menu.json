@@ -210,11 +210,7 @@
           {
             "name": "Áo Tanktop",
             "link": "/aotanktop"
-          }
-        ]
-      },
-      {
-        "links": [
+          },
           {
             "name": "Áo polo",
             "link": "/aopolo"
@@ -226,6 +222,30 @@
           {
             "name": "Áo khoác",
             "link": "/aokhoac"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "name": "Quần shorts",
+            "link": "/quanshorts"
+          },
+          {
+            "name": "Quần Joggers",
+            "link": "/quanjoogers"
+          },
+          {
+            "name": "Quần dài",
+            "link": "/quandai"
+          },
+          {
+            "name": "Quần bơi",
+            "link": "/quanboi"
+          },
+          {
+            "name": "Phụ kiện",
+            "link": "/phukien"
           }
         ]
       },
@@ -268,11 +288,34 @@
       {
         "name": "Áo khoác",
         "link": "/aokhoac"
-      }
-      ,
+      },
       {
         "name": "Áo dài tay",
         "link": "/aokhoac"
+      },
+      {
+        "divider": true
+      },
+      {
+        "name": "Quần shorts",
+        "link": "/quanshorts",
+        "divider": true
+      },
+      {
+        "name": "Quần Joggers",
+        "link": "/quanjoogers"
+      },
+      {
+        "name": "Quần dài",
+        "link": "/quandai"
+      },
+      {
+        "name": "Quần jeans",
+        "link": "/quanjeans"
+      },
+      {
+        "name": "Phụ kiện",
+        "link": "/phukien"
       }
     ]
   }

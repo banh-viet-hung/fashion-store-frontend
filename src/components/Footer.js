@@ -24,7 +24,10 @@ const Footer = () => {
   }
   return (
     <footer>
+      {/* Khối 4 services  */}
       <ServicesBlock />
+
+      {/* footer.json  */}
       <div className="py-6 text-muted">
         <Container>
           <Row>
@@ -38,7 +41,7 @@ const Footer = () => {
                   <Form.Control
                     className="form-control-underlined"
                     type="email"
-                    placeholder="Your Email Address"
+                    placeholder="Địa chỉ email của bạn"
                     aria-label="Your Email Address"
                   />
                   <Button
@@ -93,40 +96,22 @@ const Footer = () => {
           </Row>
         </Container>
       </div>
+
       <div className="py-4 fw-light text-muted">
         <Container>
           <Row className="align-items-center text-sm text-gray-500">
             <Col lg="4" className="text-center text-lg-start">
               <p className="mb-lg-0">
-                &copy; {new Date().getFullYear()} Your company. All rights
-                reserved.
+                &copy; {new Date().getFullYear()} Coolman. All rights reserved.
               </p>
             </Col>
             <Col lg="8">
               <ul className="list-inline mb-0 mt-2 mt-md-0 text-center text-lg-end">
                 <li className="list-inline-item">
                   {" "}
-                  <a className="text-reset" href="#">
-                    Terms &amp; Conditions{" "}
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  {" "}
-                  <a className="text-reset" href="#">
-                    Privacy &amp; cookies{" "}
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  {" "}
-                  <a className="text-reset" href="#">
-                    Accessibility{" "}
-                  </a>
-                </li>
-                <li className="list-inline-item">
-                  {" "}
-                  <a className="text-reset" href="#">
-                    Customer Data Promise{" "}
-                  </a>
+                  <p className="text-reset" href="#">
+                    Khóa luận tốt nghiệp đang được thực hiện!
+                  </p>
                 </li>
               </ul>
             </Col>

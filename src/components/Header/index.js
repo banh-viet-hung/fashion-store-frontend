@@ -181,9 +181,8 @@ const Header = ({ header }) => {
           <SearchBlock />
           {/* END SEARCH BLOCK */}
 
-          {/* TOP USER ICONS */}
+          {/* Bộ Icon người dùng */}
           <MainIcons className="d-none d-lg-block" sidebarRight />
-          {/* END TOP USER ICONS */}
         </Navbar.Collapse>
         {/* END MENU */}
       </Navbar>

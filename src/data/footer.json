@@ -1,81 +1,41 @@
 {
     "newsletter": {
-        "name": "Be in touch",
-        "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. At itaque temporibus."
+        "name": "COOLMAN luôn bên cạnh bạn!",
+        "text": "Chúng tôi sẽ gửi thông tin mới nhất về sản phẩm, khuyến mãi và các sự kiện đặc biệt đến bạn."
     },
     "columns": [
         {
-            "name": "Shop",
+            "name": "CHÍNH SÁCH",
             "links": [
                 {
-                    "name": "For Women",
-                    "link": "#"
-                },
-                {
-                    "name": "For Men",
-                    "link": "#"
-                },
-                {
-                    "name": "Stores",
-                    "link": "#"
-                },
-                {
-                    "name": "Our Blog",
-                    "link": "#"
-                },
-                {
-                    "name": "Shop",
-                    "link": "#"
+                    "name": "Chính sách của chúng tôi",
+                    "link": "/privacy"
                 }
             ]
         },
         {
-            "name": "Company",
+            "name": "HỔ TRỢ KHÁCH HÀNG",
             "links": [
                 {
-                    "name": "Login",
-                    "link": "#"
+                    "name": "Hỏi đáp - FAQs",
+                    "link": "/faq"
                 },
                 {
-                    "name": "Register",
-                    "link": "#"
-                },
-                {
-                    "name": "Wishlist",
-                    "link": "#"
-                },
-                {
-                    "name": "Our Products",
-                    "link": "#"
-                },
-                {
-                    "name": "Checkouts",
-                    "link": "#"
+                    "name": "Liên hệ với chúng tôi",
+                    "link": "/contact"
                 }
             ]
         },
         {
-            "name": "Your account",
+            "name": "VỀ COOLMAN",
             "links": [
                 {
-                    "name": "Login",
-                    "link": "#"
+                    "name": "About Us",
+                    "link": "/about"
                 },
                 {
-                    "name": "Register",
-                    "link": "#"
-                },
-                {
-                    "name": "Wishlist",
-                    "link": "#"
-                },
-                {
-                    "name": "Our Products",
-                    "link": "#"
-                },
-                {
-                    "name": "Checkouts",
-                    "link": "#"
+                    "name": "Blog",
+                    "link": "/blog"
                 }
             ]
         }
