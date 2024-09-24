@@ -8,7 +8,7 @@
     "megamenu": true,
     "columns": [
       {
-        "img": "/img/blog/christopher-campbell-28571-unsplash.jpg",
+        "img": "/img/blog/SANPHAM_THEOSANPHAM.webp",
         "lists": [
           {
             "name": "THEO SẢN PHẨM",
@@ -34,7 +34,7 @@
         ]
       },
       {
-        "img": "/img/blog/ian-dooley-347962-unsplash.jpg",
+        "img": "/img/blog/SANPHAM_AONAM.PNG",
         "lists": [
           {
             "name": "ÁO NAM",
@@ -77,7 +77,7 @@
         ]
       },
       {
-        "img": "/img/blog/ian-dooley-347942-unsplash.jpg",
+        "img": "/img/blog/SANPHAM_QUANNAM.png",
         "lists": [
           {
             "name": "QUẦN NAM",
@@ -115,7 +115,7 @@
         ]
       },
       {
-        "img": "/img/blog/photo-1534126511673-b6899657816a.jpg",
+        "img": "/img/blog/SANPHAM_PHUKIENNAM.jpg",
         "lists": [
           {
             "name": "PHỤ KIỆN NAM",
@@ -184,7 +184,7 @@
         ]
       },
       {
-        "img": "/img/product/kyle-loftus-596319-unsplash-cropped.jpg"
+        "img": "/img/product/DOLOT.jpg"
       }
     ]
   },
@@ -250,7 +250,7 @@
         ]
       },
       {
-        "img": "/img/product/0950354513_1_1_1.jpg"
+        "img": "/img/product/DOTHETHAO.webp"
       }
     ]
   },
