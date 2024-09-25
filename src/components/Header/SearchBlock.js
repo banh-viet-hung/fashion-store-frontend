@@ -7,7 +7,7 @@ export default function SearchBlock() {
       <InputGroup className="input-group-underlined">
         <Form.Control
           type="text"
-          placeholder="Search"
+          placeholder="Tìm kiếm"
           aria-label="Search"
           className="form-control-underlined ps-3"
         />

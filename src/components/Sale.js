@@ -64,14 +64,14 @@ const Sale = (props) => {
           >
             <div>
               <p className="subtitle mb-3 text-danger">Deal of the week</p>
-              <h3 className="h1">Oversized denim jacket</h3>
+              <h3 className="h1">ĐỒ CHẠY BỘ</h3>
               <p className="text-muted">
-                <del className="me-3">$129.00</del>
-                <span>$79.00</span>
+                <del className="me-3">199.000 VNĐ</del>
+                <span>99.000 VNĐ</span>
               </p>
               <p className="mb-4">
                 <Badge bg="danger" className="badge badge-danger p-3">
-                  $50 off
+                  SALE 50%
                 </Badge>
               </p>
               <div className="bg-white px-5 py-4 shadow mb-4" id="countdown">
@@ -90,7 +90,7 @@ const Sale = (props) => {
                 </div>
               </div>
               <p>
-                <Button variant="outline-dark">Shop now</Button>
+                <Button variant="outline-dark">KHÁM PHÁ NGAY</Button>
               </p>
             </div>
           </Col>

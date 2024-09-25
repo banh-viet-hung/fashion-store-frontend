@@ -1,32 +1,32 @@
 {
     "swiper": [
         {
-            "name": "Blouses & Tops",
-            "subtitle": "Our all-time favourites",
-            "text": "The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, pit",
-            "button": "Discover more",
+            "name": "GIẢM GIÁ TỚI 50%",
+            "subtitle": "OUTLET SALE",
+            "text": "+100 SẢN PHẨM",
+            "button": "MUA NGAY",
             "link": "#",
-            "img": "/img/photo/home-1-plain.jpg",
+            "img": "/img/photo/banner1.jpg",
             "bgdirection": "right",
             "subtitleclass": "text-dark mb-3",
             "titleclass": "display-1 mb-3"
         },
         {
-            "name": "Linen and denim",
-            "subtitle": "Blue & White",
-            "button": "Start shopping",
+            "name": "NGẬP TRÀN KHUYẾN MÃI",
+            "subtitle": "MUA SẮM THẢ GA",
+            "button": "MUA NGAY",
             "link": "#",
-            "img": "/img/photo/home-2-plain.jpg",
+            "img": "/img/photo/banner2.jpg",
             "rowclass": "justify-content-center text-center",
             "subtitleclass": "text-dark mb-3",
             "titleclass": "display-1 mb-3"
         },
         {
-            "name": "For every occassion",
-            "subtitle": "Sneakers",
-            "button": "Start shopping",
+            "name": "GYM COLLECTION",
+            "subtitle": "SỞ HỮU NGAY",
+            "button": "MUA NGAY",
             "link": "#",
-            "img": "/img/photo/home-3-plain.jpg",
+            "img": "/img/photo/banner3.jpg",
             "contentoffset": "6",
             "subtitleclass": "text-primary mb-4",
             "titleclass": "display-1 mb-5"
@@ -34,16 +34,16 @@
     ],
     "maincategories": [
         {
-            "name": "Women",
+            "name": "Quần áo",
             "link": "/category-full",
             "button": "See",
-            "img": "/img/product/category-women.jpg"
+            "img": "/img/product/Quanao.webp"
         },
         {
-            "name": "Men",
+            "name": "Phụ kiện",
             "link": "/category-full",
             "button": "See",
-            "img": "/img/product/category-men.jpg"
+            "img": "/img/product/Phukien.webp"
         }
     ]
 }

@@ -36,13 +36,15 @@ const NewArrivals = (props) => {
         {props.fluid ? (
           <Row>
             <Col lg="10" xl="8" className="text-center mx-auto">
-              <h2 className="display-3 mb-5">New Arrivals</h2>
+              <h2 className="display-3 mb-5">VỪA RA MẮT</h2>
               <p className="lead text-muted mb-6">
-                One morning, when Gregor Samsa woke from troubled dreams, he
-                found himself transformed in his bed into a horrible vermin. He
-                lay on his armour-like back, and if he lifted his head a little
-                he could see his brown belly, slightly domed and divided by
-                arches into stiff sections
+                Một buổi sáng, khi ánh nắng nhẹ nhàng chiếu qua cửa sổ, bạn thức
+                dậy với tâm trạng hứng khởi, sẵn sàng cho một ngày mới. Với
+                những bộ trang phục nam tính và phụ kiện thời thượng trong bộ
+                sưu tập mới, bạn sẽ tự tin bước ra thế giới. Hãy để phong cách
+                của bạn tỏa sáng, từ áo sơ mi thanh lịch đến quần jeans năng
+                động, và không quên những chiếc đồng hồ, thắt lưng hay giày dép
+                ấn tượng. Khám phá ngay để khẳng định phong cách riêng của bạn!
               </p>
             </Col>
           </Row>
@@ -52,15 +54,17 @@ const NewArrivals = (props) => {
               className={props.masonry ? "display-2 fw-bold mb-5" : ""}
               style={{ color: props.masonry && "#efb2af" }}
             >
-              New Arrivals
+              VỪA RA MẮT
             </h2>
             {!props.masonry && (
               <p className="lead text-muted mb-5">
-                One morning, when Gregor Samsa woke from troubled dreams, he
-                found himself transformed in his bed into a horrible vermin. He
-                lay on his armour-like back, and if he lifted his head a little
-                he could see his brown belly, slightly domed and divided by
-                arches into stiff sections
+                Một buổi sáng, khi ánh nắng nhẹ nhàng chiếu qua cửa sổ, bạn thức
+                dậy với tâm trạng hứng khởi, sẵn sàng cho một ngày mới. Với
+                những bộ trang phục nam tính và phụ kiện thời thượng trong bộ
+                sưu tập mới, bạn sẽ tự tin bước ra thế giới. Hãy để phong cách
+                của bạn tỏa sáng, từ áo sơ mi thanh lịch đến quần jeans năng
+                động, và không quên những chiếc đồng hồ, thắt lưng hay giày dép
+                ấn tượng. Khám phá ngay để khẳng định phong cách riêng của bạn!
               </p>
             )}
           </div>
@@ -75,27 +79,27 @@ const NewArrivals = (props) => {
             >
               <li className="list-inline-item">
                 <a className="text-dark" href="#">
-                  All Products{" "}
+                  Tất cả sản phẩm{" "}
                 </a>
               </li>
               <li className="list-inline-item">
                 <a className="text-muted text-hover-dark" href="#">
-                  Clothing{" "}
+                  Áo{" "}
                 </a>
               </li>
               <li className="list-inline-item">
                 <a className="text-muted text-hover-dark" href="#">
-                  Bags
+                  Quần
                 </a>
               </li>
               <li className="list-inline-item">
                 <a className="text-muted text-hover-dark" href="#">
-                  Shoes
+                  Đồ lót
                 </a>
               </li>
               <li className="list-inline-item">
                 <a className="text-muted text-hover-dark" href="#">
-                  Accessories
+                  Phụ kiện
                 </a>
               </li>
             </ul>
@@ -107,7 +111,7 @@ const NewArrivals = (props) => {
             className="text-center"
           >
             <Button variant="link" className="px-0" href="#">
-              All products
+              Tất cả sản phẩm
             </Button>
           </Col>
         </Row>

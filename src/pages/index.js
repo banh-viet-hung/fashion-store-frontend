@@ -30,6 +30,7 @@ export async function getStaticProps() {
 const Index = () => {
   return (
     <React.Fragment>
+      {/* carousel (trượt ngang) - /data/index.json */}
       <Swiper
         data={data.swiper}
         autoplay={{
@@ -44,6 +45,8 @@ const Index = () => {
         style={{ height: "95vh", minHeight: "600px" }}
         containerclass="px-lg-7"
       />
+      {/* End carousel  */}
+      {/* TRANG PHỤC VÀ PHỤ KIỆN /data/index.json */}
       {data.maincategories && (
         <div className="bg-gray-100 position-relative">
           <Container className="py-6">
@@ -80,10 +83,15 @@ const Index = () => {
           </Container>
         </div>
       )}
+      {/* END TRANG PHỤC VÀ PHỤ KIỆN */}
+      {/* Mới về  */}
       <NewArrivals fluid headCenter products={products} />
-      <Sale className="py-6" backgroundImage="/img/photo/deal-plain.jpg" />
+      {/* Sale */}
+      <Sale className="py-6" backgroundImage="/img/photo/deal.webp" />
+      {/* Our history */}
       <OurHistory />
-      <Brands className="pb-6" />
+      {/* Brands */}
+      {/* <Brands className="pb-6" /> */}
     </React.Fragment>
   )
 }
