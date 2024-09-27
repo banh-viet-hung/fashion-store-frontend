@@ -1,24 +1,24 @@
 import React from "react"
 import { Container, Row, Col, Breadcrumb } from "react-bootstrap"
 import Link from "next/link"
-import products from "../data/products-clothes.json"
-import CardProduct from "../components/CardProduct"
+import products from "../../data/products-clothes.json"
+import CardProduct from "../../components/CardProduct"
 
-import CategoriesMenu from "../components/CategoriesMenu"
+import CategoriesMenu from "../../components/CategoriesMenu"
 
-import Pagination from "../components/Pagination"
-import Filters from "../components/Filters"
-import CategoryTopBar from "../components/CategoryTopBar"
+import Pagination from "../../components/Pagination"
+import Filters from "../../components/Filters"
+import CategoryTopBar from "../../components/CategoryTopBar"
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "Category Full",
+      title: "Danh mục sản phẩm",
     },
   }
 }
 
-const CategoryFull = () => {
+const Category = () => {
   const productsFull = products.concat(products)
   return (
     <React.Fragment>
@@ -26,27 +26,29 @@ const CategoryFull = () => {
         <Row>
           <Col xl="9" lg="8" className="products-grid order-lg-2">
             <div className="hero-content pb-5">
-              <h1>Jackets and tops</h1>
+              <h1>Tất cả sản phẩm</h1>
               <Row>
                 <Col xl="8">
                   <p className="lead text-muted">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                    sed do eiusmod tempor incididunt.
+                    Chào mừng bạn đến với thế giới thời trang nam của chúng tôi!
+                    Từ áo sơ mi thanh lịch đến áo phông trẻ trung và quần jeans
+                    phóng khoáng, bộ sưu tập của chúng tôi có tất cả. Khám phá
+                    để tỏa sáng với phong cách riêng của bạn!
                   </p>
                 </Col>
               </Row>
             </div>
             <Breadcrumb>
               <Link href="/" passHref>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
               </Link>
-              <Breadcrumb.Item active>Shop</Breadcrumb.Item>
+              <Breadcrumb.Item active>Sản phẩm</Breadcrumb.Item>
             </Breadcrumb>
             <CategoryTopBar />
             <Row>
               {productsFull.slice(0, -2).map((product, index) => (
                 <Col key={index} sm="4" xl="3" xs="6">
-                  <CardProduct product={product} />
+                  <CardProduct product={product} cardType={3} />
                 </Col>
               ))}
             </Row>
@@ -62,4 +64,4 @@ const CategoryFull = () => {
   )
 }
 
-export default CategoryFull
+export default Category

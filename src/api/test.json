@@ -1,0 +1,70 @@
+{
+  "_embedded": {
+    "product": [
+      {
+        "name": "Áo thun thể thao Jacquard Seamless",
+        "price": 349.0,
+        "salePrice": 329.0,
+        "averageRating": 0.0,
+        "description": "ExDry - Thoáng khí - Không đường may",
+        "quantity": 500,
+        "brand": "Coolman",
+        "detail": "ExDry - Thoáng khí - Không đường may",
+        "createdAt": null,
+        "updatedAt": null,
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/product/1"
+          },
+          "product": {
+            "href": "http://localhost:8080/product/1"
+          },
+          "colors": {
+            "href": "http://localhost:8080/product/1/colors"
+          },
+          "orderDetails": {
+            "href": "http://localhost:8080/product/1/orderDetails"
+          },
+          "sizes": {
+            "href": "http://localhost:8080/product/1/sizes"
+          },
+          "feedbacks": {
+            "href": "http://localhost:8080/product/1/feedbacks"
+          },
+          "categories": {
+            "href": "http://localhost:8080/product/1/categories"
+          },
+          "favoriteProducts": {
+            "href": "http://localhost:8080/product/1/favoriteProducts"
+          },
+          "cartProducts": {
+            "href": "http://localhost:8080/product/1/cartProducts"
+          },
+          "images": {
+            "href": "http://localhost:8080/product/1/images"
+          },
+          "relatedProducts": {
+            "href": "http://localhost:8080/product/1/relatedProducts"
+          },
+          "features": {
+            "href": "http://localhost:8080/product/1/features"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/product?page=0&size=20"
+    },
+    "profile": {
+      "href": "http://localhost:8080/profile/product"
+    }
+  },
+  "page": {
+    "size": 20,
+    "totalElements": 1,
+    "totalPages": 1,
+    "number": 0
+  }
+}

@@ -15,7 +15,7 @@
             "links": [
               {
                 "name": "Tất cả",
-                "link": "/",
+                "link": "/category",
                 "parent": "Home"
               },
               {
@@ -41,36 +41,36 @@
             "links": [
               {
                 "name": "Tất cả áo nam",
-                "link": "/tatcaaonam"
+                "link": "/category/ao-nam"
               },
               {
                 "name": "Áo thun",
-                "link": "/aothun",
+                "link": "/category/ao-thun",
                 "new": true
               },
               {
                 "name": "Áo sơ mi",
-                "link": "/aosomi"
+                "link": "/category/ao-so-mi"
               },
               {
                 "name": "Áo polo",
-                "link": "/aopolo"
+                "link": "/category/ao-polo"
               },
               {
                 "name": "Áo dài tay",
-                "link": "/aodaitay"
+                "link": "/category/ao-dai-tay"
               },
               {
                 "name": "Áo khoác",
-                "link": "/aokhoac"
+                "link": "/category/ao-khoac"
               },
               {
                 "name": "Áo Tanktop",
-                "link": "/aotanktop"
+                "link": "/category/ao-tank-top"
               },
               {
                 "name": "Áo thể thao",
-                "link": "/aothethao"
+                "link": "/category/ao-the-thao"
               }
             ]
           }
@@ -84,31 +84,31 @@
             "links": [
               {
                 "name": "Tất cả quần nam",
-                "link": "/tatcaquannam"
+                "link": "/category/quan-nam"
               },
               {
                 "name": "Quần shorts",
-                "link": "/quanshorts"
+                "link": "/category/quan-shorts"
               },
               {
                 "name": "Quần jeans",
-                "link": "/quanjeans"
+                "link": "/category/quan-jeans"
               },
               {
                 "name": "Quần dài",
-                "link": "/quandai"
+                "link": "/category/quan-dai"
               },
               {
                 "name": "Quần thể thao",
-                "link": "/quanthethao"
+                "link": "/category/quan-the-thao"
               },
               {
                 "name": "Quần lót",
-                "link": "/quanlot"
+                "link": "/category/quan-lot"
               },
               {
                 "name": "Quần bơi",
-                "link": "/quanboi"
+                "link": "/category/quan-boi"
               }
             ]
           }
@@ -122,22 +122,22 @@
             "links": [
               {
                 "name": "Tất cả phụ kiện",
-                "link": "/tatcaphukien",
+                "link": "/category/phu-kien",
                 "new": true
               },
               {
                 "name": "Tất/Vớ",
-                "link": "/tatvo",
+                "link": "/category/tat-vo",
                 "new": true
               },
               {
                 "name": "Mũ/Nón",
-                "link": "/munon",
+                "link": "/category/mu-non",
                 "new": true
               },
               {
                 "name": "Túi",
-                "link": "/tui",
+                "link": "/category/tui",
                 "new": true
               }
             ]
@@ -154,15 +154,15 @@
         "links": [
           {
             "name": "Tất cả",
-            "link": "/tatca"
+            "link": "/category/quan-lot"
           },
           {
             "name": "Brief (Tam giác)",
-            "link": "/brieftamgiac"
+            "link": "/category/quan-lot-brief-tam-giac"
           },
           {
             "name": "Trunk (Boxer)",
-            "link": "/trunkboxer"
+            "link": "/category/quan-lot-trunk-boxer"
           }
         ]
       },
@@ -170,15 +170,15 @@
         "links": [
           {
             "name": "Boxer Brief (Boxer dài)",
-            "link": "/boxerbriefboxerdai"
+            "link": "/category/boxer-brief-boxer-dai"
           },
           {
             "name": "Long Leg",
-            "link": "/longleg"
+            "link": "/category/long-leg"
           },
           {
             "name": "Boxer Shorts",
-            "link": "/boxershorts",
+            "link": "/category/boxer-shorts",
             "new": true
           }
         ]
@@ -197,7 +197,7 @@
         "links": [
           {
             "name": "Tất cả",
-            "link": "/tatca"
+            "link": "/category/the-thao"
           },
           {
             "name": "Sản phẩm mới",
@@ -205,23 +205,23 @@
           },
           {
             "name": "Áo T-shirt",
-            "link": "/aotshirt"
+            "link": "/category/ao-the-thao-ao-thun-the-thao"
           },
           {
             "name": "Áo Tanktop",
-            "link": "/aotanktop"
+            "link": "/category/ao-the-thao-ao-tank-top"
           },
           {
             "name": "Áo polo",
-            "link": "/aopolo"
+            "link": "/category/ao-the-thao-ao-polo-the-thao"
           },
           {
             "name": "Áo dài tay",
-            "link": "/aodaitay"
+            "link": "/category/ao-dai-tay"
           },
           {
             "name": "Áo khoác",
-            "link": "/aokhoac"
+            "link": "/category/ao-khoac"
           }
         ]
       },
@@ -229,23 +229,23 @@
         "links": [
           {
             "name": "Quần shorts",
-            "link": "/quanshorts"
+            "link": "/category/quan-shorts"
           },
           {
             "name": "Quần Joggers",
-            "link": "/quanjoogers"
+            "link": "/category/quan-joggers"
           },
           {
             "name": "Quần dài",
-            "link": "/quandai"
+            "link": "/category/quan-dai"
           },
           {
             "name": "Quần bơi",
-            "link": "/quanboi"
+            "link": "/category/quan-boi"
           },
           {
             "name": "Phụ kiện",
-            "link": "/phukien"
+            "link": "/category/phu-kien"
           }
         ]
       },
@@ -263,7 +263,7 @@
       },
       {
         "name": "Tất cả",
-        "link": "/tatca"
+        "link": "/category/mac-hang-ngay"
       },
       {
         "name": "Sản phẩm mới",
@@ -271,51 +271,51 @@
       },
       {
         "name": "Áo T-shirt",
-        "link": "/aotshirt"
+        "link": "/category/ao-thun"
       },
       {
         "name": "Áo Tanktop",
-        "link": "/tanktop"
+        "link": "/category/ao-tank-top"
       },
       {
         "name": "Áo polo",
-        "link": "/aopolo"
+        "link": "/category/ao-polo"
       },
       {
         "name": "Áo sơ mi",
-        "link": "/aosomi"
+        "link": "/category/ao-so-mi"
       },
       {
         "name": "Áo khoác",
-        "link": "/aokhoac"
+        "link": "/category/ao-khoac"
       },
       {
         "name": "Áo dài tay",
-        "link": "/aokhoac"
+        "link": "/category/ao-dai-tay"
       },
       {
         "divider": true
       },
       {
         "name": "Quần shorts",
-        "link": "/quanshorts",
+        "link": "/category/quan-shorts",
         "divider": true
       },
       {
         "name": "Quần Joggers",
-        "link": "/quanjoogers"
+        "link": "/category/quan-joggers"
       },
       {
         "name": "Quần dài",
-        "link": "/quandai"
+        "link": "/category/quan-dai"
       },
       {
         "name": "Quần jeans",
-        "link": "/quanjeans"
+        "link": "/category/quan-jeans"
       },
       {
         "name": "Phụ kiện",
-        "link": "/phukien"
+        "link": "/category/phu-kien"
       }
     ]
   }
