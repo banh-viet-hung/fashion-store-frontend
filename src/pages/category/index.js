@@ -1,14 +1,12 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Container, Row, Col, Breadcrumb } from "react-bootstrap"
 import Link from "next/link"
-import products from "../../data/products-clothes.json"
 import CardProduct from "../../components/CardProduct"
-
 import CategoriesMenu from "../../components/CategoriesMenu"
-
 import Pagination from "../../components/Pagination"
 import Filters from "../../components/Filters"
 import CategoryTopBar from "../../components/CategoryTopBar"
+import { getProductsWithPagination } from "../../api/ProductAPI"
 
 export async function getStaticProps() {
   return {
@@ -19,7 +17,31 @@ export async function getStaticProps() {
 }
 
 const Category = () => {
-  const productsFull = products.concat(products)
+  const [products, setProducts] = useState([])
+  const [totalPages, setTotalPages] = useState(1) // Số trang tổng cộng
+  const [currentPage, setCurrentPage] = useState(0) // Trang hiện tại
+
+  // Gọi API để lấy sản phẩm khi component được render hoặc khi chuyển trang
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const size = 16 // Số sản phẩm trên mỗi trang
+        const data = await getProductsWithPagination(currentPage, size)
+        setProducts(data._embedded.product) // Lấy danh sách sản phẩm
+        setTotalPages(data.page.totalPages) // Cập nhật tổng số trang
+      } catch (error) {
+        console.error("Error fetching products:", error)
+      }
+    }
+
+    fetchData()
+  }, [currentPage]) // Chạy lại khi `currentPage` thay đổi
+
+  // Hàm xử lý khi người dùng chọn trang mới
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber) // Cập nhật trang hiện tại
+  }
+
   return (
     <React.Fragment>
       <Container fluid className="container-fluid-px py-6">
@@ -46,13 +68,17 @@ const Category = () => {
             </Breadcrumb>
             <CategoryTopBar />
             <Row>
-              {productsFull.slice(0, -2).map((product, index) => (
+              {products.map((product, index) => (
                 <Col key={index} sm="4" xl="3" xs="6">
-                  <CardProduct product={product} cardType={3} />
+                  <CardProduct product={product} />
                 </Col>
               ))}
             </Row>
-            <Pagination />
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
           </Col>
           <Col xl="3" lg="4" className="sidebar pe-xl-5 order-lg-1">
             <CategoriesMenu />

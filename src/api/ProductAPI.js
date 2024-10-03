@@ -2,10 +2,10 @@ import axios from "axios"
 
 const BASE_URL = "http://localhost:8080/product"
 
-// Lấy danh sách sản phẩm
-export const getProducts = async () => {
+// Lấy danh sách sản phẩm với tham số page và size
+export const getProductsWithPagination = async (page = 0, size = 5) => {
   try {
-    const response = await axios.get(BASE_URL)
+    const response = await axios.get(`${BASE_URL}?page=${page}&size=${size}`)
     return response.data
   } catch (error) {
     console.error("Error fetching products:", error)

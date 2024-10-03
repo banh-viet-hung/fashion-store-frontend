@@ -46,11 +46,11 @@ const CardProduct = ({ product, masonry, cardType }) => {
       {cardType === 5 && <CardProduct5 {...params} />}
       {cardType === 6 && <CardProduct6 {...params} />}
       {cardType === 7 && <CardProduct7 {...params} />}
-      <ModalQuickView
+      {/* <ModalQuickView
         isOpen={quickView}
         toggle={() => setQuickView()}
         product={product}
-      />
+      /> */}
     </React.Fragment>
   )
 }
