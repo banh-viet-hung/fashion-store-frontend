@@ -5,6 +5,7 @@ import Stars from "../Stars"
 import Icon from "../Icon"
 import Image from "../Image"
 import moment from "moment"
+import { getImagesByProductId } from "../../api/ImageAPI"
 
 const CardProductDefault = ({
   product,
@@ -15,38 +16,35 @@ const CardProductDefault = ({
 }) => {
   const [thumbnailImages, setThumbnailImages] = useState([])
 
-  // Calculate if the product is fresh
+  // Tính toán xem sản phẩm có mới không
   const isFresh = product.createdAt
     ? moment().diff(moment(product.createdAt), "days") < 7
     : false
 
-  // Check if the product is on sale
+  // Kiểm tra xem sản phẩm có đang giảm giá không
   const isSale = product.salePrice !== 0
 
-  // Check if the product is sold out
+  // Kiểm tra xem sản phẩm đã hết hàng chưa
   const isSoldOut = product.quantity <= 0
 
-  // Get thumbnail images (maximum 2)
+  // Lấy hình ảnh thumbnail (tối đa 2 hình)
   useEffect(() => {
-    const imagesLink = product._links.images.href
-
-    // Fetch images from API
-    fetch(imagesLink)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok")
+    const fetchImages = async () => {
+      if (product && product.id) {
+        try {
+          const images = await getImagesByProductId(product.id)
+          // Lọc hình ảnh thumbnail (tối đa 2 hình)
+          const filteredImages = images
+            .filter((img) => img.thumbnail)
+            .slice(0, 2)
+          setThumbnailImages(filteredImages)
+        } catch (error) {
+          console.error("Error fetching images:", error)
         }
-        return response.json()
-      })
-      .then((imageData) => {
-        // Handle the image data received
-        const images = imageData._embedded.image
+      }
+    }
 
-        // Filter for thumbnail images (maximum 2)
-        const filteredImages = images.filter((img) => img.thumbnail).slice(0, 2)
-        setThumbnailImages(filteredImages)
-      })
-      .catch((error) => console.error("Error fetching images:", error))
+    fetchImages()
   }, [product])
 
   return (
@@ -58,7 +56,7 @@ const CardProductDefault = ({
       <div className="product-image mb-md-3">
         {isFresh && (
           <Badge bg="secondary" className="product-badge">
-            Fresh
+            Mới
           </Badge>
         )}
         {isSale && (
@@ -68,7 +66,7 @@ const CardProductDefault = ({
         )}
         {isSoldOut && (
           <Badge bg="dark" className="product-badge">
-            Sold out
+            Hết hàng
           </Badge>
         )}
         <Link href={`/product/${product.id}`}>
