@@ -13,6 +13,17 @@ export const getProductsWithPagination = async (page = 0, size = 5) => {
   }
 }
 
+// Lấy danh sách hình ảnh theo sản phẩm
+export const getImagesByProductId = async (productId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${productId}/images`)
+    return response.data._embedded.image
+  } catch (error) {
+    console.error("Error fetching images:", error)
+    throw error
+  }
+}
+
 // Lấy sản phẩm theo ID
 export const getProductById = async (id) => {
   try {

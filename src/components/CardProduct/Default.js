@@ -5,7 +5,7 @@ import Stars from "../Stars"
 import Icon from "../Icon"
 import Image from "../Image"
 import moment from "moment"
-import { getImagesByProductId } from "../../api/ImageAPI"
+import { getImagesByProductId } from "../../api/ProductAPI"
 
 const CardProductDefault = ({
   product,
@@ -117,6 +117,7 @@ const CardProductDefault = ({
             )}
           </a>
         </Link>
+
         <div className="product-hover-overlay">
           <a
             className="text-dark text-sm"
@@ -128,7 +129,7 @@ const CardProductDefault = ({
               className="text-hover-primary svg-icon-heavy d-sm-none"
               icon="retail-bag-1"
             />
-            <span className="d-none d-sm-inline">Add to cart</span>
+            <span className="d-none d-sm-inline">Thêm vào giỏ hàng</span>
           </a>
           <div>
             <a
@@ -153,6 +154,7 @@ const CardProductDefault = ({
           </div>
         </div>
       </div>
+
       <div className="position-relative">
         <h3 className="text-base mb-1">
           <Link href={`/product/${product.id}`}>
@@ -160,7 +162,13 @@ const CardProductDefault = ({
           </Link>
         </h3>
         <span className="text-gray-500 text-sm">
-          {isSale ? `${product.salePrice} VNĐ` : `${product.price} VNĐ`}
+          {isSale
+            ? `${(product.salePrice ?? 0)
+                .toLocaleString("it-IT")
+                .replace(/,/g, ".")}đ`
+            : `${(product.price ?? 0)
+                .toLocaleString("it-IT")
+                .replace(/,/g, ".")}đ`}
         </span>
         <Stars
           stars={product.averageRating}
