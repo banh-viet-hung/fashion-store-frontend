@@ -56,7 +56,7 @@ const CardProductDefault = ({
       <div className="product-image mb-md-3">
         {isFresh && (
           <Badge bg="secondary" className="product-badge">
-            Mới
+            New
           </Badge>
         )}
         {isSale && (
@@ -66,7 +66,7 @@ const CardProductDefault = ({
         )}
         {isSoldOut && (
           <Badge bg="dark" className="product-badge">
-            Hết hàng
+            Sold Out
           </Badge>
         )}
         <Link href={`/product/${product.id}`}>
@@ -123,7 +123,10 @@ const CardProductDefault = ({
             className="text-dark text-sm"
             aria-label="add to cart"
             href="#"
-            onClick={(e) => addToCart(e, product)}
+            onClick={(e) => {
+              e.preventDefault()
+              setQuickView((prev) => !prev)
+            }}
           >
             <Icon
               className="text-hover-primary svg-icon-heavy d-sm-none"

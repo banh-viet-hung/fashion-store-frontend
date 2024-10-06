@@ -100,12 +100,12 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
               {isSale && <Badge className="product-badge">Sale</Badge>}
               {isFresh && (
                 <Badge bg="secondary" className="product-badge">
-                  Mới
+                  New
                 </Badge>
               )}
               {isSoldOut && (
                 <Badge className="product-badge" bg="dark">
-                  Hết hàng
+                  Sold Out
                 </Badge>
               )}
               <Swiper {...params} loop ref={swiperRef}>
