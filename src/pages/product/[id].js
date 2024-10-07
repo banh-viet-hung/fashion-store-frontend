@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import {
   Container,
   Row,
@@ -11,38 +11,73 @@ import {
 } from "react-bootstrap"
 import InnerImageZoom from "react-inner-image-zoom"
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.min.css"
+import {
+  getProductsWithPagination,
+  getProductById,
+  getImagesByProductId,
+} from "../../api/ProductAPI" // Import hàm gọi API
 
-import Icon from "../components/Icon"
+import Icon from "../../components/Icon"
 
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 
-import dummyProduct from "../data/dummyproduct.json"
-import Stars from "../components/Stars"
-import ProductBottomTabs from "../components/ProductBottomTabs"
-import ProductBottomProducts from "../components/ProductBottomProducts"
+import Stars from "../../components/Stars"
+import ProductBottomTabs from "../../components/ProductBottomTabs"
+import ProductBottomProducts from "../../components/ProductBottomProducts"
 import Link from "next/link"
-import SelectBox from "../components/SelectBox"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { CartContext } from "../../components/CartContext"
+
+import { addCartItem } from "../../hooks/UseCart"
+import { addWishlistItem } from "../../hooks/UseWishlist"
+import { WishlistContext } from "../../components/WishlistContext"
+import SelectBox from "../../components/SelectBox"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
 import { faHeart } from "@fortawesome/free-regular-svg-icons"
-import { faTwitter, faFacebookF } from "@fortawesome/free-brands-svg-icons"
-import useWindowSize from "../hooks/UseWindowSize"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import useWindowSize from "../../hooks/UseWindowSize"
 
-export async function getStaticProps() {
+export async function getStaticPaths() {
+  const productsData = await getProductsWithPagination(0, 1000) // Lấy dữ liệu sản phẩm từ API
+  const paths = productsData._embedded.product.map((product) => ({
+    params: { id: product.id.toString() }, // Sử dụng id làm slug
+  }))
+
+  return { paths, fallback: false }
+}
+
+export async function getStaticProps({ params }) {
+  const productData = await getProductById(params.id) // Lấy sản phẩm theo id
   return {
     props: {
-      title: "Product with sticky info",
+      title: productData.name,
+      productData,
     },
   }
 }
 
-const Detail1 = () => {
+const ProductPage = ({ productData }) => {
   const [lightBoxOpen, setLightBoxOpen] = useState(false)
   const [activeImage, setActiveImage] = useState(0)
-  const [activeType, setActiveType] = useState("material_0")
   const [alert, setAlert] = useState(true)
+  const [cartItems, dispatch] = useContext(CartContext)
+  const [wishlistItems, wishlistDispatch] = useContext(WishlistContext)
+  const [activeType, setActiveType] = useState("material_0")
+  const [quantity, setQuantity] = useState("1")
+  const [images, setImages] = useState([]) // Khởi tạo state cho hình ảnh
   const size = useWindowSize()
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (productData && productData.id) {
+        const imagesData = await getImagesByProductId(productData.id) // Gọi API để lấy hình ảnh sản phẩm
+        setImages(imagesData)
+      }
+    }
+
+    fetchImages()
+  }, [productData])
+
   const onClick = (e, index) => {
     e.preventDefault()
     if (size.width > 1200) {
@@ -51,7 +86,20 @@ const Detail1 = () => {
     }
   }
 
-  const images = dummyProduct.img.detail
+  const addToCart = (e, product) => {
+    e.preventDefault()
+    addCartItem(product, quantity)
+    dispatch({ type: "add", payload: product, quantity: quantity })
+  }
+  const addToWishlist = (e, product) => {
+    e.preventDefault()
+    addWishlistItem(product)
+    wishlistDispatch({ type: "add", payload: product })
+  }
+  const onChange = (e) => {
+    const value = e.target.value
+    setQuantity(value)
+  }
 
   return (
     <React.Fragment>
@@ -60,20 +108,20 @@ const Detail1 = () => {
           <div className="d-block" id="addToCartAlert">
             <Alert
               variant="success"
-              className="mb-4 mb-lg-5 opacity-10"
+              className="mb-4 mb-lg-5  opacity-10"
               role="alert"
               show={alert}
               onClose={() => setAlert(false)}
-              dismissible
               closeVariant="white"
+              dismissible
             >
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center pe-3">
                 <Icon
                   icon="checked-circle-1"
                   className="d-none d-sm-block w-3rem h-3rem svg-icon-light flex-shrink-0 me-3"
                 />
                 <p className="mb-0">
-                  Push-up jeans have been added to your cart.
+                  {productData.name} have been added to your cart.
                   <br className="d-inline-block d-lg-none" />
                   <Link href="/cart">
                     <a className="text-reset text-decoration-underline ms-lg-3">
@@ -86,12 +134,12 @@ const Detail1 = () => {
           </div>
           <Breadcrumb>
             <Link href="/" passHref>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
+              <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
             </Link>
-            <Link href="/category-full" passHref>
-              <Breadcrumb.Item>Jeans</Breadcrumb.Item>
+            <Link href="/category" passHref>
+              <Breadcrumb.Item>Sản phẩm</Breadcrumb.Item>
             </Link>
-            <Breadcrumb.Item active>Push-up Jeans</Breadcrumb.Item>
+            <Breadcrumb.Item active>{productData.name}</Breadcrumb.Item>
           </Breadcrumb>
           <Row>
             <Col
@@ -99,73 +147,84 @@ const Detail1 = () => {
               xl="7"
               className="pt-4 order-2 order-lg-1 photoswipe-gallery"
             >
-              {dummyProduct.img.detail.map((image, index) => (
+              {images.map((image, index) => (
                 <a
                   key={index}
                   onClick={(e) => onClick(e, index)}
                   className="d-block mb-4"
-                  href={image.img}
+                  href={image.url}
                 >
                   <InnerImageZoom
                     hideHint
-                    src={image.img}
-                    zoomSrc={image.img}
-                    alt={image.alt}
+                    src={image.url}
+                    zoomSrc={image.url}
+                    alt={image.alt || "Product Image"}
                     zoomType="hover"
                     className="cursor-pointer"
                   />
                 </a>
               ))}
+
               <Lightbox
                 open={lightBoxOpen}
                 close={() => setLightBoxOpen(false)}
-                slides={images?.map((image) => ({
-                  alt: image.alt,
-                  src: image.img,
+                slides={images.map((image) => ({
+                  alt: image.alt || "Product Image",
+                  src: image.url,
                 }))}
                 index={activeImage}
               />
             </Col>
             <Col lg="6" xl="4" className="pt-4 order-1 order-lg-2 ms-lg-auto">
-              <div className="sticky-top" style={{ top: "100px", zIndex: "1" }}>
-                <h1 className="mb-4">{dummyProduct.name}</h1>
+              <div className="sticky-top" style={{ top: "100px" }}>
+                <h1 className="mb-4">{productData.name}</h1>
                 <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between mb-4">
                   <ul className="list-inline mb-2 mb-sm-0">
                     <li className="list-inline-item h4 fw-light mb-0">
-                      ${dummyProduct.pricesale.toFixed(2)}
+                      {productData.salePrice > 0
+                        ? `${(productData.salePrice ?? 0)
+                            .toLocaleString("it-IT")
+                            .replace(/,/g, ".")}đ`
+                        : `${(productData.price ?? 0)
+                            .toLocaleString("it-IT")
+                            .replace(/,/g, ".")}đ`}
                     </li>
-                    <li className="list-inline-item text-muted fw-light">
-                      <del>${dummyProduct.price.toFixed(2)}</del>
-                    </li>
+                    {productData.salePrice > 0 && (
+                      <li className="list-inline-item text-muted fw-light">
+                        <del>
+                          {(productData.price ?? 0)
+                            .toLocaleString("it-IT")
+                            .replace(/,/g, ".")}
+                          đ
+                        </del>
+                      </li>
+                    )}
                   </ul>
+
                   <div className="d-flex align-items-center text-sm">
-                    <Stars
-                      stars={4}
-                      secondColor="gray-300"
-                      className="me-2"
-                      starClass="me-1"
-                    />
+                    <Stars stars={4} secondColor="gray-300" starClass="me-1" />
                     <span className="text-muted text-uppercase">
                       25 reviews
                     </span>
                   </div>
                 </div>
-                <p className="mb-4 text-muted">
-                  {dummyProduct.description.short}
-                </p>
+                <p className="mb-4 text-muted">{productData.description}</p>
                 <Form>
                   <Row>
                     <Col sm="6" lg="12" className="detail-option mb-4">
                       <h6 className="detail-option-heading">
-                        Size <span>(required)</span>
+                        Kích thước <span>(yêu cầu)</span>
                       </h6>
-                      <SelectBox options={dummyProduct.sizes} />
+                      {/* <SelectBox
+                        options={dummyProduct.sizes}
+                        id="detail-slug"
+                      /> */}
                     </Col>
                     <Col sm="6" lg="12" className="detail-option mb-4">
                       <h6 className="detail-option-heading">
-                        Type <span>(required)</span>
+                        Màu sắc <span>(yêu cầu)</span>
                       </h6>
-                      {dummyProduct.types.map((type) => (
+                      {/* {dummyProduct.types.map((type) => (
                         <label
                           key={type.value}
                           className={`btn btn-sm btn-outline-primary detail-option-btn-label ${
@@ -184,7 +243,7 @@ const Detail1 = () => {
                             required
                           />
                         </label>
-                      ))}
+                      ))} */}
                     </Col>
                   </Row>
                   <InputGroup className="w-100 mb-4">
@@ -194,51 +253,45 @@ const Detail1 = () => {
                       defaultValue="1"
                       name="items"
                       type="number"
+                      onChange={onChange}
                     />
                     <div className="flex-grow-1">
                       <div className="d-grid h-100">
-                        <Button variant="dark" type="submit">
+                        <Button
+                          variant="dark"
+                          type="submit"
+                          onClick={(e) => addToCart(e, productData)}
+                        >
                           <FontAwesomeIcon
                             icon={faShoppingCart}
-                            className="me-2 flex-grow-1 w-1rem"
+                            className="me-2"
                           />
-                          Add to Cart
+                          Thêm vào giỏ hàng
                         </Button>
                       </div>
                     </div>
                   </InputGroup>
                   <Row className="mb-4">
                     <Col xs="6">
-                      <a href="#">
+                      <a
+                        href="#"
+                        onClick={(e) => addToWishlist(e, productData)}
+                      >
                         <FontAwesomeIcon icon={faHeart} className="me-2" />
-                        Add to wishlist
+                        Yêu thích
                       </a>
-                    </Col>
-                    <Col xs="6" className="text-end">
-                      <ul className="list-inline mb-0">
-                        <li className="list-inline-item me-2">
-                          <a className="text-dark text-hover-primary" href="#">
-                            <FontAwesomeIcon icon={faFacebookF} />
-                          </a>
-                        </li>
-                        <li className="list-inline-item">
-                          <a className="text-dark text-hover-primary" href="#">
-                            <FontAwesomeIcon icon={faTwitter} />
-                          </a>
-                        </li>
-                      </ul>
                     </Col>
                   </Row>
                   <ul className="list-unstyled">
                     <li>
-                      <strong>Category:&nbsp;</strong>
-                      <a className="text-muted" href="#">
-                        {dummyProduct.category}
-                      </a>
+                      <strong>Danh mục:&nbsp;</strong>
+                      {/* <Link href={`/${productData.category[1]}`}>
+                        <a className="text-muted">{productData.category[0]}</a>
+                      </Link> */}
                     </li>
                     <li>
-                      <strong>Tags:&nbsp;</strong>
-                      {dummyProduct.tags.map((tag, index) => (
+                      <strong>Tính năng nỗi bật:&nbsp;</strong>
+                      {/* {dummyProduct.tags.map((tag, index) => (
                         <React.Fragment key={tag.name}>
                           <Link href={tag.link}>
                             <a className="text-muted">{tag.name}</a>
@@ -247,7 +300,7 @@ const Detail1 = () => {
                             ? ",\u00A0"
                             : ""}
                         </React.Fragment>
-                      ))}
+                      ))} */}
                     </li>
                   </ul>
                 </Form>
@@ -256,10 +309,10 @@ const Detail1 = () => {
           </Row>
         </Container>
       </section>
-      <ProductBottomTabs product={dummyProduct} />
+      {/* <ProductBottomTabs product={productData} /> */}
       <ProductBottomProducts />
     </React.Fragment>
   )
 }
 
-export default Detail1
+export default ProductPage

@@ -1,4 +1,3 @@
-// pages/category/[slug].js
 import React from "react"
 import { Container, Row, Col, Breadcrumb } from "react-bootstrap"
 import Link from "next/link"
