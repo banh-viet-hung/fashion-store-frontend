@@ -174,7 +174,7 @@ const CardProductDefault = ({
                 .replace(/,/g, ".")}đ`}
         </span>
         <Stars
-          stars={product.averageRating}
+          stars={5}
           className="product-stars text-xs"
         />
       </div>

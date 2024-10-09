@@ -38,7 +38,7 @@ const ProductBottomProducts = ({ className }) => {
   return (
     <section className={`py-5 ${className ? className : ""}`}>
       <Container>
-        <h5 className="mb-4">You might also like these</h5>
+        <h5 className="mb-4">GỢI Ý SẢN PHẨM</h5>
         <div className="position-relative">
           {domLoaded && (
             <Swiper {...params}>

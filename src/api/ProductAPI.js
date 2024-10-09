@@ -35,34 +35,13 @@ export const getProductById = async (id) => {
   }
 }
 
-// Thêm sản phẩm mới
-export const createProduct = async (product) => {
+// Lấy feedback của sản phẩm theo ID
+export const getFeedbackByProductId = async (productId) => {
   try {
-    const response = await axios.post(BASE_URL, product)
-    return response.data
+    const response = await axios.get(`${BASE_URL}/${productId}/feedbacks`)
+    return response.data._embedded.feedback // Chỉnh sửa để trả về đúng định dạng
   } catch (error) {
-    console.error("Error creating product:", error)
-    throw error
-  }
-}
-
-// Cập nhật sản phẩm
-export const updateProduct = async (id, product) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/${id}`, product)
-    return response.data
-  } catch (error) {
-    console.error("Error updating product:", error)
-    throw error
-  }
-}
-
-// Xóa sản phẩm
-export const deleteProduct = async (id) => {
-  try {
-    await axios.delete(`${BASE_URL}/${id}`)
-  } catch (error) {
-    console.error("Error deleting product:", error)
+    console.error("Error fetching feedback:", error)
     throw error
   }
 }

@@ -23,7 +23,7 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons"
 import Image from "./Image"
 import "swiper/css"
 import moment from "moment"
-import { getImagesByProductId } from "../api/ProductAPI"
+import { getImagesByProductId, getFeedbackByProductId } from "../api/ProductAPI" // Import API
 
 const ModalQuickView = ({ isOpen, toggle, product }) => {
   const swiperRef = useRef(null)
@@ -32,6 +32,7 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
   const [cartItems, dispatch] = useContext(CartContext)
   const [wishlistItems, wishlistDispatch] = useContext(WishlistContext)
   const [images, setImages] = useState([])
+  const [feedbacks, setFeedbacks] = useState([]) // State for feedbacks
 
   const isFresh = product.createdAt
     ? moment().diff(moment(product.createdAt), "days") < 7
@@ -48,7 +49,15 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
       }
     }
 
+    const fetchFeedbacks = async () => {
+      if (product && product.id) {
+        const feedbackData = await getFeedbackByProductId(product.id) // Gọi API để lấy feedback
+        setFeedbacks(feedbackData)
+      }
+    }
+
     fetchImages()
+    fetchFeedbacks() // Gọi hàm fetchFeedbacks
   }, [product])
 
   const addToCart = (e) => {
@@ -86,6 +95,18 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
   ]
 
   const [activeType, setActiveType] = useState("material_0_modal")
+
+  // Tính điểm trung bình và số lượng phản hồi
+  const averageRating =
+    feedbacks.length > 0
+      ? parseFloat(
+          (
+            feedbacks.reduce((acc, feedback) => acc + feedback.rating, 0) /
+            feedbacks.length
+          ).toFixed(1)
+        )
+      : 0
+  const reviewCount = feedbacks.length
 
   return (
     <Modal show={isOpen} onHide={toggle} size="xl">
@@ -169,12 +190,32 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
               </ul>
 
               <div className="d-flex align-items-center text-sm">
-                <Stars
-                  stars={product.averageRating}
-                  className="me-2 mb-0"
-                  secondColor="gray-300"
-                />
-                <span className="text-muted text-uppercase">25 reviews</span>
+                {feedbacks.length > 0 && (
+                  <>
+                    <Stars
+                      stars={parseFloat(
+                        (
+                          feedbacks.reduce(
+                            (acc, feedback) => acc + feedback.rating,
+                            0
+                          ) / feedbacks.length
+                        ).toFixed(1)
+                      )}
+                      className="me-2 mb-0"
+                      secondColor="gray-300"
+                    />
+                    <span className="text-muted text-uppercase">
+                      (
+                      {(
+                        feedbacks.reduce(
+                          (acc, feedback) => acc + feedback.rating,
+                          0
+                        ) / feedbacks.length
+                      ).toFixed(1)}
+                      )
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 

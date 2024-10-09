@@ -15,19 +15,17 @@ import {
   getProductsWithPagination,
   getProductById,
   getImagesByProductId,
+  getFeedbackByProductId,
 } from "../../api/ProductAPI" // Import hàm gọi API
-
+import { getUserByFeedbackId } from "../../api/FeedbackAPI"
 import Icon from "../../components/Icon"
-
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
-
 import Stars from "../../components/Stars"
 import ProductBottomTabs from "../../components/ProductBottomTabs"
 import ProductBottomProducts from "../../components/ProductBottomProducts"
 import Link from "next/link"
 import { CartContext } from "../../components/CartContext"
-
 import { addCartItem } from "../../hooks/UseCart"
 import { addWishlistItem } from "../../hooks/UseWishlist"
 import { WishlistContext } from "../../components/WishlistContext"
@@ -65,6 +63,7 @@ const ProductPage = ({ productData }) => {
   const [activeType, setActiveType] = useState("material_0")
   const [quantity, setQuantity] = useState("1")
   const [images, setImages] = useState([]) // Khởi tạo state cho hình ảnh
+  const [feedbacks, setFeedbacks] = useState([])
   const size = useWindowSize()
 
   useEffect(() => {
@@ -77,6 +76,10 @@ const ProductPage = ({ productData }) => {
 
     fetchImages()
   }, [productData])
+
+  // Lấy ảnh thumbnail hoặc ảnh đầu tiên
+  const thumbnailImage =
+    images.find((image) => image.thumbnail) || images[0] || null
 
   const onClick = (e, index) => {
     e.preventDefault()
@@ -91,15 +94,42 @@ const ProductPage = ({ productData }) => {
     addCartItem(product, quantity)
     dispatch({ type: "add", payload: product, quantity: quantity })
   }
+
   const addToWishlist = (e, product) => {
     e.preventDefault()
     addWishlistItem(product)
     wishlistDispatch({ type: "add", payload: product })
   }
+
   const onChange = (e) => {
     const value = e.target.value
     setQuantity(value)
   }
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const feedbackData = await getFeedbackByProductId(productData.id)
+        const feedbacksWithUser = await Promise.all(
+          feedbackData.map(async (feedback) => {
+            const userResponse = await getUserByFeedbackId(feedback.id)
+            return {
+              id: feedback.id,
+              rating: feedback.rating,
+              comment: feedback.comment,
+              createdAt: feedback.createdAt,
+              user: userResponse,
+            }
+          })
+        )
+        setFeedbacks(feedbacksWithUser)
+      } catch (error) {
+        console.error("Error fetching feedbacks:", error)
+      }
+    }
+
+    fetchFeedbacks()
+  }, [productData.id])
 
   return (
     <React.Fragment>
@@ -108,7 +138,7 @@ const ProductPage = ({ productData }) => {
           <div className="d-block" id="addToCartAlert">
             <Alert
               variant="success"
-              className="mb-4 mb-lg-5  opacity-10"
+              className="mb-4 mb-lg-5 opacity-10"
               role="alert"
               show={alert}
               onClose={() => setAlert(false)}
@@ -121,11 +151,11 @@ const ProductPage = ({ productData }) => {
                   className="d-none d-sm-block w-3rem h-3rem svg-icon-light flex-shrink-0 me-3"
                 />
                 <p className="mb-0">
-                  {productData.name} have been added to your cart.
+                  {productData.name} đã được thêm vào giỏ hàng.
                   <br className="d-inline-block d-lg-none" />
                   <Link href="/cart">
                     <a className="text-reset text-decoration-underline ms-lg-3">
-                      View Cart
+                      Xem giỏ hàng
                     </a>
                   </Link>
                 </p>
@@ -202,48 +232,64 @@ const ProductPage = ({ productData }) => {
                   </ul>
 
                   <div className="d-flex align-items-center text-sm">
-                    <Stars stars={4} secondColor="gray-300" starClass="me-1" />
-                    <span className="text-muted text-uppercase">
-                      25 reviews
-                    </span>
+                    {feedbacks.length > 0 && (
+                      <>
+                        <Stars
+                          stars={parseFloat(
+                            (
+                              feedbacks.reduce(
+                                (acc, feedback) => acc + feedback.rating,
+                                0
+                              ) / feedbacks.length
+                            ).toFixed(1)
+                          )}
+                          secondColor="gray-300"
+                          starClass="me-1"
+                        />
+                        <span className="text-muted text-uppercase">
+                          ({(
+                            feedbacks.reduce(
+                              (acc, feedback) => acc + feedback.rating,
+                              0
+                            ) / feedbacks.length
+                          ).toFixed(1)})
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
-                <p className="mb-4 text-muted">{productData.description}</p>
                 <Form>
                   <Row>
                     <Col sm="6" lg="12" className="detail-option mb-4">
                       <h6 className="detail-option-heading">
                         Kích thước <span>(yêu cầu)</span>
                       </h6>
-                      {/* <SelectBox
-                        options={dummyProduct.sizes}
-                        id="detail-slug"
-                      /> */}
+                      {/* <SelectBox options={dummyProduct.sizes} id="detail-slug" /> */}
                     </Col>
                     <Col sm="6" lg="12" className="detail-option mb-4">
                       <h6 className="detail-option-heading">
                         Màu sắc <span>(yêu cầu)</span>
                       </h6>
                       {/* {dummyProduct.types.map((type) => (
-                        <label
-                          key={type.value}
-                          className={`btn btn-sm btn-outline-primary detail-option-btn-label ${
-                            activeType === type.id ? "active" : ""
-                          } me-1`}
-                          htmlFor={type.id}
-                        >
-                          {type.label}
-                          <Form.Control
-                            className="input-invisible"
-                            type="radio"
-                            name="material"
-                            value={type.value}
-                            id={type.id}
-                            onChange={() => setActiveType(type.id)}
-                            required
-                          />
-                        </label>
-                      ))} */}
+                          <label
+                            key={type.value}
+                            className={`btn btn-sm btn-outline-primary detail-option-btn-label ${
+                              activeType === type.id ? "active" : ""
+                            } me-1`}
+                            htmlFor={type.id}
+                          >
+                            {type.label}
+                            <Form.Control
+                              className="input-invisible"
+                              type="radio"
+                              name="material"
+                              value={type.value}
+                              id={type.id}
+                              onChange={() => setActiveType(type.id)}
+                              required
+                            />
+                          </label>
+                        ))} */}
                     </Col>
                   </Row>
                   <InputGroup className="w-100 mb-4">
@@ -286,21 +332,19 @@ const ProductPage = ({ productData }) => {
                     <li>
                       <strong>Danh mục:&nbsp;</strong>
                       {/* <Link href={`/${productData.category[1]}`}>
-                        <a className="text-muted">{productData.category[0]}</a>
-                      </Link> */}
+                          <a className="text-muted">{productData.category[0]}</a>
+                        </Link> */}
                     </li>
                     <li>
-                      <strong>Tính năng nỗi bật:&nbsp;</strong>
+                      <strong>Tính năng nổi bật:&nbsp;</strong>
                       {/* {dummyProduct.tags.map((tag, index) => (
-                        <React.Fragment key={tag.name}>
-                          <Link href={tag.link}>
-                            <a className="text-muted">{tag.name}</a>
-                          </Link>
-                          {index < dummyProduct.tags.length - 1
-                            ? ",\u00A0"
-                            : ""}
-                        </React.Fragment>
-                      ))} */}
+                          <React.Fragment key={tag.name}>
+                            <Link href={tag.link}>
+                              <a className="text-muted">{tag.name}</a>
+                            </Link>
+                            {index < dummyProduct.tags.length - 1 ? ",\u00A0" : ""}
+                          </React.Fragment>
+                        ))} */}
                     </li>
                   </ul>
                 </Form>
@@ -309,7 +353,11 @@ const ProductPage = ({ productData }) => {
           </Row>
         </Container>
       </section>
-      {/* <ProductBottomTabs product={productData} /> */}
+      <ProductBottomTabs
+        product={productData}
+        thumbnail={thumbnailImage ? thumbnailImage.url : null}
+        feedbacks={feedbacks}
+      />
       <ProductBottomProducts />
     </React.Fragment>
   )
