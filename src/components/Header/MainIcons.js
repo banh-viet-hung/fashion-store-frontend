@@ -63,22 +63,6 @@ const MainIcons = (props) => {
             <div className="navbar-icon-badge">{cartContext.length}</div>
           </a>
         </li>
-        {props.sidebarRight && (
-          <li className="list-inline-item">
-            <a
-              className={`text-${
-                props.light ? "light" : "dark"
-              } text-hover-primary`}
-              href="#"
-              onClick={(e) =>
-                preventAnchor(e, () => toggleModal("sidebarRight"))
-              }
-              aria-label="open right sidebar"
-            >
-              <Icon className="navbar-icon" icon="menu-hamburger-1" />
-            </a>
-          </li>
-        )}
       </ul>
       {/* Modal của Icon người dùng */}
       <ModalLogin toggle={() => toggleModal("login")} isOpen={modal.login} />
@@ -86,11 +70,6 @@ const MainIcons = (props) => {
       <SidebarCart
         toggle={() => toggleModal("sidebarCart")}
         isOpen={modal.sidebarCart}
-      />
-      {/* Sidebar phải */}
-      <SidebarRight
-        toggle={() => toggleModal("sidebarRight")}
-        isOpen={modal.sidebarRight}
       />
     </React.Fragment>
   )

@@ -182,7 +182,7 @@ const Header = ({ header }) => {
           {/* END SEARCH BLOCK */}
 
           {/* Bộ Icon người dùng */}
-          <MainIcons className="d-none d-lg-block" sidebarRight />
+          <MainIcons className="d-none d-lg-block"/>
         </Navbar.Collapse>
         {/* END MENU */}
       </Navbar>
