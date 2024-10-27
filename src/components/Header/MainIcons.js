@@ -1,20 +1,19 @@
 import React from "react"
 import Link from "next/link"
-
 import { CartContext } from "../CartContext"
-
 import SidebarCart from "../SidebarCart"
 import ModalLogin from "../ModalLogin"
 import SidebarRight from "../SidebarRight"
-
 import Icon from "../Icon"
 import { WishlistContext } from "../WishlistContext"
+import { useUser } from "../UserContext" // Đảm bảo import useUser
 
 const MainIcons = (props) => {
   const [modal, setModal] = React.useState({})
   const toggleModal = (name) => {
     setModal({ ...modal, [name]: !modal[name] })
   }
+
   const preventAnchor = (e, func) => {
     e.preventDefault()
     func()
@@ -22,6 +21,8 @@ const MainIcons = (props) => {
 
   const [cartContext] = React.useContext(CartContext)
   const [wishlistContext] = React.useContext(WishlistContext)
+  const { user } = useUser() // Lấy thông tin người dùng từ UserContext
+
   return (
     <React.Fragment>
       <ul className={`list-inline mb-0 ${props.className}`}>
@@ -31,10 +32,22 @@ const MainIcons = (props) => {
               props.light ? "light" : "dark"
             } text-hover-primary`}
             href="#"
-            aria-label="open login modal"
-            onClick={(e) => preventAnchor(e, () => toggleModal("login"))}
+            aria-label={user ? "open right sidebar" : "open login modal"}
+            onClick={(e) =>
+              preventAnchor(e, () => {
+                if (user) {
+                  toggleModal("sidebarRight") // Nếu đã đăng nhập, mở sidebar
+                } else {
+                  toggleModal("login") // Nếu chưa đăng nhập, mở modal đăng nhập
+                }
+              })
+            }
           >
-            <Icon icon="avatar-1" className="navbar-icon" />
+            {user ? (
+              <Icon icon="male-user-1" className="navbar-icon" /> // Icon cho người đã đăng nhập
+            ) : (
+              <Icon icon="avatar-1" className="navbar-icon" /> // Icon cho người chưa đăng nhập
+            )}
           </a>
         </li>
         <li className="list-inline-item me-3">
@@ -43,7 +56,7 @@ const MainIcons = (props) => {
               className={`text-${
                 props.light ? "light" : "dark"
               } text-hover-primary position-relative`}
-              aria-label="go to whishlist"
+              aria-label="go to wishlist"
             >
               <Icon icon="heart-1" className="navbar-icon" />
               <div className="navbar-icon-badge">{wishlistContext.length}</div>
@@ -63,13 +76,31 @@ const MainIcons = (props) => {
             <div className="navbar-icon-badge">{cartContext.length}</div>
           </a>
         </li>
+        {props.sidebarRight && (
+          <li className="list-inline-item">
+            <a
+              className={`text-${
+                props.light ? "light" : "dark"
+              } text-hover-primary`}
+              href="#"
+              onClick={(e) =>
+                preventAnchor(e, () => toggleModal("sidebarRight"))
+              }
+              aria-label="open right sidebar"
+            >
+              <Icon className="navbar-icon" icon="menu-hamburger-1" />
+            </a>
+          </li>
+        )}
       </ul>
-      {/* Modal của Icon người dùng */}
       <ModalLogin toggle={() => toggleModal("login")} isOpen={modal.login} />
-      {/* Sidebar của giỏ hàng */}
       <SidebarCart
         toggle={() => toggleModal("sidebarCart")}
         isOpen={modal.sidebarCart}
+      />
+      <SidebarRight
+        toggle={() => toggleModal("sidebarRight")}
+        isOpen={modal.sidebarRight}
       />
     </React.Fragment>
   )

@@ -11,12 +11,16 @@ import {
   Form,
   Tab,
   Spinner,
+  CloseButton,
+  Toast,
 } from "react-bootstrap"
 import { faSignInAlt } from "@fortawesome/free-solid-svg-icons"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { registerUser, checkEmail, requestPasswordReset } from "../api/UserAPI"
+import { loginUser } from "../api/AuthAPI"
+import { useUser } from "./UserContext"
 
 // Định nghĩa schema với Yup
 const registerSchema = yup.object().shape({
@@ -42,6 +46,18 @@ const forgotPasswordSchema = yup.object().shape({
     .required("Email không được để trống"),
 })
 
+// Định nghĩa schema với Yup cho đăng nhập
+const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Email không hợp lệ")
+    .required("Email không được để trống"),
+  password: yup
+    .string()
+    .required("Mật khẩu không được để trống")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+})
+
 const ModalLogin = (props) => {
   const {
     register: registerRegister,
@@ -59,78 +75,113 @@ const ModalLogin = (props) => {
     resolver: yupResolver(forgotPasswordSchema),
   })
 
+  const {
+    register: registerLogin,
+    handleSubmit: handleSubmitLogin,
+    formState: { errors: loginErrors },
+  } = useForm({
+    resolver: yupResolver(loginSchema),
+  })
+
   const [errorMessage, setErrorMessage] = useState("")
+  const [loginErrorMessage, setLoginErrorMessage] = useState("")
+  const [forgotPasswordErrorMessage, setForgotPasswordErrorMessage] =
+    useState("")
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showResetSuccessModal, setShowResetSuccessModal] = useState(false)
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
   const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+  const [registerSuccessMessage, setRegisterSuccessMessage] = useState("")
+  const [showToast, setShowToast] = useState(false)
+  const { login } = useUser()
 
   const onSubmitRegister = async (data) => {
     try {
       await registerUser(data)
-      setShowSuccessModal(true)
+      setRegisterSuccessMessage("Đăng ký thành công!")
       setErrorMessage("")
     } catch (error) {
-      console.log("Error response:", error.response)
-      if (error.response && error.response.data) {
-        const backendMessage = error.response.data.message
-        setErrorMessage(backendMessage)
-      } else {
-        setErrorMessage("Có lỗi xảy ra trong quá trình đăng ký")
-      }
       console.error("Registration error:", error)
+      setErrorMessage(
+        error.response?.data?.message || "Có lỗi xảy ra trong quá trình đăng ký"
+      )
+      setRegisterSuccessMessage("")
     }
   }
 
   const handleForgotPasswordSubmit = async (data) => {
-    console.log("Submitting forgot password form with email:", data.forgotEmail)
     setLoading(true)
     try {
       const response = await checkEmail(data.forgotEmail)
-      console.log("Check email response:", response)
       if (response.success) {
         await requestPasswordReset(data.forgotEmail)
-        setShowResetSuccessModal(true) // Hiển thị modal thông báo thành công
-        props.toggle() // Đóng modal chính trước khi mở modal mới
+        setShowResetSuccessModal(true)
+        props.toggle()
       } else {
-        setErrorMessage(response.message)
+        setForgotPasswordErrorMessage(response.message)
       }
     } catch (error) {
-      console.error("Error checking email:", error)
-      setErrorMessage("Có lỗi xảy ra trong quá trình kiểm tra email.")
+      setForgotPasswordErrorMessage(
+        "Có lỗi xảy ra trong quá trình kiểm tra email."
+      )
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleLoginSubmit = async (data) => {
+    try {
+      const response = await loginUser(data)
+      login(response.data)
+      setLoginErrorMessage("")
+      setSuccessMessage("Đăng nhập thành công!")
+      props.toggle() // Ẩn modal
+      setShowToast(true) // Hiện thông báo thành công
+    } catch (error) {
+      setLoginErrorMessage(
+        error.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin."
+      )
+      setSuccessMessage("")
     }
   }
 
   const handleTabSelect = (key) => {
     setActiveTab(key)
     setErrorMessage("")
-  }
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false)
+    setLoginErrorMessage("")
+    setForgotPasswordErrorMessage("")
   }
 
   const handleCloseResetSuccessModal = () => {
     setShowResetSuccessModal(false)
-    props.toggle() // Để đóng modal chính
+    props.toggle()
+  }
+
+  const handleFocus = () => {
+    setErrorMessage("")
+    setLoginErrorMessage("")
+    setForgotPasswordErrorMessage("")
+    setRegisterSuccessMessage("")
+    setSuccessMessage("")
   }
 
   useEffect(() => {
     if (showSuccessModal) {
-      const timer = setTimeout(() => {
-        setShowSuccessModal(false)
-      }, 5000)
+      const timer = setTimeout(() => setShowSuccessModal(false), 5000)
       return () => clearTimeout(timer)
     }
   }, [showSuccessModal])
 
   return (
     <>
-      {/* Modal cho Đăng nhập / Đăng ký */}
       <Modal show={props.isOpen} onHide={props.toggle} centered>
+        <CloseButton
+          className="btn-close-absolute btn-close-lg"
+          size="lg"
+          onClick={props.toggle}
+        />
         <Modal.Body className="p-5">
           {isForgotPassword ? (
             <>
@@ -152,8 +203,8 @@ const ModalLogin = (props) => {
                       </p>
                     )}
                   </Form.Group>
-                  {errorMessage && (
-                    <p className="text-danger">{errorMessage}</p>
+                  {forgotPasswordErrorMessage && (
+                    <p className="text-danger">{forgotPasswordErrorMessage}</p>
                   )}
                   <Button variant="primary" type="submit" className="w-100">
                     {loading ? (
@@ -190,17 +241,31 @@ const ModalLogin = (props) => {
               <hr className="mb-3" />
               <Tab.Content>
                 <Tab.Pane className="px-3" eventKey="login">
-                  <Form>
+                  {loginErrorMessage && (
+                    <div className="text-danger mb-3">{loginErrorMessage}</div>
+                  )}
+                  {successMessage && (
+                    <div className="text-success mb-3">{successMessage}</div>
+                  )}
+                  <Form onSubmit={handleSubmitLogin(handleLoginSubmit)}>
                     <div className="mb-4">
-                      <Form.Label htmlFor="loginEmail">Email</Form.Label>
-                      <Form.Control id="loginEmail" type="text" />
+                      <Form.Label htmlFor="email">Email</Form.Label>
+                      <Form.Control
+                        id="email"
+                        type="email"
+                        {...registerLogin("email")}
+                        onFocus={handleFocus}
+                      />
+                      {loginErrors.email && (
+                        <p className="text-danger">
+                          {loginErrors.email.message}
+                        </p>
+                      )}
                     </div>
                     <div className="mb-4">
                       <Row>
                         <Col>
-                          <Form.Label htmlFor="loginPassword">
-                            Mật khẩu
-                          </Form.Label>
+                          <Form.Label htmlFor="password">Mật khẩu</Form.Label>
                         </Col>
                         <Col xs="auto">
                           <Form.Text
@@ -213,12 +278,16 @@ const ModalLogin = (props) => {
                         </Col>
                       </Row>
                       <Form.Control
-                        name="loginPassword"
-                        id="loginPassword"
-                        placeholder="Mật khẩu"
+                        id="password"
                         type="password"
-                        required
+                        {...registerLogin("password")}
+                        onFocus={handleFocus}
                       />
+                      {loginErrors.password && (
+                        <p className="text-danger">
+                          {loginErrors.password.message}
+                        </p>
+                      )}
                     </div>
                     <div className="mb-4">
                       <Form.Check
@@ -226,36 +295,46 @@ const ModalLogin = (props) => {
                         id="loginRemember"
                         label={
                           <span className="text-sm text-muted">
-                            Ghi nhớ mật khẩu
+                            Ghi nhớ đăng nhập trong 30 ngày
                           </span>
                         }
+                        {...registerLogin("rememberMe")}
                       />
                     </div>
                     <div className="mb-4">
-                      <Button variant="outline-dark w-100">
-                        <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
+                      <Button
+                        variant="outline-dark w-100"
+                        type="submit"
+                        disabled={loading}
+                      >
+                        <FontAwesomeIcon icon={faSignInAlt} className="me-2" />{" "}
                         Đăng nhập
                       </Button>
                     </div>
-                    <div className="mb-4">
-                      <Button variant="outline-danger w-100">
-                        <FontAwesomeIcon icon={faGoogle} className="me-2" />
-                        Đăng nhập với Google
-                      </Button>
-                    </div>
                   </Form>
+                  <hr
+                    className="my-3 hr-text letter-spacing-2"
+                    data-content="HOẶC"
+                  />
+                  <div className="text-center">
+                    <Button variant="outline-primary" className="me-1">
+                      <FontAwesomeIcon icon={faGoogle} className="fa-fw" /> Đăng
+                      nhập với Google
+                    </Button>
+                  </div>
                 </Tab.Pane>
                 <Tab.Pane className="px-3" eventKey="register">
                   <p className="text-muted text-sm">
                     Bạn chưa có tài khoản? Vui lòng nhập thông tin vào biểu mẫu
                     bên dưới và nhấn vào nút "ĐĂNG KÝ".
                   </p>
-                  {errorMessage && (
-                    <div className="text-danger mb-3">
-                      {errorMessage.split(", ").map((msg, index) => (
-                        <div key={index}>{msg}</div>
-                      ))}
+                  {registerSuccessMessage && (
+                    <div className="text-success mb-3">
+                      {registerSuccessMessage}
                     </div>
+                  )}
+                  {errorMessage && (
+                    <div className="text-danger mb-3">{errorMessage}</div>
                   )}
                   <Form onSubmit={handleSubmitRegister(onSubmitRegister)}>
                     <div className="mb-4">
@@ -264,6 +343,7 @@ const ModalLogin = (props) => {
                         id="fullName"
                         type="text"
                         {...registerRegister("fullName")}
+                        onFocus={handleFocus}
                       />
                       {registerErrors.fullName && (
                         <p className="text-danger">
@@ -277,6 +357,7 @@ const ModalLogin = (props) => {
                         id="email"
                         type="text"
                         {...registerRegister("email")}
+                        onFocus={handleFocus}
                       />
                       {registerErrors.email && (
                         <p className="text-danger">
@@ -290,6 +371,7 @@ const ModalLogin = (props) => {
                         id="password"
                         type="password"
                         {...registerRegister("password")}
+                        onFocus={handleFocus}
                       />
                       {registerErrors.password && (
                         <p className="text-danger">
@@ -305,6 +387,7 @@ const ModalLogin = (props) => {
                         id="confirmPassword"
                         type="password"
                         {...registerRegister("confirmPassword")}
+                        onFocus={handleFocus}
                       />
                       {registerErrors.confirmPassword && (
                         <p className="text-danger">
@@ -330,7 +413,6 @@ const ModalLogin = (props) => {
         </Modal.Body>
       </Modal>
 
-      {/* Modal thông báo thành công cho yêu cầu cấp lại mật khẩu */}
       <Modal show={showResetSuccessModal} onHide={handleCloseResetSuccessModal}>
         <Modal.Header closeButton>
           <Modal.Title>Yêu Cầu Thành Công</Modal.Title>
@@ -338,17 +420,15 @@ const ModalLogin = (props) => {
         <Modal.Body className="text-center">
           <p className="mb-4">
             Vui lòng kiểm tra email để thực hiện thay đổi mật khẩu.
-            <br />
-            Nếu không tìm thấy, vui lòng kiểm tra mục <strong>"Spam"</strong>.
           </p>
         </Modal.Body>
         <Modal.Footer>
           <Button
             variant="secondary"
             onClick={() => {
-              handleCloseResetSuccessModal() // Đóng modal thông báo
-              setIsForgotPassword(false) // Quay lại tab đăng nhập
-              setActiveTab("login") // Chuyển đến tab đăng nhập
+              handleCloseResetSuccessModal()
+              setIsForgotPassword(false)
+              setActiveTab("login")
             }}
           >
             Đăng nhập
@@ -356,39 +436,30 @@ const ModalLogin = (props) => {
           <Button
             variant="primary"
             onClick={() => {
-              handleCloseResetSuccessModal() // Đóng modal thông báo
-              setIsForgotPassword(false) // Để không ở trạng thái quên mật khẩu
-              setActiveTab("register") // Chuyển đến tab đăng ký
+              handleCloseResetSuccessModal()
+              setIsForgotPassword(false)
+              setActiveTab("register")
             }}
           >
             Đăng ký tài khoản mới
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <Modal
-        show={showSuccessModal}
-        onHide={handleCloseSuccessModal}
-        size="md"
-        style={{ transform: "translateX(-9px)" }} // Dịch modal sang phải 20px
+      {/* Toast thông báo thành công */}
+      <Toast
+        onClose={() => setShowToast(false)}
+        show={showToast}
+        delay={3000}
+        autohide
+        style={{
+          position: "fixed",
+          top: "20px",
+          right: "20px",
+          zIndex: 1050,
+        }}
       >
-        <Modal.Header className="bg-success text-white" closeButton>
-          <Modal.Title>Đăng Ký Thành Công</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="text-center">
-          <p className="mb-4" style={{ color: "green" }}>
-            Bạn đã đăng ký tài khoản thành công.
-            <br />
-            Đăng nhập ngay để trải nghiệm dịch vụ mua sắm online cùng COOLMAN
-            <span style={{ color: "red", marginLeft: "5px" }}>❤️</span>
-          </p>
-        </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <Button variant="success" onClick={handleCloseSuccessModal}>
-            Đóng
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <Toast.Body>{successMessage}</Toast.Body>
+      </Toast>
     </>
   )
 }
