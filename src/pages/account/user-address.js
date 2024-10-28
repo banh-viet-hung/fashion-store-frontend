@@ -3,20 +3,18 @@ import {
   Container,
   Row,
   Col,
-  Breadcrumb,
   Collapse,
   Form,
   Button,
 } from "react-bootstrap"
 
-import Link from "next/link"
-import CustomerSidebar from "../components/CustomerSidebar"
+import CustomerSidebar from "../../components/CustomerSidebar"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSave } from "@fortawesome/free-regular-svg-icons"
 export async function getStaticProps() {
   return {
     props: {
-      title: "Customer addresses",
+      title: "Sổ địa chỉ",
     },
   }
 }
@@ -32,12 +30,6 @@ const CustomerAddresses = () => {
     <React.Fragment>
       <section className="hero py-6">
         <Container>
-          <Breadcrumb>
-            <Link href="/" passHref>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-            </Link>
-            <Breadcrumb.Item active>Your addresses</Breadcrumb.Item>
-          </Breadcrumb>
           <div className="hero-content">
             <h1 className="hero-heading mb-3">Your addresses</h1>
           </div>

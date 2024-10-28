@@ -1,13 +1,13 @@
 import { faFacebookF, faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import React from "react"
-import { Modal, Nav, CloseButton, Toast } from "react-bootstrap" // Import Toast
+import { Modal, Nav, CloseButton, Toast } from "react-bootstrap"
 import Icon from "./Icon"
-import { useUser } from "./UserContext" // Đảm bảo import useUser
-import { useRouter } from "next/router" // Import useRouter
+import { useUser } from "./UserContext"
+import { useRouter } from "next/router"
 
 const SidebarRight = (props) => {
-  const router = useRouter() // Khởi tạo router
+  const router = useRouter()
   const headerClose = (
     <CloseButton
       className="btn-close-lg btn-close-rotate"
@@ -16,13 +16,13 @@ const SidebarRight = (props) => {
     />
   )
 
-  const { user, logout } = useUser() // Lấy thông tin người dùng từ UserContext
-  const [showToast, setShowToast] = React.useState(false) // State quản lý thông báo
+  const { user, logout } = useUser()
+  const [showToast, setShowToast] = React.useState(false)
 
   const handleLogout = () => {
-    logout() // Gọi hàm logout
-    setShowToast(true) // Hiển thị thông báo khi đăng xuất
-    props.toggle() // Ẩn sidebar
+    logout()
+    setShowToast(true)
+    props.toggle()
   }
 
   return (
@@ -35,38 +35,25 @@ const SidebarRight = (props) => {
               Chào mừng, {user && user.email ? user.email.split("@")[0] : ""}!
             </h5>
             <Nav className="flex-column mb-5">
-              <Nav.Item>
-                <Nav.Link
-                  className="ps-0"
-                  onClick={() => router.push("/account")}
-                >
-                  Thông tin tài khoản
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link
-                  className="ps-0"
-                  onClick={() => router.push("/address")}
-                >
-                  Địa chỉ
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link
-                  className="ps-0"
-                  onClick={() => router.push("/track-order")}
-                >
-                  Theo dõi đơn hàng
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link
-                  className="ps-0"
-                  onClick={() => router.push("/order-history")}
-                >
-                  Lịch sử đơn hàng
-                </Nav.Link>
-              </Nav.Item>
+              {[
+                "/account/info",
+                "/account/user-address",
+                "/order/tracking",
+                "/account/orders",
+              ].map((path, index) => (
+                <Nav.Item key={index}>
+                  <Nav.Link className="ps-0" onClick={() => router.push(path)}>
+                    {
+                      [
+                        "Thông tin tài khoản",
+                        "Địa chỉ",
+                        "Theo dõi đơn hàng",
+                        "Lịch sử đơn hàng",
+                      ][index]
+                    }
+                  </Nav.Link>
+                </Nav.Item>
+              ))}
               <hr className="my-3" />
               <Nav.Item>
                 <Nav.Link className="ps-0" onClick={handleLogout}>
@@ -121,7 +108,7 @@ const SidebarRight = (props) => {
           position: "fixed",
           top: "20px",
           right: "20px",
-          zIndex: 1050, // Đặt z-index cao hơn để đảm bảo đè lên giao diện khác
+          zIndex: 1000000,
         }}
       >
         <Toast.Body>Đăng xuất thành công!</Toast.Body>

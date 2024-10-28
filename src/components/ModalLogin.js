@@ -455,7 +455,7 @@ const ModalLogin = (props) => {
           position: "fixed",
           top: "20px",
           right: "20px",
-          zIndex: 1050,
+          zIndex: 99999,
         }}
       >
         <Toast.Body>{successMessage}</Toast.Body>

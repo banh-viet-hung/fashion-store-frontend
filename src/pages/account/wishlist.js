@@ -1,16 +1,15 @@
 import React from "react"
-import { Container, Row, Col, Breadcrumb } from "react-bootstrap"
+import { Container, Row, Col } from "react-bootstrap"
 
-import Link from "next/link"
-import { WishlistContext } from "../components/WishlistContext"
+import { WishlistContext } from "../../components/WishlistContext"
 
-import CustomerSidebar from "../components/CustomerSidebar"
-import WishlistItems from "../components/WishlistItems"
+import CustomerSidebar from "../../components/CustomerSidebar"
+import WishlistItems from "../../components/WishlistItems"
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "Customer wishlist",
+      title: "Sản phẩm yêu thích",
     },
   }
 }
@@ -21,12 +20,6 @@ const CustomerWishlist = () => {
     <React.Fragment>
       <section className="hero py-6">
         <Container>
-          <Breadcrumb>
-            <Link href="/" passHref>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-            </Link>
-            <Breadcrumb.Item active>Wishlist</Breadcrumb.Item>
-          </Breadcrumb>
           <div className="hero-content">
             <h1 className="hero-heading mb-3">Wishlist</h1>
             <div>

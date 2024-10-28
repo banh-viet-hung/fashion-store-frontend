@@ -10,11 +10,11 @@ import {
 } from "react-bootstrap"
 
 import Link from "next/link"
-import CustomerSidebar from "../components/CustomerSidebar"
+import CustomerSidebar from "../../components/CustomerSidebar"
 export async function getStaticProps() {
   return {
     props: {
-      title: "Customer orders",
+      title: "Đơn hàng của bạn",
     },
   }
 }
@@ -24,12 +24,6 @@ const CustomerOrders = () => {
     <React.Fragment>
       <section className="hero py-6">
         <Container>
-          <Breadcrumb>
-            <Link href="/" passHref>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-            </Link>
-            <Breadcrumb.Item active>Orders</Breadcrumb.Item>
-          </Breadcrumb>
           <div className="hero-content">
             <h1 className="hero-heading">Your orders</h1>
             <div>

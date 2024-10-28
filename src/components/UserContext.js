@@ -1,5 +1,5 @@
-// context/UserContext.js
 import React, { createContext, useContext, useState, useEffect } from "react"
+import { getUserFromLocalStorage } from "../utils/authUtils"
 
 const UserContext = createContext()
 
@@ -7,24 +7,13 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    const email = localStorage.getItem("email")
-    const role = localStorage.getItem("role")
-    const expiration = localStorage.getItem("expiration")
-
-    if (token && email && role && expiration) {
-      const currentTime = Math.floor(Date.now() / 1000) // Thời gian hiện tại (giây)
-      console.log(currentTime)
-      console.log(expiration)
-
-      // Kiểm tra xem token có hết hạn không
-      if (expiration > currentTime) {
-        setUser({ token, email, role, expiration })
-      } else {
-        logout() // Token đã hết hạn, đăng xuất
-      }
+    const userData = getUserFromLocalStorage()
+    if (userData) {
+      setUser(userData)
+    } else {
+      logout() // Token đã hết hạn, đăng xuất
     }
-  }, [])
+  }, []) // Chạy một lần khi component mount
 
   const login = (userData) => {
     setUser(userData)
