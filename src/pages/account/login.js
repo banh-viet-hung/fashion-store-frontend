@@ -14,7 +14,7 @@ import * as yup from "yup"
 import { loginUser } from "../../api/AuthAPI"
 import { useUser } from "../../components/UserContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faUser, faGoogle } from "@fortawesome/free-brands-svg-icons"
+import { faUbuntu, faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { useRouter } from "next/router"
 
 // Định nghĩa schema với Yup cho đăng nhập
@@ -58,7 +58,7 @@ const LoginPage = () => {
       if (showToast) {
         setTimeout(() => {
           router.push("/")
-        }, 3000)
+        }, 1000)
       } else {
         router.push("/")
       }
@@ -75,7 +75,7 @@ const LoginPage = () => {
       setShowToast(true)
       setTimeout(() => {
         router.push("/")
-      }, 3000)
+      }, 1000)
     } catch (error) {
       setLoginErrorMessage(
         error.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin."
@@ -129,7 +129,7 @@ const LoginPage = () => {
                 )}
               </Form.Group>
               <Button variant="outline-dark w-100" type="submit">
-                <FontAwesomeIcon icon={faUser} className="me-2" /> Đăng nhập
+                <FontAwesomeIcon icon={faUbuntu} className="me-2" /> Đăng nhập
               </Button>
             </Form>
 

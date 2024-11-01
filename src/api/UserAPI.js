@@ -51,4 +51,32 @@ export const resetPassword = async (token, newPasswordData) => {
   }
 }
 
-// Bạn có thể thêm các API khác như login, get user info, v.v.
+// Lấy thông tin người dùng
+export const getUserInfo = async (token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/info`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi token trong header
+      },
+    });
+    return response.data; // Trả về dữ liệu phản hồi từ server
+  } catch (error) {
+    console.error("Error getting user info:", error);
+    throw error; // Ném lỗi để xử lý ở nơi khác nếu cần
+  }
+}
+
+export const updateUserInfo = async (token, userInfo) => {
+  try {
+      const response = await axios.put(`${BASE_URL}/update`, userInfo, {
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      return response.data;
+  } catch (error) {
+      console.error("Error updating user info:", error);
+      throw error;
+  }
+};
+
