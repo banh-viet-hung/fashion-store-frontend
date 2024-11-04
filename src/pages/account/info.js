@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSave } from "@fortawesome/free-regular-svg-icons"
 import { getUserFromLocalStorage } from "../../utils/authUtils"
 import { useUser } from "../../components/UserContext"
-import { getUserInfo, updateUserInfo } from "../../api/UserAPI" // Đường dẫn đúng đến file chứa hàm này
+import { getUserInfo, updateUserInfo, changePassword } from "../../api/UserAPI" // Đường dẫn đúng đến file chứa hàm này
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -29,6 +29,25 @@ const userInfoSchema = yup.object().shape({
     .nullable()
     .required("Ngày sinh không được để trống")
     .typeError("Ngày sinh không được để trống"),
+})
+
+const passwordSchema = yup.object().shape({
+  password_old: yup
+    .string()
+    .min(6, "Mật khẩu cũ phải ít nhất 6 ký tự")
+    .required("Mật khẩu cũ không được để trống"),
+  password_1: yup
+    .string()
+    .min(6, "Mật khẩu mới phải ít nhất 6 ký tự")
+    .required("Mật khẩu mới không được để trống")
+    .notOneOf(
+      [yup.ref("password_old")],
+      "Mật khẩu mới không được giống mật khẩu cũ"
+    ),
+  password_2: yup
+    .string()
+    .oneOf([yup.ref("password_1"), null], "Mật khẩu xác nhận không khớp")
+    .required("Nhập lại mật khẩu mới không được để trống"),
 })
 
 export async function getStaticProps() {
@@ -65,7 +84,14 @@ const CustomerAccount = () => {
     dateOfBirth: null,
   })
   const [loading, setLoading] = useState(true)
-  const [notification, setNotification] = useState({ message: "", type: "" })
+  const [userInfoNotification, setUserInfoNotification] = useState({
+    message: "",
+    type: "",
+  })
+  const [passwordNotification, setPasswordNotification] = useState({
+    message: "",
+    type: "",
+  })
   const { user } = useUser()
 
   const {
@@ -75,6 +101,14 @@ const CustomerAccount = () => {
     setValue,
   } = useForm({
     resolver: yupResolver(userInfoSchema),
+  })
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    formState: { errors: passwordErrors },
+  } = useForm({
+    resolver: yupResolver(passwordSchema),
   })
 
   useEffect(() => {
@@ -98,14 +132,14 @@ const CustomerAccount = () => {
             setValue("gender", response.data.gender || "")
             setValue("dateOfBirth", response.data.dateOfBirth || "")
           } else {
-            showNotification(
+            showUserInfoNotification(
               response.message || "Không thể tải thông tin người dùng.",
               "error"
             )
           }
         } catch (error) {
           console.error("Error fetching user info:", error)
-          showNotification(
+          showUserInfoNotification(
             "Đã xảy ra lỗi khi lấy thông tin người dùng.",
             "error"
           )
@@ -120,10 +154,17 @@ const CustomerAccount = () => {
     }
   }, [router, user, setValue])
 
-  const showNotification = (message, type) => {
-    setNotification({ message, type })
+  const showUserInfoNotification = (message, type) => {
+    setUserInfoNotification({ message, type })
     setTimeout(() => {
-      setNotification({ message: "", type: "" })
+      setUserInfoNotification({ message: "", type: "" })
+    }, 3000)
+  }
+
+  const showPasswordNotification = (message, type) => {
+    setPasswordNotification({ message, type })
+    setTimeout(() => {
+      setPasswordNotification({ message: "", type: "" })
     }, 3000)
   }
 
@@ -154,10 +195,35 @@ const CustomerAccount = () => {
     try {
       console.log("Data to update:", updatedData)
       await updateUserInfo(token, updatedData) // Gọi hàm cập nhật
-      showNotification("Cập nhật thông tin thành công", "success")
+      showUserInfoNotification("Cập nhật thông tin thành công", "success")
     } catch (error) {
       console.error("Error updating user info:", error)
-      showNotification("Có lỗi xảy ra, vui lòng thử lại", "error")
+      showUserInfoNotification("Có lỗi xảy ra, vui lòng thử lại", "error")
+    }
+  }
+
+  const handlePasswordChange = async (data) => {
+    const token = getUserFromLocalStorage().token
+
+    // Chuyển đổi dữ liệu sang định dạng mong muốn
+    const passwordData = {
+      oldPassword: data.password_old,
+      newPassword: data.password_1,
+      confirmPassword: data.password_2,
+    }
+
+    try {
+      const response = await changePassword(token, passwordData) // Gọi hàm đổi mật khẩu
+
+      if (response.success) {
+        showPasswordNotification("Đổi mật khẩu thành công", "success")
+      } else {
+        showPasswordNotification(response.message, "error")
+      }
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      showPasswordNotification(message, "error")
     }
   }
 
@@ -187,13 +253,15 @@ const CustomerAccount = () => {
         <Container>
           <Row>
             <Col lg="8" xl="9" className="mb-5 mb-lg-0">
-              {notification.message && (
+              {userInfoNotification.message && (
                 <Alert
                   variant={
-                    notification.type === "success" ? "success" : "danger"
+                    userInfoNotification.type === "success"
+                      ? "success"
+                      : "danger"
                   }
                 >
-                  {notification.message}
+                  {userInfoNotification.message}
                 </Alert>
               )}
               <h3 className="mb-5">Thông tin cá nhân</h3>
@@ -217,6 +285,7 @@ const CustomerAccount = () => {
                       )}
                     </Col>
                   ))}
+
                   <Col sm="12" className="mb-4">
                     <Form.Label>Giới tính</Form.Label>
                     {["Nam", "Nữ", "Khác"].map((gender) => (
@@ -267,7 +336,18 @@ const CustomerAccount = () => {
 
               <hr className="my-5" />
               <h3 className="mb-5">Đổi mật khẩu</h3>
-              <Form>
+              {passwordNotification.message && (
+                <Alert
+                  variant={
+                    passwordNotification.type === "success"
+                      ? "success"
+                      : "danger"
+                  }
+                >
+                  {passwordNotification.message}
+                </Alert>
+              )}
+              <Form onSubmit={handlePasswordSubmit(handlePasswordChange)}>
                 <Row>
                   {passwordInputs.map((input) => (
                     <Col sm="6" key={input.name} className="mb-4">
@@ -277,9 +357,13 @@ const CustomerAccount = () => {
                       <Form.Control
                         type={input.type}
                         id={input.name}
-                        onChange={onChange}
-                        autoComplete={input.autocomplete}
+                        {...registerPassword(input.name)} // Đăng ký trường với react-hook-form
                       />
+                      {passwordErrors[input.name] && (
+                        <p className="text-danger">
+                          {passwordErrors[input.name].message}
+                        </p>
+                      )}
                     </Col>
                   ))}
                 </Row>

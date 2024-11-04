@@ -58,25 +58,43 @@ export const getUserInfo = async (token) => {
       headers: {
         Authorization: `Bearer ${token}`, // Gửi token trong header
       },
-    });
-    return response.data; // Trả về dữ liệu phản hồi từ server
+    })
+    return response.data // Trả về dữ liệu phản hồi từ server
   } catch (error) {
-    console.error("Error getting user info:", error);
-    throw error; // Ném lỗi để xử lý ở nơi khác nếu cần
+    console.error("Error getting user info:", error)
+    throw error // Ném lỗi để xử lý ở nơi khác nếu cần
   }
 }
 
 export const updateUserInfo = async (token, userInfo) => {
   try {
-      const response = await axios.put(`${BASE_URL}/update`, userInfo, {
-          headers: {
-              Authorization: `Bearer ${token}`,
-          },
-      });
-      return response.data;
+    const response = await axios.put(`${BASE_URL}/update`, userInfo, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
   } catch (error) {
-      console.error("Error updating user info:", error);
-      throw error;
+    console.error("Error updating user info:", error)
+    throw error
   }
-};
+}
 
+// Đổi mật khẩu
+export const changePassword = async (token, passwordData) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/change-password`,
+      passwordData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Kèm theo token trong header
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error changing password:", error)
+    throw error
+  }
+}
