@@ -11,19 +11,39 @@ import {
 } from "react-bootstrap"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { CartContext } from "./CartContext"
-import { addCartItem } from "../hooks/UseCart"
 import { addWishlistItem } from "../hooks/UseWishlist"
 import { WishlistContext } from "./WishlistContext"
 import Stars from "./Stars"
 import Link from "next/link"
-import SelectBox from "./SelectBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
 import { faHeart } from "@fortawesome/free-regular-svg-icons"
 import Image from "./Image"
 import "swiper/css"
 import moment from "moment"
-import { getImagesByProductId, getFeedbackByProductId } from "../api/ProductAPI" // Import API
+import {
+  getImagesByProductId,
+  getFeedbackByProductId,
+  getSizesByProductId,
+  getColorsByProductId,
+} from "../api/ProductAPI" // Import API
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+
+// Định nghĩa schema validate với Yup, bỏ qua trường quantity
+const quickViewSchema = (sizes, colors) =>
+  yup.object().shape({
+    size:
+      sizes.length > 0
+        ? yup.string().required("Vui lòng chọn kích thước")
+        : yup.string().notRequired(), // Validate size nếu có sizes
+    color:
+      colors.length > 0
+        ? yup.string().required("Vui lòng chọn màu sắc")
+        : yup.string().notRequired(), // Validate color nếu có colors
+    // Không cần validate quantity nữa
+  })
 
 const ModalQuickView = ({ isOpen, toggle, product }) => {
   const swiperRef = useRef(null)
@@ -32,7 +52,21 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
   const [cartItems, dispatch] = useContext(CartContext)
   const [wishlistItems, wishlistDispatch] = useContext(WishlistContext)
   const [images, setImages] = useState([])
-  const [feedbacks, setFeedbacks] = useState([]) // State for feedbacks
+  const [feedbacks, setFeedbacks] = useState([])
+  const [sizes, setSizes] = useState([]) // State to store size options
+  const [colors, setColors] = useState([]) // State to store color options
+  const [activeSize, setActiveSize] = useState(null) // State to store selected size
+  const [activeColor, setActiveColor] = useState(null) // State to store selected color
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
+    resolver: yupResolver(quickViewSchema(sizes, colors)), // Schema dynamic based on available sizes and colors
+  })
 
   const isFresh = product.createdAt
     ? moment().diff(moment(product.createdAt), "days") < 7
@@ -51,19 +85,48 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
 
     const fetchFeedbacks = async () => {
       if (product && product.id) {
-        const feedbackData = await getFeedbackByProductId(product.id) // Gọi API để lấy feedback
+        const feedbackData = await getFeedbackByProductId(product.id)
         setFeedbacks(feedbackData)
       }
     }
 
+    const fetchSizes = async () => {
+      if (product && product.id) {
+        const sizeData = await getSizesByProductId(product.id)
+        setSizes(sizeData)
+      }
+    }
+
+    const fetchColors = async () => {
+      if (product && product.id) {
+        const colorData = await getColorsByProductId(product.id)
+        setColors(colorData)
+      }
+    }
+
     fetchImages()
-    fetchFeedbacks() // Gọi hàm fetchFeedbacks
+    fetchFeedbacks()
+    fetchSizes()
+    fetchColors()
   }, [product])
 
-  const addToCart = (e) => {
-    e.preventDefault()
-    addCartItem(product, quantity)
-    dispatch({ type: "add", payload: product, quantity })
+  const addToCart = (data) => {
+    const cartData = {
+      productId: product.id, // Always include product ID
+      size: activeSize || null, // Set to null if no size selected
+      color: activeColor || null, // Set to null if no color selected
+      quantity: data.quantity || 1, // Đảm bảo quantity có giá trị
+    }
+
+    console.log(cartData)
+    // Proceed with adding to cart with cartData
+    // dispatch({
+    //   type: "add",
+    //   payload: product,
+    //   quantity: data.quantity,
+    //   activeSize: activeSize || null,
+    //   activeColor: activeColor || null,
+    // });
   }
 
   const addToWishlist = (e) => {
@@ -88,15 +151,7 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
     },
   }
 
-  const sizes = [
-    { value: "value_0", label: "Small" },
-    { value: "value_1", label: "Medium" },
-    { value: "value_2", label: "Large" },
-  ]
-
-  const [activeType, setActiveType] = useState("material_0_modal")
-
-  // Tính điểm trung bình và số lượng phản hồi
+  // Calculate average rating and review count
   const averageRating =
     feedbacks.length > 0
       ? parseFloat(
@@ -193,26 +248,12 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                 {feedbacks.length > 0 && (
                   <>
                     <Stars
-                      stars={parseFloat(
-                        (
-                          feedbacks.reduce(
-                            (acc, feedback) => acc + feedback.rating,
-                            0
-                          ) / feedbacks.length
-                        ).toFixed(1)
-                      )}
+                      stars={averageRating}
                       className="me-2 mb-0"
                       secondColor="gray-300"
                     />
                     <span className="text-muted text-uppercase">
-                      (
-                      {(
-                        feedbacks.reduce(
-                          (acc, feedback) => acc + feedback.rating,
-                          0
-                        ) / feedbacks.length
-                      ).toFixed(1)}
-                      )
+                      ({averageRating})
                     </span>
                   </>
                 )}
@@ -223,76 +264,85 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
               {product.description || "No description available"}
             </p>
 
-            <Form>
-              <Row>
-                <Col sm="6" lg="12" className="detail-option mb-4">
-                  <h6 className="detail-option-heading">
-                    Kích thước <span>(yêu cầu)</span>
-                  </h6>
-                  <SelectBox options={sizes} />
-                </Col>
+            <Form onSubmit={handleSubmit(addToCart)}>
+              {/* Size Selection */}
+              {sizes.length > 0 && (
+                <Row>
+                  <Col sm="6" lg="12" className="detail-option mb-4">
+                    <h6 className="detail-option-heading">
+                      Kích thước <span>(yêu cầu)</span>
+                    </h6>
+                    {sizes.map((size) => (
+                      <Button
+                        key={size.id}
+                        variant="outline-primary"
+                        className={`detail-option-btn-label me-1 ${
+                          activeSize === size.name ? "active" : ""
+                        }`}
+                        size="sm"
+                        onClick={() => {
+                          setActiveSize(size.name)
+                          setValue("size", size.name) // Set size value in form
+                        }}
+                      >
+                        {size.name}
+                      </Button>
+                    ))}
+                    {errors.size && (
+                      <p className="text-danger">{errors.size.message}</p>
+                    )}
+                  </Col>
+                </Row>
+              )}
 
-                <Col sm="6" lg="12" className="detail-option mb-5">
-                  <h6 className="detail-option-heading">
-                    Màu sắc <span>(yêu cầu)</span>
-                  </h6>
-                  <Button
-                    as="label"
-                    variant="outline-primary"
-                    className={`detail-option-btn-label me-1 ${
-                      activeType === "material_0_modal" ? "active" : ""
-                    }`}
-                    size="sm"
-                    htmlFor="material_0_modal"
-                  >
-                    Hoodie
-                    <Form.Control
-                      className="input-invisible"
-                      type="radio"
-                      name="material"
-                      value="value_0"
-                      id="material_0_modal"
-                      onChange={() => setActiveType("material_0_modal")}
-                      required
-                    />
-                  </Button>
-                  <Button
-                    as="label"
-                    variant="outline-primary"
-                    className={`detail-option-btn-label ${
-                      activeType === "material_1_modal" ? "active" : ""
-                    }`}
-                    size="sm"
-                    htmlFor="material_1_modal"
-                  >
-                    College
-                    <Form.Control
-                      className="input-invisible"
-                      type="radio"
-                      name="material"
-                      value="value_1"
-                      id="material_1_modal"
-                      onChange={() => setActiveType("material_1_modal")}
-                      required
-                    />
-                  </Button>
-                </Col>
-              </Row>
+              {/* Color Selection (Radio button version) */}
+              {colors.length > 0 && (
+                <Row>
+                  <Col sm="6" lg="12" className="detail-option mb-4">
+                    <h6 className="detail-option-heading">
+                      Màu sắc <span>(yêu cầu)</span>
+                    </h6>
+                    <ul className="list-inline mb-0 colours-wrapper">
+                      {colors.map((color) => (
+                        <li key={color.id} className="list-inline-item">
+                          <Form.Check
+                            type="radio"
+                            name="color"
+                            id={color.id}
+                            label={
+                              <span
+                                className={`btn-colour ${
+                                  activeColor === color.name ? "active" : ""
+                                }`}
+                                style={{ backgroundColor: color.code.trim() }}
+                              />
+                            }
+                            checked={activeColor === color.name}
+                            onChange={() => {
+                              setActiveColor(color.name)
+                              setValue("color", color.name) // Set color value in form
+                            }}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                    {errors.color && (
+                      <p className="text-danger">{errors.color.message}</p>
+                    )}
+                  </Col>
+                </Row>
+              )}
 
               <InputGroup className="w-100 mb-4">
                 <Form.Control
                   size="lg"
                   className="detail-quantity"
-                  name="items"
+                  name="quantity"
                   type="number"
                   value={quantity > 0 ? quantity : ""}
                   onChange={(e) => setQuantity(e.target.value)}
                 />
-                <Button
-                  variant="dark"
-                  onClick={addToCart}
-                  className="flex-grow-1"
-                >
+                <Button variant="dark" type="submit" className="flex-grow-1">
                   <FontAwesomeIcon
                     icon={faShoppingCart}
                     className="me-2 flex-grow-1"

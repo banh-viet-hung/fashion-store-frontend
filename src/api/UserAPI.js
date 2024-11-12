@@ -66,6 +66,7 @@ export const getUserInfo = async (token) => {
   }
 }
 
+// Cập nhật thông tin người dùng
 export const updateUserInfo = async (token, userInfo) => {
   try {
     const response = await axios.put(`${BASE_URL}/update`, userInfo, {
@@ -95,6 +96,40 @@ export const changePassword = async (token, passwordData) => {
     return response.data
   } catch (error) {
     console.error("Error changing password:", error)
+    throw error
+  }
+}
+
+// Lấy avatar và tên đầy đủ của người dùng
+export const getUserAvatarAndFullName = async (token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/avatar-and-fullname`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi token trong header
+      },
+    })
+    return response.data // Trả về dữ liệu phản hồi từ server
+  } catch (error) {
+    console.error("Error getting user avatar and full name:", error)
+    throw error // Ném lỗi để xử lý ở nơi khác nếu cần
+  }
+}
+
+// Cập nhật avatar
+export const updateAvatar = async (token, avatarUrl) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/update-avatar`,
+      { avatar: avatarUrl }, // Gửi URL avatar trong body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Kèm theo token trong header
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error updating avatar:", error)
     throw error
   }
 }

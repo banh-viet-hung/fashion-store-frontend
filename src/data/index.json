@@ -35,13 +35,13 @@
     "maincategories": [
         {
             "name": "Quần áo",
-            "link": "/category-full",
+            "link": "/category/quan-ao",
             "button": "See",
             "img": "/img/product/Quanao.webp"
         },
         {
             "name": "Phụ kiện",
-            "link": "/category-full",
+            "link": "/category/phu-kien",
             "button": "See",
             "img": "/img/product/Phukien.webp"
         }

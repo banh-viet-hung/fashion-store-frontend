@@ -45,3 +45,25 @@ export const getFeedbackByProductId = async (productId) => {
     throw error
   }
 }
+
+// Lấy size của sản phẩm theo ID
+export const getSizesByProductId = async (productId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${productId}/sizes`)
+    return response.data._embedded.size // Trả về thông tin về size
+  } catch (error) {
+    console.error("Error fetching sizes:", error)
+    throw error
+  }
+}
+
+// Lấy color của sản phẩm theo ID
+export const getColorsByProductId = async (productId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${productId}/colors`)
+    return response.data._embedded.color // Trả về thông tin về color
+  } catch (error) {
+    console.error("Error fetching colors:", error)
+    throw error
+  }
+}

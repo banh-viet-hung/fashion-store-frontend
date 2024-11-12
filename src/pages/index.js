@@ -11,7 +11,6 @@ import products from "../data/products-clothes.json"
 
 import Sale from "../components/Sale"
 import OurHistory from "../components/OurHistory"
-import Brands from "../components/Brands"
 import Image from "../components/Image"
 
 export async function getStaticProps() {

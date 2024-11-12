@@ -16,7 +16,9 @@ import {
   getProductById,
   getImagesByProductId,
   getFeedbackByProductId,
-} from "../../api/ProductAPI" // Import hàm gọi API
+  getSizesByProductId,
+  getColorsByProductId,
+} from "../../api/ProductAPI"
 import { getUserByFeedbackId } from "../../api/FeedbackAPI"
 import Icon from "../../components/Icon"
 import Lightbox from "yet-another-react-lightbox"
@@ -29,23 +31,26 @@ import { CartContext } from "../../components/CartContext"
 import { addCartItem } from "../../hooks/UseCart"
 import { addWishlistItem } from "../../hooks/UseWishlist"
 import { WishlistContext } from "../../components/WishlistContext"
-import SelectBox from "../../components/SelectBox"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
 import { faHeart } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useWindowSize from "../../hooks/UseWindowSize"
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
 
+// Static Generation (SSG) - Paths and Props fetching
 export async function getStaticPaths() {
-  const productsData = await getProductsWithPagination(0, 1000) // Lấy dữ liệu sản phẩm từ API
+  const productsData = await getProductsWithPagination(0, 1000)
   const paths = productsData._embedded.product.map((product) => ({
-    params: { id: product.id.toString() }, // Sử dụng id làm slug
+    params: { id: product.id.toString() },
   }))
 
   return { paths, fallback: false }
 }
 
 export async function getStaticProps({ params }) {
-  const productData = await getProductById(params.id) // Lấy sản phẩm theo id
+  const productData = await getProductById(params.id)
   return {
     props: {
       title: productData.name,
@@ -60,52 +65,29 @@ const ProductPage = ({ productData }) => {
   const [alert, setAlert] = useState(true)
   const [cartItems, dispatch] = useContext(CartContext)
   const [wishlistItems, wishlistDispatch] = useContext(WishlistContext)
-  const [activeType, setActiveType] = useState("material_0")
   const [quantity, setQuantity] = useState("1")
-  const [images, setImages] = useState([]) // Khởi tạo state cho hình ảnh
+  const [images, setImages] = useState([])
   const [feedbacks, setFeedbacks] = useState([])
+  const [sizes, setSizes] = useState([])
+  const [colors, setColors] = useState([])
+  const [activeSize, setActiveSize] = useState(null)
+  const [activeColor, setActiveColor] = useState(null)
+  const [category, setCategory] = useState(null) // Danh mục sản phẩm
+  const [features, setFeatures] = useState([]) // Tính năng nổi bật
   const size = useWindowSize()
 
+  // Fetch Product Images
   useEffect(() => {
     const fetchImages = async () => {
       if (productData && productData.id) {
-        const imagesData = await getImagesByProductId(productData.id) // Gọi API để lấy hình ảnh sản phẩm
+        const imagesData = await getImagesByProductId(productData.id)
         setImages(imagesData)
       }
     }
-
     fetchImages()
   }, [productData])
 
-  // Lấy ảnh thumbnail hoặc ảnh đầu tiên
-  const thumbnailImage =
-    images.find((image) => image.thumbnail) || images[0] || null
-
-  const onClick = (e, index) => {
-    e.preventDefault()
-    if (size.width > 1200) {
-      setActiveImage(index)
-      setLightBoxOpen(!lightBoxOpen)
-    }
-  }
-
-  const addToCart = (e, product) => {
-    e.preventDefault()
-    addCartItem(product, quantity)
-    dispatch({ type: "add", payload: product, quantity: quantity })
-  }
-
-  const addToWishlist = (e, product) => {
-    e.preventDefault()
-    addWishlistItem(product)
-    wishlistDispatch({ type: "add", payload: product })
-  }
-
-  const onChange = (e) => {
-    const value = e.target.value
-    setQuantity(value)
-  }
-
+  // Fetch Feedbacks with User Data
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
@@ -127,9 +109,92 @@ const ProductPage = ({ productData }) => {
         console.error("Error fetching feedbacks:", error)
       }
     }
-
     fetchFeedbacks()
   }, [productData.id])
+
+  // Fetch Sizes and Colors
+  useEffect(() => {
+    const fetchSizesAndColors = async () => {
+      const sizesData = await getSizesByProductId(productData.id)
+      setSizes(sizesData)
+
+      const colorsData = await getColorsByProductId(productData.id)
+      setColors(colorsData)
+
+      // Giả sử sản phẩm có thuộc tính category và features
+      setCategory(productData.category || "Chưa có danh mục")
+      setFeatures(productData.features || ["Chưa có tính năng nổi bật"])
+    }
+    fetchSizesAndColors()
+  }, [productData])
+
+  // Form Validation Schema
+  const schema = yup.object().shape({
+    size:
+      sizes.length > 0
+        ? yup.string().required("Vui lòng chọn kích thước")
+        : yup.string(),
+    color:
+      colors.length > 0
+        ? yup.string().required("Vui lòng chọn màu sắc")
+        : yup.string(),
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  })
+
+  // Handle Image Click for Lightbox
+  const onClick = (e, index) => {
+    e.preventDefault()
+    if (size.width > 1200) {
+      setActiveImage(index)
+      setLightBoxOpen(!lightBoxOpen)
+    }
+  }
+
+  // Add Product to Cart
+  const addToCart = (e, product) => {
+    // e.preventDefault()
+
+    // Xây dựng đối tượng cartData
+    const cartData = {
+      productId: productData.id, // ID của sản phẩm
+      size: activeSize || null, // Kích thước, null nếu không chọn
+      color: activeColor || null, // Màu sắc, null nếu không chọn
+      quantity: quantity || 1, // Số lượng, mặc định là 1 nếu không có giá trị
+    }
+
+    // In ra thông tin cartData
+    console.log("Dữ liệu giỏ hàng:", cartData)
+
+    // Cập nhật giỏ hàng (bạn có thể sử dụng context hoặc redux tùy vào cách bạn quản lý state)
+    // addCartItem(product, quantity) // Gọi hàm để thêm vào giỏ hàng
+    // dispatch({ type: "add", payload: product, quantity: quantity }) // Cập nhật vào giỏ hàng thông qua dispatch
+  }
+
+  // Add Product to Wishlist
+  const addToWishlist = (e, product) => {
+    e.preventDefault()
+    addWishlistItem(product)
+    wishlistDispatch({ type: "add", payload: product })
+  }
+
+  // Handle Quantity Change
+  const onChange = (e) => {
+    const value = e.target.value
+    setQuantity(value)
+  }
+
+  // Get Thumbnail Image (First Image if no Thumbnail)
+  const thumbnailImage =
+    images.find((image) => image.thumbnail) || images[0] || null
 
   return (
     <React.Fragment>
@@ -162,6 +227,8 @@ const ProductPage = ({ productData }) => {
               </div>
             </Alert>
           </div>
+
+          {/* Breadcrumb */}
           <Breadcrumb>
             <Link href="/" passHref>
               <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
@@ -171,7 +238,9 @@ const ProductPage = ({ productData }) => {
             </Link>
             <Breadcrumb.Item active>{productData.name}</Breadcrumb.Item>
           </Breadcrumb>
+
           <Row>
+            {/* Product Images */}
             <Col
               lg="6"
               xl="7"
@@ -205,6 +274,8 @@ const ProductPage = ({ productData }) => {
                 index={activeImage}
               />
             </Col>
+
+            {/* Product Details */}
             <Col lg="6" xl="4" className="pt-4 order-1 order-lg-2 ms-lg-auto">
               <div className="sticky-top" style={{ top: "100px" }}>
                 <h1 className="mb-4">{productData.name}</h1>
@@ -231,6 +302,7 @@ const ProductPage = ({ productData }) => {
                     )}
                   </ul>
 
+                  {/* Ratings */}
                   <div className="d-flex align-items-center text-sm">
                     {feedbacks.length > 0 && (
                       <>
@@ -247,112 +319,135 @@ const ProductPage = ({ productData }) => {
                           starClass="me-1"
                         />
                         <span className="text-muted text-uppercase">
-                          ({(
+                          (
+                          {(
                             feedbacks.reduce(
                               (acc, feedback) => acc + feedback.rating,
                               0
                             ) / feedbacks.length
-                          ).toFixed(1)})
+                          ).toFixed(1)}
+                          )
                         </span>
                       </>
                     )}
                   </div>
                 </div>
-                <Form>
-                  <Row>
-                    <Col sm="6" lg="12" className="detail-option mb-4">
+
+                {/* Product Options Form */}
+                <Form onSubmit={handleSubmit(addToCart)}>
+                  {/* Size selection */}
+                  {sizes.length > 0 && (
+                    <div className="mb-4">
                       <h6 className="detail-option-heading">
                         Kích thước <span>(yêu cầu)</span>
                       </h6>
-                      {/* <SelectBox options={dummyProduct.sizes} id="detail-slug" /> */}
-                    </Col>
-                    <Col sm="6" lg="12" className="detail-option mb-4">
+                      <div>
+                        {sizes.map((size) => (
+                          <Button
+                            key={size.id}
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => {
+                              setActiveSize(size.name)
+                              setValue("size", size.name)
+                            }}
+                            className={activeSize === size.name ? "active" : ""}
+                          >
+                            {size.name}
+                          </Button>
+                        ))}
+                      </div>
+                      {errors.size && (
+                        <p className="text-danger">{errors.size.message}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Color selection */}
+                  {colors.length > 0 && (
+                    <div className="mb-4">
                       <h6 className="detail-option-heading">
                         Màu sắc <span>(yêu cầu)</span>
                       </h6>
-                      {/* {dummyProduct.types.map((type) => (
-                          <label
-                            key={type.value}
-                            className={`btn btn-sm btn-outline-primary detail-option-btn-label ${
-                              activeType === type.id ? "active" : ""
-                            } me-1`}
-                            htmlFor={type.id}
-                          >
-                            {type.label}
-                            <Form.Control
-                              className="input-invisible"
-                              type="radio"
-                              name="material"
-                              value={type.value}
-                              id={type.id}
-                              onChange={() => setActiveType(type.id)}
-                              required
-                            />
-                          </label>
-                        ))} */}
-                    </Col>
-                  </Row>
+                      <div>
+                        {colors.map((color) => (
+                          <Form.Check
+                            key={color.id}
+                            type="radio"
+                            name="color"
+                            id={color.id}
+                            label={
+                              <span
+                                className={`btn-colour ${
+                                  activeColor === color.name ? "active" : ""
+                                }`}
+                                style={{ backgroundColor: color.code.trim() }}
+                              />
+                            }
+                            checked={activeColor === color.name}
+                            onChange={() => {
+                              setActiveColor(color.name)
+                              setValue("color", color.name)
+                            }}
+                          />
+                        ))}
+                      </div>
+                      {errors.color && (
+                        <p className="text-danger">{errors.color.message}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Quantity */}
                   <InputGroup className="w-100 mb-4">
                     <Form.Control
                       size="lg"
-                      className="detail-quantity"
-                      defaultValue="1"
-                      name="items"
+                      name="quantity"
                       type="number"
-                      onChange={onChange}
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
                     />
-                    <div className="flex-grow-1">
-                      <div className="d-grid h-100">
-                        <Button
-                          variant="dark"
-                          type="submit"
-                          onClick={(e) => addToCart(e, productData)}
-                        >
-                          <FontAwesomeIcon
-                            icon={faShoppingCart}
-                            className="me-2"
-                          />
-                          Thêm vào giỏ hàng
-                        </Button>
-                      </div>
-                    </div>
+                    <Button
+                      variant="dark"
+                      type="submit"
+                      className="flex-grow-1"
+                    >
+                      <FontAwesomeIcon icon={faShoppingCart} className="me-2" />
+                      Thêm vào giỏ hàng
+                    </Button>
                   </InputGroup>
-                  <Row className="mb-4">
-                    <Col xs="6">
-                      <a
-                        href="#"
-                        onClick={(e) => addToWishlist(e, productData)}
-                      >
-                        <FontAwesomeIcon icon={faHeart} className="me-2" />
-                        Yêu thích
-                      </a>
-                    </Col>
-                  </Row>
-                  <ul className="list-unstyled">
-                    <li>
-                      <strong>Danh mục:&nbsp;</strong>
-                      {/* <Link href={`/${productData.category[1]}`}>
-                          <a className="text-muted">{productData.category[0]}</a>
-                        </Link> */}
-                    </li>
-                    <li>
-                      <strong>Tính năng nổi bật:&nbsp;</strong>
-                      {/* {dummyProduct.tags.map((tag, index) => (
-                          <React.Fragment key={tag.name}>
-                            <Link href={tag.link}>
-                              <a className="text-muted">{tag.name}</a>
-                            </Link>
-                            {index < dummyProduct.tags.length - 1 ? ",\u00A0" : ""}
-                          </React.Fragment>
-                        ))} */}
-                    </li>
-                  </ul>
                 </Form>
+
+                {/* Wishlist */}
+                <div className="mb-4">
+                  <Button
+                    variant="outline-danger"
+                    onClick={(e) => addToWishlist(e, productData)}
+                    className="w-100"
+                  >
+                    <FontAwesomeIcon icon={faHeart} className="me-2" />
+                    Thêm vào yêu thích
+                  </Button>
+                </div>
+
+                {/* Category and Features */}
+                <ul className="list-unstyled">
+                  <li>
+                    <strong>Danh mục:&nbsp;</strong>
+                    {category}
+                  </li>
+                  <li>
+                    <strong>Tính năng nổi bật:&nbsp;</strong>
+                    {features.join(", ")}
+                  </li>
+                </ul>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
+
+      {/* Product Bottom Tabs */}
       <ProductBottomTabs
         product={productData}
         thumbnail={thumbnailImage ? thumbnailImage.url : null}
