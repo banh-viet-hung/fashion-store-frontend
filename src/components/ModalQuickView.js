@@ -11,13 +11,13 @@ import {
 } from "react-bootstrap"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { CartContext } from "./CartContext"
-import { addWishlistItem } from "../hooks/UseWishlist"
+import { addWishlistItem, removeWishlistItem } from "../hooks/UseWishlist"
 import { WishlistContext } from "./WishlistContext"
 import Stars from "./Stars"
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
-import { faHeart } from "@fortawesome/free-regular-svg-icons"
+import { faHeart, faKissWinkHeart } from "@fortawesome/free-regular-svg-icons"
 import Image from "./Image"
 import "swiper/css"
 import moment from "moment"
@@ -129,10 +129,19 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
     // });
   }
 
+  // Kiểm tra xem sản phẩm có trong wishlist không
+  const isInWishlist = wishlistItems.some((item) => item === product.id)
+
   const addToWishlist = (e) => {
     e.preventDefault()
     addWishlistItem(product)
-    wishlistDispatch({ type: "add", payload: product })
+    wishlistDispatch({ type: "add", payload: product.id })
+  }
+
+  const removeFromWishlist = (e) => {
+    e.preventDefault()
+    removeWishlistItem(product)
+    wishlistDispatch({ type: "remove", payload: product.id })
   }
 
   const slideTo = (index) => {
@@ -353,10 +362,17 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
 
               <Row className="mb-4">
                 <Col xs="6">
-                  <a href="#" onClick={addToWishlist}>
-                    <FontAwesomeIcon icon={faHeart} className="me-2" />
-                    Yêu thích
-                  </a>
+                  {!isInWishlist ? (
+                    <a href="#" onClick={addToWishlist}>
+                      <FontAwesomeIcon icon={faHeart} className="me-2" />
+                      Yêu thích
+                    </a>
+                  ) : (
+                    <a href="#" onClick={removeFromWishlist}>
+                      <FontAwesomeIcon icon={faKissWinkHeart} className="me-2"/>
+                      Hông thích nữa
+                    </a>
+                  )}
                 </Col>
               </Row>
               <ul className="list-unstyled">

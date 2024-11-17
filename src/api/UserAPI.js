@@ -133,3 +133,55 @@ export const updateAvatar = async (token, avatarUrl) => {
     throw error
   }
 }
+
+// Thêm sản phẩm vào danh sách yêu thích
+export const addToFavorites = async (token, productId) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/favorite/add/${productId}`,
+      {}, // Không cần body, chỉ cần productId trong URL
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Gửi token trong header
+        },
+      }
+    )
+    return response.data // Trả về dữ liệu phản hồi từ server
+  } catch (error) {
+    console.error("Error adding product to favorites:", error)
+    throw error // Ném lỗi để xử lý ở nơi khác nếu cần
+  }
+}
+
+// Xóa sản phẩm khỏi danh sách yêu thích
+export const removeFromFavorites = async (token, productId) => {
+  try {
+    const response = await axios.delete(
+      `${BASE_URL}/favorite/remove/${productId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Gửi token trong header
+        },
+      }
+    )
+    return response.data // Trả về dữ liệu phản hồi từ server
+  } catch (error) {
+    console.error("Error removing product from favorites:", error)
+    throw error // Ném lỗi để xử lý ở nơi khác nếu cần
+  }
+}
+
+// Lấy danh sách sản phẩm yêu thích
+export const getFavoriteProducts = async (token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/favorite`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi token trong header
+      },
+    })
+    return response.data // Trả về dữ liệu phản hồi từ server
+  } catch (error) {
+    console.error("Error getting favorite products:", error)
+    throw error // Ném lỗi để xử lý ở nơi khác nếu cần
+  }
+}

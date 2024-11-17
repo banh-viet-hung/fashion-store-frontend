@@ -1,20 +1,28 @@
-import React from 'react';
+import React from "react"
 
 // Tạo WishlistContext
-const WishlistContext = React.createContext({}) 
+const WishlistContext = React.createContext({})
 
 const initialState = []
 
 // Tạo reducer cho WishlistContext
 const reducer = (state, action) => {
-  
   switch (action.type) {
     case "reset":
-      return initialState;
+      return initialState
+
     case "add":
-      return !state.some(item => item.slug === action.payload.slug) ? [...state, action.payload] : [...state] // If product not in wishlist add else return wishlist
+      // Kiểm tra xem sản phẩm có id này đã tồn tại chưa trong wishlist, nếu chưa thì thêm
+      return !state.includes(action.payload)
+        ? [...state, action.payload]
+        : [...state]
+
     case "remove":
-      return state.filter(x => action.payload.slug !== x.slug) // Remove item from wishlist
+      // Lọc ra các id không phải là id của sản phẩm cần xoá
+      return state.filter((id) => id !== action.payload)
+
+    default:
+      return state
   }
 }
 
@@ -24,7 +32,7 @@ const WishlistProvider = (props) => {
     <WishlistContext.Provider value={[state, dispatch]}>
       {props.children}
     </WishlistContext.Provider>
-  );
+  )
 }
 
-export { WishlistContext, WishlistProvider };
+export { WishlistContext, WishlistProvider }

@@ -29,10 +29,10 @@ import ProductBottomProducts from "../../components/ProductBottomProducts"
 import Link from "next/link"
 import { CartContext } from "../../components/CartContext"
 import { addCartItem } from "../../hooks/UseCart"
-import { addWishlistItem } from "../../hooks/UseWishlist"
+import { addWishlistItem, removeWishlistItem } from "../../hooks/UseWishlist"
 import { WishlistContext } from "../../components/WishlistContext"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
-import { faHeart } from "@fortawesome/free-regular-svg-icons"
+import { faHeart, faKissWinkHeart } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useWindowSize from "../../hooks/UseWindowSize"
 import { useForm } from "react-hook-form"
@@ -179,11 +179,19 @@ const ProductPage = ({ productData }) => {
     // dispatch({ type: "add", payload: product, quantity: quantity }) // Cập nhật vào giỏ hàng thông qua dispatch
   }
 
-  // Add Product to Wishlist
-  const addToWishlist = (e, product) => {
+  // Kiểm tra xem sản phẩm có trong wishlist không
+  const isInWishlist = wishlistItems.some((item) => item === productData.id)
+
+  const addToWishlist = (e) => {
     e.preventDefault()
-    addWishlistItem(product)
-    wishlistDispatch({ type: "add", payload: product })
+    addWishlistItem(productData)
+    wishlistDispatch({ type: "add", payload: productData.id })
+  }
+
+  const removeFromWishlist = (e) => {
+    e.preventDefault()
+    removeWishlistItem(productData)
+    wishlistDispatch({ type: "remove", payload: productData.id })
   }
 
   // Handle Quantity Change
@@ -421,12 +429,17 @@ const ProductPage = ({ productData }) => {
                 {/* Wishlist */}
                 <div className="mb-4">
                   <Button
-                    variant="outline-danger"
-                    onClick={(e) => addToWishlist(e, productData)}
+                    variant={
+                      !isInWishlist ? "outline-danger" : "outline-primary"
+                    }
+                    onClick={!isInWishlist ? addToWishlist : removeFromWishlist}
                     className="w-100"
                   >
-                    <FontAwesomeIcon icon={faHeart} className="me-2" />
-                    Thêm vào yêu thích
+                    <FontAwesomeIcon
+                      icon={!isInWishlist ? faHeart : faKissWinkHeart}
+                      className="me-2"
+                    />
+                    {!isInWishlist ? "Yêu thích" : "Hông thích nữa"}
                   </Button>
                 </div>
 

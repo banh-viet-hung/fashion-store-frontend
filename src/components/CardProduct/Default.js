@@ -7,13 +7,7 @@ import Image from "../Image"
 import moment from "moment"
 import { getImagesByProductId } from "../../api/ProductAPI"
 
-const CardProductDefault = ({
-  product,
-  masonry,
-  addToCart,
-  addToWishlist,
-  setQuickView,
-}) => {
+const CardProductDefault = ({ product, masonry, addToCart, setQuickView }) => {
   const [thumbnailImages, setThumbnailImages] = useState([])
 
   // Tính toán xem sản phẩm có mới không
@@ -136,14 +130,6 @@ const CardProductDefault = ({
           </a>
           <div>
             <a
-              className="text-dark text-hover-primary me-2"
-              href="#"
-              onClick={(e) => addToWishlist(e, product)}
-              aria-label="add to wishlist"
-            >
-              <Icon className="svg-icon-heavy" icon="heart-1" />
-            </a>
-            <a
               className="text-dark text-hover-primary text-decoration-none"
               href="#"
               onClick={(e) => {
@@ -173,10 +159,7 @@ const CardProductDefault = ({
                 .toLocaleString("it-IT")
                 .replace(/,/g, ".")}đ`}
         </span>
-        <Stars
-          stars={5}
-          className="product-stars text-xs"
-        />
+        <Stars stars={5} className="product-stars text-xs" />
       </div>
     </div>
   )

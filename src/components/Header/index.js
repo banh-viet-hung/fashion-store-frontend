@@ -2,30 +2,28 @@ import React, { useEffect } from "react"
 import Router from "next/router"
 import Link from "next/link"
 import { Nav, Navbar, NavLink } from "react-bootstrap"
-
 import menu from "../../data/menu.json"
-
 import Icon from "../Icon"
 import ActiveLink from "../ActiveLink"
 import MainIcons from "./MainIcons"
-
-import initialProducts from "../../data/products-clothes.json" // Remove on production
-
 import { CartContext } from "../CartContext"
-
 import { addCartItem } from "../../hooks/UseCart"
-import { WishlistContext } from "../WishlistContext"
+import { WishlistContext } from "../WishlistContext" // Import WishlistContext
 import { addWishlistItem } from "../../hooks/UseWishlist"
 import TopBar from "./TopBar"
 import SearchBlock from "./SearchBlock"
 import DropdownMenuItem from "./DropdownMenuItem"
 import UseWindowSize from "../../hooks/UseWindowSize"
+import { getUserFromLocalStorage } from "../../utils/authUtils" // Utility to check login status
+import { getFavoriteProducts } from "../../api/UserAPI" // API to get favorite products
+import { useUser } from "../../components/UserContext"
 
 const Header = ({ header }) => {
   const [collapse, setCollapse] = React.useState(false)
   const size = UseWindowSize() // Viewport size hook
   const [parentName, setParentName] = React.useState(false)
   const [cartItems, dispatch] = React.useContext(CartContext) // Cart context
+  const { user } = useUser()
   const [wishlistItems, wishlistDispatch] = React.useContext(WishlistContext) // Wishlist context
 
   const highlightDropdownParent = () => {
@@ -82,27 +80,42 @@ const Header = ({ header }) => {
     }
     // <-- END remove
 
-    if (localStorage.getItem("wishlist")) {
-      // If localStorage exists set wishlist items to wishlist context
-      JSON.parse(localStorage.getItem("wishlist")).map((product) =>
-        wishlistDispatch({ type: "add", payload: product })
+    const userInfo = getUserFromLocalStorage() // Kiểm tra người dùng có đăng nhập không
+
+    if (userInfo) {
+      // Nếu người dùng đã đăng nhập, reset wishlist và gọi API lấy danh sách sản phẩm yêu thích
+      wishlistDispatch({ type: "reset" }) // Reset wishlist context nếu đã đăng nhập
+
+      // Gọi API lấy danh sách sản phẩm yêu thích của người dùng
+      getFavoriteProducts(userInfo.token)
+        .then((response) => {
+          if (response.success && response.data) {
+            // Cập nhật wishlist với danh sách sản phẩm yêu thích
+            response.data.forEach((productId) => {
+              wishlistDispatch({ type: "add", payload: productId })
+            })
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching favorite products:", error)
+        })
+    } else {
+      // Nếu người dùng chưa đăng nhập, lấy wishlist từ localStorage
+      const storedWishlist = JSON.parse(
+        localStorage.getItem("wishlist") || "[]"
       )
-    }
-    // Remove on production START -->
-    else {
-      // Set 6th, 7th & 8th product item to cart on demo
-      initialProducts.slice(5, 8).map((product) => {
-        addWishlistItem(product)
-        wishlistDispatch({ type: "add", payload: product })
+      wishlistDispatch({ type: "reset" }) // Đặt lại wishlist nếu có dữ liệu cũ
+      storedWishlist.forEach((productId) => {
+        wishlistDispatch({ type: "add", payload: productId })
       })
     }
-    // <-- END remove
-  }, [])
+  }, [user])
 
   const onLinkClick = (parent) => {
     size.width < 991 && setCollapse(!collapse) // If viewport below 991px toggle collapse block
-    setParentName(parent) // Set parent name for item parent higlight
+    setParentName(parent) // Set parent name for item parent highlight
   }
+
   return (
     <header
       className={`header ${header && header.absolute ? "header-absolute" : ""}`}
@@ -152,9 +165,7 @@ const Header = ({ header }) => {
           {/* Menu.json */}
           <Nav className="mt-3 mt-lg-0" navbar>
             {menu.map((item, index) => {
-              // Mapping through menu items
-
-              return item.link ? ( // If item has property link than simple link
+              return item.link ? (
                 <Nav.Item key={index}>
                   <ActiveLink
                     activeClassName="active"
@@ -165,7 +176,6 @@ const Header = ({ header }) => {
                   </ActiveLink>
                 </Nav.Item>
               ) : (
-                // If item doesn't have link property than dropdown
                 <DropdownMenuItem
                   onLinkClick={onLinkClick}
                   item={item}
@@ -176,13 +186,12 @@ const Header = ({ header }) => {
               )
             })}
           </Nav>
-
           {/* SEARCH BLOCK */}
           <SearchBlock />
           {/* END SEARCH BLOCK */}
 
           {/* Bộ Icon người dùng */}
-          <MainIcons className="d-none d-lg-block"/>
+          <MainIcons className="d-none d-lg-block" />
         </Navbar.Collapse>
         {/* END MENU */}
       </Navbar>
