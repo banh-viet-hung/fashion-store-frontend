@@ -27,9 +27,11 @@ import {
   getSizesByProductId,
   getColorsByProductId,
 } from "../api/ProductAPI" // Import API
+import { getProductQuantity } from "../api/ProductVariantAPI" // Import API
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import { addCartItem } from "../hooks/UseCart"
 
 // Định nghĩa schema validate với Yup, bỏ qua trường quantity
 const quickViewSchema = (sizes, colors) =>
@@ -110,23 +112,48 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
     fetchColors()
   }, [product])
 
-  const addToCart = (data) => {
+  const addToCart = async (data) => {
     const cartData = {
       productId: product.id, // Always include product ID
       size: activeSize || null, // Set to null if no size selected
       color: activeColor || null, // Set to null if no color selected
-      quantity: data.quantity || 1, // Đảm bảo quantity có giá trị
+      quantity: quantity || 1, // Đảm bảo quantity có giá trị
     }
 
-    console.log(cartData)
-    // Proceed with adding to cart with cartData
-    // dispatch({
-    //   type: "add",
-    //   payload: product,
-    //   quantity: data.quantity,
-    //   activeSize: activeSize || null,
-    //   activeColor: activeColor || null,
-    // });
+    try {
+      // Gọi API để lấy số lượng sản phẩm
+      const response = await getProductQuantity(
+        product.id,
+        activeColor,
+        activeSize
+      )
+
+      // Kiểm tra số lượng sản phẩm từ API response
+      if (response.success) {
+        const availableQuantity = response.data // Số lượng có sẵn từ API
+
+        if (availableQuantity >= quantity) {
+          // Nếu số lượng sản phẩm đủ, tiếp tục thêm vào giỏ hàng
+          console.log("Sản phẩm có sẵn đủ số lượng:", availableQuantity)
+          
+          // Thêm sản phẩm vào giỏ hàng
+          addCartItem(cartData)
+          dispatch({ type: "add", payload: cartData })
+
+          // Hiển thị thông báo thành công hoặc thêm hành động khác nếu cần
+          alert("Sản phẩm đã được thêm vào giỏ hàng!")
+        } else {
+          // Nếu không đủ số lượng, hiển thị thông báo lỗi
+          alert(`Chỉ còn ${availableQuantity} sản phẩm trong kho!`)
+        }
+      } else {
+        // Trường hợp API trả về không tìm thấy sản phẩm
+        alert("Không tìm thấy sản phẩm này!")
+      }
+    } catch (error) {
+      console.error("Lỗi khi gọi API lấy số lượng sản phẩm:", error)
+      alert("Đã xảy ra lỗi, vui lòng thử lại sau.")
+    }
   }
 
   // Kiểm tra xem sản phẩm có trong wishlist không
@@ -369,7 +396,10 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                     </a>
                   ) : (
                     <a href="#" onClick={removeFromWishlist}>
-                      <FontAwesomeIcon icon={faKissWinkHeart} className="me-2"/>
+                      <FontAwesomeIcon
+                        icon={faKissWinkHeart}
+                        className="me-2"
+                      />
                       Hông thích nữa
                     </a>
                   )}

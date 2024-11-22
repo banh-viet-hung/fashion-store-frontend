@@ -7,22 +7,21 @@ import Icon from "../Icon"
 import ActiveLink from "../ActiveLink"
 import MainIcons from "./MainIcons"
 import { CartContext } from "../CartContext"
-import { addCartItem } from "../../hooks/UseCart"
 import { WishlistContext } from "../WishlistContext" // Import WishlistContext
-import { addWishlistItem } from "../../hooks/UseWishlist"
 import TopBar from "./TopBar"
 import SearchBlock from "./SearchBlock"
 import DropdownMenuItem from "./DropdownMenuItem"
 import UseWindowSize from "../../hooks/UseWindowSize"
 import { getUserFromLocalStorage } from "../../utils/authUtils" // Utility to check login status
 import { getFavoriteProducts } from "../../api/UserAPI" // API to get favorite products
+import { getCart } from "../../api/CartAPI" // API to get cart
 import { useUser } from "../../components/UserContext"
 
 const Header = ({ header }) => {
   const [collapse, setCollapse] = React.useState(false)
   const size = UseWindowSize() // Viewport size hook
   const [parentName, setParentName] = React.useState(false)
-  const [cartItems, dispatch] = React.useContext(CartContext) // Cart context
+  const [cartItems, cartDispatch] = React.useContext(CartContext) // Cart context
   const { user } = useUser()
   const [wishlistItems, wishlistDispatch] = React.useContext(WishlistContext) // Wishlist context
 
@@ -63,28 +62,12 @@ const Header = ({ header }) => {
 
   useEffect(() => {
     highlightDropdownParent()
-
-    if (localStorage.getItem("cart")) {
-      // If localStorage exists set cart items to cart context
-      JSON.parse(localStorage.getItem("cart")).map((product) =>
-        dispatch({ type: "add", payload: product })
-      )
-    }
-    // Remove on production START -->
-    else {
-      // Set first six product items to cart on demo
-      initialProducts.slice(0, 6).map((product) => {
-        addCartItem(product, 1)
-        dispatch({ type: "add", payload: product, quantity: 1 })
-      })
-    }
-    // <-- END remove
-
     const userInfo = getUserFromLocalStorage() // Kiểm tra người dùng có đăng nhập không
 
     if (userInfo) {
       // Nếu người dùng đã đăng nhập, reset wishlist và gọi API lấy danh sách sản phẩm yêu thích
       wishlistDispatch({ type: "reset" }) // Reset wishlist context nếu đã đăng nhập
+      cartDispatch({ type: "reset" }) // Reset cart context nếu đã đăng nhập
 
       // Gọi API lấy danh sách sản phẩm yêu thích của người dùng
       getFavoriteProducts(userInfo.token)
@@ -99,6 +82,20 @@ const Header = ({ header }) => {
         .catch((error) => {
           console.error("Error fetching favorite products:", error)
         })
+
+      // Gọi API lấy danh sách sản phẩm trong giỏ hàng của người dùng
+      getCart(userInfo.token)
+        .then((response) => {
+          if (response.success && response.data) {
+            // Cập nhật giỏ hàng với danh sách sản phẩm từ API
+            response.data.forEach((product) => {
+              cartDispatch({ type: "add", payload: product })
+            })
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching cart:", error)
+        })
     } else {
       // Nếu người dùng chưa đăng nhập, lấy wishlist từ localStorage
       const storedWishlist = JSON.parse(
@@ -107,6 +104,13 @@ const Header = ({ header }) => {
       wishlistDispatch({ type: "reset" }) // Đặt lại wishlist nếu có dữ liệu cũ
       storedWishlist.forEach((productId) => {
         wishlistDispatch({ type: "add", payload: productId })
+      })
+
+      // Lấy giỏ hàng từ localStorage
+      const storedCart = JSON.parse(localStorage.getItem("cart") || "[]")
+      cartDispatch({ type: "reset" }) // Đặt lại giỏ hàng nếu có dữ liệu cũ
+      storedCart.forEach((product) => {
+        cartDispatch({ type: "add", payload: product })
       })
     }
   }, [user])

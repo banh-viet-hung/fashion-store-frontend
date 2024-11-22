@@ -30,11 +30,13 @@ import Link from "next/link"
 import { CartContext } from "../../components/CartContext"
 import { addCartItem } from "../../hooks/UseCart"
 import { addWishlistItem, removeWishlistItem } from "../../hooks/UseWishlist"
+import { getProductQuantity } from "../../api/ProductVariantAPI"
 import { WishlistContext } from "../../components/WishlistContext"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
 import { faHeart, faKissWinkHeart } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useWindowSize from "../../hooks/UseWindowSize"
+import { Toast, ToastContainer } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -75,6 +77,9 @@ const ProductPage = ({ productData }) => {
   const [category, setCategory] = useState(null) // Danh mục sản phẩm
   const [features, setFeatures] = useState([]) // Tính năng nổi bật
   const size = useWindowSize()
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
+  const [toastVariant, setToastVariant] = useState("success") // 'success', 'danger'
 
   // Fetch Product Images
   useEffect(() => {
@@ -159,24 +164,51 @@ const ProductPage = ({ productData }) => {
     }
   }
 
-  // Add Product to Cart
-  const addToCart = (e, product) => {
-    // e.preventDefault()
-
-    // Xây dựng đối tượng cartData
+  const addToCart = async (data) => {
     const cartData = {
-      productId: productData.id, // ID của sản phẩm
-      size: activeSize || null, // Kích thước, null nếu không chọn
-      color: activeColor || null, // Màu sắc, null nếu không chọn
-      quantity: quantity || 1, // Số lượng, mặc định là 1 nếu không có giá trị
+      productId: productData.id,
+      size: activeSize || null,
+      color: activeColor || null,
+      quantity: quantity || 1,
     }
 
-    // In ra thông tin cartData
-    console.log("Dữ liệu giỏ hàng:", cartData)
+    try {
+      const response = await getProductQuantity(
+        productData.id,
+        activeColor,
+        activeSize
+      )
 
-    // Cập nhật giỏ hàng (bạn có thể sử dụng context hoặc redux tùy vào cách bạn quản lý state)
-    // addCartItem(product, quantity) // Gọi hàm để thêm vào giỏ hàng
-    // dispatch({ type: "add", payload: product, quantity: quantity }) // Cập nhật vào giỏ hàng thông qua dispatch
+      if (response.success) {
+        const availableQuantity = response.data
+
+        if (availableQuantity >= quantity) {
+          console.log("Sản phẩm có sẵn đủ số lượng:", availableQuantity)
+
+          addCartItem(cartData)
+          dispatch({ type: "add", payload: cartData })
+
+          // Set thông báo Toast thành công
+          setToastMessage("Sản phẩm đã được thêm vào giỏ hàng!")
+          setToastVariant("success")
+          setShowToast(true)
+        } else {
+          // Set thông báo Toast lỗi khi không đủ số lượng
+          setToastMessage(`Chỉ còn ${availableQuantity} sản phẩm trong kho!`)
+          setToastVariant("danger")
+          setShowToast(true)
+        }
+      } else {
+        setToastMessage("Không tìm thấy sản phẩm này!")
+        setToastVariant("danger")
+        setShowToast(true)
+      }
+    } catch (error) {
+      console.error("Lỗi khi gọi API lấy số lượng sản phẩm:", error)
+      setToastMessage("Đã xảy ra lỗi, vui lòng thử lại sau.")
+      setToastVariant("danger")
+      setShowToast(true)
+    }
   }
 
   // Kiểm tra xem sản phẩm có trong wishlist không
@@ -467,6 +499,18 @@ const ProductPage = ({ productData }) => {
         feedbacks={feedbacks}
       />
       <ProductBottomProducts />
+
+      <ToastContainer position="top-end" className="p-3">
+        <Toast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          bg={toastVariant}
+          delay={3000} // Thời gian hiển thị (ms)
+          autohide
+        >
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </React.Fragment>
   )
 }

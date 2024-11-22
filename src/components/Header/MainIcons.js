@@ -1,12 +1,11 @@
 import React from "react"
 import Link from "next/link"
 import { CartContext } from "../CartContext"
-import SidebarCart from "../SidebarCart"
 import ModalLogin from "../ModalLogin"
 import SidebarRight from "../SidebarRight"
 import Icon from "../Icon"
 import { WishlistContext } from "../WishlistContext"
-import { useUser } from "../UserContext" // Đảm bảo import useUser
+import { useUser } from "../UserContext"
 
 const MainIcons = (props) => {
   const [modal, setModal] = React.useState({})
@@ -21,7 +20,7 @@ const MainIcons = (props) => {
 
   const [cartContext] = React.useContext(CartContext)
   const [wishlistContext] = React.useContext(WishlistContext)
-  const { user } = useUser() // Lấy thông tin người dùng từ UserContext
+  const { user } = useUser()
 
   return (
     <React.Fragment>
@@ -36,17 +35,17 @@ const MainIcons = (props) => {
             onClick={(e) =>
               preventAnchor(e, () => {
                 if (user) {
-                  toggleModal("sidebarRight") // Nếu đã đăng nhập, mở sidebar
+                  toggleModal("sidebarRight")
                 } else {
-                  toggleModal("login") // Nếu chưa đăng nhập, mở modal đăng nhập
+                  toggleModal("login")
                 }
               })
             }
           >
             {user ? (
-              <Icon icon="male-user-1" className="navbar-icon" /> // Icon cho người đã đăng nhập
+              <Icon icon="male-user-1" className="navbar-icon" />
             ) : (
-              <Icon icon="avatar-1" className="navbar-icon" /> // Icon cho người chưa đăng nhập
+              <Icon icon="avatar-1" className="navbar-icon" />
             )}
           </a>
         </li>
@@ -64,17 +63,18 @@ const MainIcons = (props) => {
           </Link>
         </li>
         <li className="list-inline-item position-relative me-3">
-          <a
-            className={`text-${
-              props.light ? "light" : "dark"
-            } text-hover-primary`}
-            href="#"
-            aria-label="show cart"
-            onClick={(e) => preventAnchor(e, () => toggleModal("sidebarCart"))}
-          >
-            <Icon icon="retail-bag-1" className="navbar-icon" />
-            <div className="navbar-icon-badge">{cartContext.length}</div>
-          </a>
+          {/* Thay đổi ở đây: Sử dụng Link thay vì onClick để điều hướng đến trang giỏ hàng */}
+          <Link href="/cart">
+            <a
+              className={`text-${
+                props.light ? "light" : "dark"
+              } text-hover-primary`}
+              aria-label="go to cart"
+            >
+              <Icon icon="retail-bag-1" className="navbar-icon" />
+              <div className="navbar-icon-badge">{cartContext.length}</div>
+            </a>
+          </Link>
         </li>
         {props.sidebarRight && (
           <li className="list-inline-item">
@@ -94,10 +94,6 @@ const MainIcons = (props) => {
         )}
       </ul>
       <ModalLogin toggle={() => toggleModal("login")} isOpen={modal.login} />
-      <SidebarCart
-        toggle={() => toggleModal("sidebarCart")}
-        isOpen={modal.sidebarCart}
-      />
       <SidebarRight
         toggle={() => toggleModal("sidebarRight")}
         isOpen={modal.sidebarRight}

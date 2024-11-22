@@ -1,49 +1,77 @@
 import React from "react"
 import { Container, Row, Col, Breadcrumb, Button } from "react-bootstrap"
-
 import OrderSummary from "../components/OrderSummary"
 import Link from "next/link"
 import CartItems from "../components/CartItems"
-
-export async function getStaticProps() {
-  return {
-    props: {
-      title: "Shopping cart",
-    },
-  }
-}
 import { CartContext } from "../components/CartContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faChevronLeft, faSync } from "@fortawesome/free-solid-svg-icons"
 
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Giỏ hàng",
+    },
+  }
+}
+
 const Cart = () => {
   const [cartItems, dispatch] = React.useContext(CartContext)
+
+  // Nếu giỏ hàng rỗng, hiển thị thông báo
+  if (cartItems.length === 0) {
+    return (
+      <React.Fragment>
+        <section className="hero py-6">
+          <Container>
+            <Breadcrumb>
+              <Link href="/" passHref>
+                <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
+              </Link>
+              <Breadcrumb.Item active>Giỏ hàng</Breadcrumb.Item>
+            </Breadcrumb>
+            <div className="hero-content">
+              <h1 className="hero-heading">Giỏ hàng</h1>
+              <div>
+                <p className="lead text-muted">
+                  Giỏ hàng của bạn đang trống. Hãy thêm sản phẩm vào giỏ hàng!
+                </p>
+              </div>
+            </div>
+          </Container>
+        </section>
+        <section>
+          <Container>
+            <Row className="mb-5">
+              <Col className="text-center">
+                <Button variant="link" href="/category">
+                  <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
+                  Trở lại trang mua sắm
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      </React.Fragment>
+    )
+  }
+
+  // Nếu có sản phẩm trong giỏ, hiển thị như bình thường
   return (
     <React.Fragment>
       <section className="hero py-6">
         <Container>
           <Breadcrumb>
             <Link href="/" passHref>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
+              <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
             </Link>
-            <Breadcrumb.Item active>Shopping cart</Breadcrumb.Item>
+            <Breadcrumb.Item active>Giỏ hàng</Breadcrumb.Item>
           </Breadcrumb>
           <div className="hero-content">
-            <h1 className="hero-heading">Shopping cart</h1>
+            <h1 className="hero-heading">Giỏ hàng</h1>
             <div>
               <p className="lead text-muted">
-                You have {cartItems.length} items in your cart.
-              </p>
-              <p className="lead text-muted">
-                For the checkout, you can use either a{" "}
-                <Link href="/checkout1">
-                  <a>Multiple pages checkout</a>
-                </Link>{" "}
-                or have everything on a{" "}
-                <Link href="/checkout">
-                  <a>single page</a>
-                </Link>
-                .
+                Bạn có {cartItems.length} sản phẩm trong giỏ hàng.
               </p>
             </div>
           </div>
@@ -58,18 +86,15 @@ const Cart = () => {
                 <Button
                   variant="link"
                   className="text-muted"
-                  href="/category-full"
+                  href="/category"
                 >
                   <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
-                  Continue Shopping
-                </Button>
-                <Button variant="link" className="text-primary" href="#">
-                  <FontAwesomeIcon icon={faSync} className="me-2" /> Update cart
+                  Tiếp tục mua sắm
                 </Button>
               </div>
             </Col>
             <Col lg="4">
-              <OrderSummary showProceedToCheckout />
+              {/* <OrderSummary showProceedToCheckout /> */}
             </Col>
           </Row>
         </Container>

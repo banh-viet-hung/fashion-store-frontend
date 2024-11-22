@@ -1,46 +1,124 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { CartContext } from "../components/CartContext"
-
 import { Row, Col, Button, Form } from "react-bootstrap"
-import Icon from "./Icon"
-import { removeCartItem, addCartItem } from "../hooks/UseCart"
+import { removeCartItem, addCartItem, updateCartItem } from "../hooks/UseCart"
 import Link from "next/link"
-
-import dummyProduct from "../data/dummyproduct.json"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import Image from "./Image"
+import { getProductById, getImagesByProductId } from "../api/ProductAPI"
+import { getProductQuantity } from "../api/ProductVariantAPI"
+
+// Hàm định dạng tiền
+const formatCurrency = (amount) => {
+  if (amount == null) {
+    return "Loading..." // Hoặc bất kỳ chuỗi nào bạn muốn
+  }
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "VND",
+  })
+}
 
 const CartItems = ({ review, className }) => {
   const [cartItems, dispatch] = useContext(CartContext) // Cart context
+  const [productDetails, setProductDetails] = useState({}) // State to store product details
 
-  // Decrease product quantity
+  useEffect(() => {
+    // Fetch details for each item in the cart
+    const fetchProductDetails = async () => {
+      for (let item of cartItems) {
+        try {
+          const productData = await getProductById(item.productId)
+          const images = await getImagesByProductId(item.productId)
+          const thumbnailImage =
+            images.find((image) => image.thumbnail) || images[0] // Prefer thumbnail image
+
+          setProductDetails((prevDetails) => ({
+            ...prevDetails,
+            [item.productId]: {
+              name: productData.name,
+              price:
+                productData.salePrice !== 0
+                  ? productData.salePrice
+                  : productData.price,
+              image: thumbnailImage ? thumbnailImage.url : null,
+            },
+          }))
+        } catch (error) {
+          console.error("Error fetching product details:", error)
+        }
+      }
+    }
+
+    fetchProductDetails()
+  }, [cartItems])
+
   const decreaseQuantity = (product) => {
     if (product.quantity > 1) {
-      addCartItem(product, product.quantity - 1)
-      dispatch({ type: "add", payload: product, quantity: product.quantity })
+      const newQuantity = product.quantity - 1
+      updateCartQuantity(product, newQuantity)
     }
   }
 
-  // Increase product quantity
   const increaseQuantity = (product) => {
-    addCartItem(product, product.quantity + 1)
-    dispatch({ type: "add", payload: product, quantity: product.quantity })
+    const newQuantity = product.quantity + 1
+    updateCartQuantity(product, newQuantity)
   }
 
-  // Remove from cart
   const removeFromCart = (e, product) => {
     e.preventDefault()
     dispatch({ type: "remove", payload: product })
     removeCartItem(product)
   }
 
-  // Add to cart
   const onQuantityChange = (e, product) => {
-    const value = e.target.value
+    const value = parseInt(e.target.value, 10)
     if (value >= 1) {
-      addCartItem(product, value)
-      dispatch({ type: "add", payload: product, quantity: value })
+      updateCartQuantity(product, value)
+    }
+  }
+
+  const updateCartQuantity = async (product, newQuantity) => {
+    const cartData = {
+      productId: product.productId,
+      size: product.size || null,
+      color: product.color || null,
+      quantity: newQuantity,
+    }
+
+    try {
+      const response = await getProductQuantity(
+        product.productId,
+        product.color,
+        product.size
+      )
+
+      if (response.success) {
+        const availableQuantity = response.data // Số lượng có sẵn từ API
+
+        if (availableQuantity >= newQuantity) {
+          // Nếu đủ số lượng, cập nhật giỏ hàng
+          updateCartItem(cartData)
+          dispatch({ type: "update", payload: cartData })
+        } else {
+          // Nếu không đủ số lượng, hiển thị thông báo lỗi
+          alert(`Chỉ còn ${availableQuantity} sản phẩm trong kho!`)
+
+          // Cập nhật lại số lượng sản phẩm trong giỏ hàng
+          updateCartItem({ ...product, quantity: availableQuantity })
+          dispatch({
+            type: "update",
+            payload: { ...product, quantity: availableQuantity },
+          })
+        }
+      } else {
+        // Trường hợp API trả về không tìm thấy sản phẩm
+        alert("Không tìm thấy sản phẩm này!")
+      }
+    } catch (error) {
+      console.error("Lỗi khi gọi API lấy số lượng sản phẩm:", error)
+      alert("Đã xảy ra lỗi, vui lòng thử lại sau.")
     }
   }
 
@@ -65,8 +143,10 @@ const CartItems = ({ review, className }) => {
         )}
         <div className="cart-body">
           {cartItems.map((item) => (
-            // Cart items
-            <div key={item.name} className="cart-item">
+            <div
+              key={`${item.productId}-${item.size}-${item.color}`}
+              className="cart-item"
+            >
               <Row className="d-flex align-items-center text-start text-md-center">
                 <Col xs="12" md={review ? 6 : 5}>
                   {/* MOBILE REMOVE FROM CART BUTTON */}
@@ -78,47 +158,49 @@ const CartItems = ({ review, className }) => {
                     <FontAwesomeIcon icon={faTimes} />
                   </a>
                   {/* END MOBILE REMOVE FROM CART BUTTON */}
-
                   <div className="d-flex align-items-center">
                     {/* PRODUCT IMAGE */}
-                    <Link href={`/${item.category[1]}/${item.slug}`}>
+                    <Link href={`/product/${item.productId}`}>
                       <a>
                         <Image
                           className="cart-item-img"
-                          src={item.img.category[0].img}
-                          alt={item.img.category[0].alt}
+                          src={
+                            productDetails[item.productId]?.image ||
+                            "https://res.cloudinary.com/doo4qviqi/image/upload/v1732206099/gqnshi59fakw12ddtae1.jpg"
+                          }
+                          alt={item.name}
                           width={80}
                           height={103}
                         />
                       </a>
                     </Link>
                     {/* END PRODUCT IMAGE */}
-
                     <div className="cart-title text-start">
                       {/* PRODUCT TITLE */}
-                      <Link href={`/${item.category[1]}/${item.slug}`}>
+                      <Link href={`/product/${item.productId}`}>
                         <a className="text-dark link-animated">
-                          <strong>{item.name}</strong>
+                          <strong>
+                            {productDetails[item.productId]?.name ||
+                              "Loading..."}
+                          </strong>
                         </a>
                       </Link>
                       <br />
                       {/* END PRODUCT TITLE */}
-
-                      {/* PRODUCT ATTRIBUTES */}
-                      {/* Only demo data. Add real data on production! */}
-                      {dummyProduct.attributes.map((attribute, index) => (
-                        <React.Fragment key={attribute.name}>
-                          <span className="text-muted text-sm">
-                            {attribute.name}: {attribute.value}
-                          </span>
-                          {index < dummyProduct.attributes.length - 1 ? (
-                            <br />
-                          ) : (
-                            ""
-                          )}
-                        </React.Fragment>
-                      ))}
-                      {/* END PRODUCT ATTRIBUTES */}
+                      {/* Màu sắc và kích thước */}
+                      <div className="cart-item-attributes mt-2">
+                        {item.color && (
+                          <div className="cart-item-color">
+                            <strong>Color: </strong> {item.color}
+                          </div>
+                        )}
+                        {item.size && (
+                          <div className="cart-item-size">
+                            <strong>Size: </strong> {item.size}
+                          </div>
+                        )}
+                      </div>
+                      {/* END Màu sắc và kích thước */}
                     </div>
                   </div>
                 </Col>
@@ -131,7 +213,9 @@ const CartItems = ({ review, className }) => {
                           Price per item
                         </Col>
                         <Col xs="6" md="12" className="text-end text-md-center">
-                          ${item.price}
+                          {formatCurrency(
+                            productDetails[item.productId]?.price
+                          ) || "Loading..."}
                         </Col>
                       </Row>
                       {/* END PRODUCT PRICE */}
@@ -180,7 +264,10 @@ const CartItems = ({ review, className }) => {
                           Total price
                         </Col>
                         <Col xs="6" md="12" className="text-end text-md-center">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatCurrency(
+                            productDetails[item.productId]?.price *
+                              item.quantity
+                          ) || "Loading..."}
                         </Col>
                         {/* END PRICE TOTAL */}
                       </Row>
@@ -193,12 +280,8 @@ const CartItems = ({ review, className }) => {
                           href="#"
                           onClick={(e) => removeFromCart(e, item)}
                         >
-                          <Icon
-                            icon="close-1"
-                            className="w-2rem h-2rem svg-icon-light"
-                          />
+                          <FontAwesomeIcon icon={faTimes} size="lg" />
                         </a>
-                        {/* END REMOVE FROM CART BUTTON */}
                       </Col>
                     )}
                   </Row>
