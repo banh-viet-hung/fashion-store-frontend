@@ -94,7 +94,7 @@ const Cart = () => {
               </div>
             </Col>
             <Col lg="4">
-              {/* <OrderSummary showProceedToCheckout /> */}
+              <OrderSummary showProceedToCheckout />
             </Col>
           </Row>
         </Container>
