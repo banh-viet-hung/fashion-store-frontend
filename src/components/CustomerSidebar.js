@@ -170,7 +170,6 @@ const CustomerSidebar = () => {
             href: "/account/orders",
             icon: "paper-bag-1",
             text: "Lịch sử đơn hàng",
-            badge: 5,
           },
           {
             href: "/account/info",
