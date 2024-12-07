@@ -5,7 +5,7 @@ import Link from "next/link"
 import CartItems from "../components/CartItems"
 import { CartContext } from "../components/CartContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faChevronLeft, faSync } from "@fortawesome/free-solid-svg-icons"
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons"
 
 export async function getStaticProps() {
   return {

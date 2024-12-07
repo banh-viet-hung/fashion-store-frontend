@@ -32,6 +32,8 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { addCartItem } from "../hooks/UseCart"
+import { toast } from "react-toastify"
+import { set } from "nprogress"
 
 // Định nghĩa schema validate với Yup, bỏ qua trường quantity
 const quickViewSchema = (sizes, colors) =>
@@ -135,24 +137,21 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
         if (availableQuantity >= quantity) {
           // Nếu số lượng sản phẩm đủ, tiếp tục thêm vào giỏ hàng
           console.log("Sản phẩm có sẵn đủ số lượng:", availableQuantity)
-          
+
           // Thêm sản phẩm vào giỏ hàng
           addCartItem(cartData)
           dispatch({ type: "add", payload: cartData })
 
-          // Hiển thị thông báo thành công hoặc thêm hành động khác nếu cần
-          alert("Sản phẩm đã được thêm vào giỏ hàng!")
+          toast.success("Đã thêm sản phẩm vào giỏ hàng!")
         } else {
-          // Nếu không đủ số lượng, hiển thị thông báo lỗi
-          alert(`Chỉ còn ${availableQuantity} sản phẩm trong kho!`)
+          toast.error("Sản phẩm không đủ số lượng!")
+          setQuantity(availableQuantity) // Set quantity to available quantity
         }
       } else {
-        // Trường hợp API trả về không tìm thấy sản phẩm
-        alert("Không tìm thấy sản phẩm này!")
+        toast.error("Đã xảy ra lỗi, vui lòng thử lại sau.")
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API lấy số lượng sản phẩm:", error)
-      alert("Đã xảy ra lỗi, vui lòng thử lại sau.")
+      toast.error("Đã xảy ra lỗi, vui lòng thử lại sau.")
     }
   }
 
@@ -372,11 +371,11 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
               <InputGroup className="w-100 mb-4">
                 <Form.Control
                   size="lg"
-                  className="detail-quantity"
                   name="quantity"
                   type="number"
-                  value={quantity > 0 ? quantity : ""}
+                  value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
+                  min="1"
                 />
                 <Button variant="dark" type="submit" className="flex-grow-1">
                   <FontAwesomeIcon

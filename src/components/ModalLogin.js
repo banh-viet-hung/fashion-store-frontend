@@ -12,7 +12,6 @@ import {
   Tab,
   Spinner,
   CloseButton,
-  Toast,
 } from "react-bootstrap"
 import { faSignInAlt } from "@fortawesome/free-solid-svg-icons"
 import { useForm } from "react-hook-form"
@@ -21,6 +20,7 @@ import * as yup from "yup"
 import { registerUser, checkEmail, requestPasswordReset } from "../api/UserAPI"
 import { loginUser } from "../api/AuthAPI"
 import { useUser } from "./UserContext"
+import { toast } from "react-toastify"
 
 // Định nghĩa schema với Yup
 const registerSchema = yup.object().shape({
@@ -94,13 +94,13 @@ const ModalLogin = (props) => {
   const [loading, setLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [registerSuccessMessage, setRegisterSuccessMessage] = useState("")
-  const [showToast, setShowToast] = useState(false)
   const { login } = useUser()
 
   const onSubmitRegister = async (data) => {
     try {
       await registerUser(data)
       setRegisterSuccessMessage("Đăng ký thành công!")
+      toast.success("Đăng ký thành công!")
       setErrorMessage("")
     } catch (error) {
       console.error("Registration error:", error)
@@ -136,9 +136,8 @@ const ModalLogin = (props) => {
       const response = await loginUser(data)
       login(response.data)
       setLoginErrorMessage("")
-      setSuccessMessage("Đăng nhập thành công!")
+      toast.success("Đăng nhập thành công!")
       props.toggle() // Ẩn modal
-      setShowToast(true) // Hiện thông báo thành công
     } catch (error) {
       setLoginErrorMessage(
         error.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin."
@@ -445,21 +444,6 @@ const ModalLogin = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
-      {/* Toast thông báo thành công */}
-      <Toast
-        onClose={() => setShowToast(false)}
-        show={showToast}
-        delay={3000}
-        autohide
-        style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
-          zIndex: 99999,
-        }}
-      >
-        <Toast.Body>{successMessage}</Toast.Body>
-      </Toast>
     </>
   )
 }

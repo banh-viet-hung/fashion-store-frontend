@@ -8,6 +8,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import Image from "./Image"
 import { getProductById, getImagesByProductId } from "../api/ProductAPI"
 import { getProductQuantity } from "../api/ProductVariantAPI"
+import { toast } from "react-toastify"
 
 // Hàm định dạng tiền
 const formatCurrency = (amount) => {
@@ -102,8 +103,7 @@ const CartItems = ({ review, className }) => {
           updateCartItem(cartData)
           dispatch({ type: "update", payload: cartData })
         } else {
-          // Nếu không đủ số lượng, hiển thị thông báo lỗi
-          alert(`Chỉ còn ${availableQuantity} sản phẩm trong kho!`)
+          toast.error("Sản phẩm không đủ số lượng trong kho!")
 
           // Cập nhật lại số lượng sản phẩm trong giỏ hàng
           updateCartItem({ ...product, quantity: availableQuantity })
@@ -113,12 +113,10 @@ const CartItems = ({ review, className }) => {
           })
         }
       } else {
-        // Trường hợp API trả về không tìm thấy sản phẩm
-        alert("Không tìm thấy sản phẩm này!")
+        toast.error("Lỗi khi kiểm tra số lượng sản phẩm!")
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API lấy số lượng sản phẩm:", error)
-      alert("Đã xảy ra lỗi, vui lòng thử lại sau.")
+      toast.error("Lỗi khi kiểm tra số lượng sản phẩm!")
     }
   }
 

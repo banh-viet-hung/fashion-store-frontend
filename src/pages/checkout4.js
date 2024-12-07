@@ -7,8 +7,6 @@ import {
   Nav,
   Button,
   Spinner,
-  Toast,
-  ToastContainer,
 } from "react-bootstrap"
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -21,6 +19,7 @@ import { FormContext } from "../components/FormContext"
 import { CartContext } from "../components/CartContext" // Import CartContext
 import { getUserFromLocalStorage } from "../utils/authUtils"
 import { createOrder } from "../api/OrderAPI"
+import { toast } from "react-toastify"
 
 export async function getStaticProps() {
   return {
@@ -36,8 +35,6 @@ const Checkout4 = () => {
   const [cart] = useContext(CartContext) // Lấy dữ liệu giỏ hàng từ CartContext
   const [isLoading, setIsLoading] = useState(true) // Quản lý trạng thái loading
   const [isRedirecting, setIsRedirecting] = useState(false) // Trạng thái chuyển hướng
-  const [showErrorToast, setShowErrorToast] = useState(false) // Quản lý hiển thị Toast lỗi
-  const [errorMessage, setErrorMessage] = useState("") // Lưu trữ thông báo lỗi
   const [isOrderLoading, setIsOrderLoading] = useState(false) // Trạng thái loading cho nút "Xác nhận đặt hàng"
   const router = useRouter()
 
@@ -77,7 +74,7 @@ const Checkout4 = () => {
       !formInputs.address ||
       !formInputs.shipping
     ) {
-      alert("Vui lòng điền đầy đủ thông tin!") // Thông báo lỗi nếu thiếu thông tin
+      toast.error("Vui lòng điền đầy đủ thông tin!") // Thông báo lỗi nếu thiếu thông tin
       router.push("/checkout1") // Chuyển hướng về trang checkout1
     }
 
@@ -90,13 +87,10 @@ const Checkout4 = () => {
       if (response.success) {
         router.push(`/checkout-confirmed?id=${response.data}`)
       } else {
-        setErrorMessage(response.message || "Có lỗi xảy ra, vui lòng thử lại!")
-        setShowErrorToast(true) // Hiển thị thông báo lỗi
+        toast.error(response.message || "Có lỗi xảy ra, vui lòng thử lại!")
       }
     } catch (error) {
-      console.error("Error confirming order:", error)
-      setErrorMessage(error.message || "Có lỗi xảy ra, vui lòng thử lại!")
-      setShowErrorToast(true) // Hiển thị thông báo lỗi
+      toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại!")
     } finally {
       setIsOrderLoading(false) // Dừng trạng thái loading sau khi hoàn tất
     }
@@ -203,27 +197,6 @@ const Checkout4 = () => {
           </Row>
         </Container>
       </section>
-
-      {/* Thông báo lỗi */}
-      <ToastContainer
-        className="p-3"
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          zIndex: 9999,
-        }}
-      >
-        <Toast
-          onClose={() => setShowErrorToast(false)}
-          show={showErrorToast}
-          delay={5000}
-          autohide
-          bg="danger"
-        >
-          <Toast.Body>{errorMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
     </React.Fragment>
   )
 }

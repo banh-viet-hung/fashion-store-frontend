@@ -70,7 +70,7 @@ const CheckoutConfirmed = ({ id }) => {
           </div>
           <br />
           <p className="mb-6">
-            <Link href="/customer-order" passHref>
+            <Link href="/account/orders" passHref>
               <Button variant="outline-dark">Quản lí đơn hàng</Button>
             </Link>
           </p>

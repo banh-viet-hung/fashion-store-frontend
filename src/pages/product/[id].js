@@ -36,10 +36,10 @@ import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
 import { faHeart, faKissWinkHeart } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useWindowSize from "../../hooks/UseWindowSize"
-import { Toast, ToastContainer } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import { toast } from "react-toastify"
 
 // Static Generation (SSG) - Paths and Props fetching
 export async function getStaticPaths() {
@@ -77,9 +77,6 @@ const ProductPage = ({ productData }) => {
   const [category, setCategory] = useState(null) // Danh mục sản phẩm
   const [features, setFeatures] = useState([]) // Tính năng nổi bật
   const size = useWindowSize()
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState("")
-  const [toastVariant, setToastVariant] = useState("success") // 'success', 'danger'
 
   // Fetch Product Images
   useEffect(() => {
@@ -188,26 +185,17 @@ const ProductPage = ({ productData }) => {
           addCartItem(cartData)
           dispatch({ type: "add", payload: cartData })
 
-          // Set thông báo Toast thành công
-          setToastMessage("Sản phẩm đã được thêm vào giỏ hàng!")
-          setToastVariant("success")
-          setShowToast(true)
+          toast.success("Sản phẩm đã được thêm vào giỏ hàng!")
         } else {
-          // Set thông báo Toast lỗi khi không đủ số lượng
-          setToastMessage(`Chỉ còn ${availableQuantity} sản phẩm trong kho!`)
-          setToastVariant("danger")
-          setShowToast(true)
+          toast.error("Sản phẩm không đủ số lượng trong kho!")
+          setQuantity(availableQuantity)
         }
       } else {
-        setToastMessage("Không tìm thấy sản phẩm này!")
-        setToastVariant("danger")
-        setShowToast(true)
+        toast.error("Lỗi khi kiểm tra số lượng sản phẩm!")
       }
     } catch (error) {
       console.error("Lỗi khi gọi API lấy số lượng sản phẩm:", error)
-      setToastMessage("Đã xảy ra lỗi, vui lòng thử lại sau.")
-      setToastVariant("danger")
-      setShowToast(true)
+      toast.error("Lỗi khi kiểm tra số lượng sản phẩm!")
     }
   }
 
@@ -240,8 +228,8 @@ const ProductPage = ({ productData }) => {
     <React.Fragment>
       <section>
         <Container fluid className="px-xl-7 pt-5 pb-3 pb-lg-6">
-          <div className="d-block" id="addToCartAlert">
-            <Alert
+          {/* <div className="d-block" id="addToCartAlert">
+            <Alert  
               variant="success"
               className="mb-4 mb-lg-5 opacity-10"
               role="alert"
@@ -266,7 +254,7 @@ const ProductPage = ({ productData }) => {
                 </p>
               </div>
             </Alert>
-          </div>
+          </div> */}
 
           {/* Breadcrumb */}
           <Breadcrumb>
@@ -446,6 +434,7 @@ const ProductPage = ({ productData }) => {
                       type="number"
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
+                      min="1"
                     />
                     <Button
                       variant="dark"
@@ -499,18 +488,6 @@ const ProductPage = ({ productData }) => {
         feedbacks={feedbacks}
       />
       <ProductBottomProducts />
-
-      <ToastContainer position="top-end" className="p-3">
-        <Toast
-          show={showToast}
-          onClose={() => setShowToast(false)}
-          bg={toastVariant}
-          delay={3000} // Thời gian hiển thị (ms)
-          autohide
-        >
-          <Toast.Body>{toastMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
     </React.Fragment>
   )
 }

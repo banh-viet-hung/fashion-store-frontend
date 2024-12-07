@@ -2,22 +2,18 @@ import React from "react"
 import AOS from "aos"
 import Layout from "../components/Layout"
 import { UserProvider } from "../components/UserContext" // Import UserProvider
-
+import { ToastContainer, toast } from "react-toastify" // Import react-toastify
 import "aos/dist/aos.css"
-
-// swiper core styles
 import "swiper/css"
-
-// modules styles
 import "swiper/css/pagination"
 import "swiper/css/navigation"
 import "swiper/css/parallax"
 import "swiper/css/autoplay"
 import "swiper/css/effect-fade"
-
 import "../fonts/stylesheet.css"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 import "../scss/style.default.scss"
+import "react-toastify/dist/ReactToastify.css" // Import style của react-toastify
 
 const App = ({ Component, pageProps }) => {
   React.useEffect(() => {
@@ -32,12 +28,24 @@ const App = ({ Component, pageProps }) => {
     AOS.refresh()
   }, []) // Thêm [] để useEffect chỉ chạy một lần
 
+  // Hàm hiển thị toast
+  const showToast = () => {
+    toast.success("Đăng ký thành công!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    })
+  }
+
   return (
     <UserProvider>
-      {" "}
-      {/* Bọc Layout bằng UserProvider */}
       <Layout {...pageProps}>
         <Component {...pageProps} />
+        <ToastContainer />{" "}
+        {/* Đặt ToastContainer ở nơi muốn hiển thị thông báo */}
       </Layout>
     </UserProvider>
   )

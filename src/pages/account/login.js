@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react"
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Toast,
-  Spinner,
-} from "react-bootstrap"
+import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -16,6 +8,7 @@ import { useUser } from "../../components/UserContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUbuntu, faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { useRouter } from "next/router"
+import { toast } from "react-toastify"
 
 // Định nghĩa schema với Yup cho đăng nhập
 const loginSchema = yup.object().shape({
@@ -50,18 +43,11 @@ const LoginPage = () => {
 
   const [loginErrorMessage, setLoginErrorMessage] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
-  const [showToast, setShowToast] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (user) {
-      if (showToast) {
-        setTimeout(() => {
-          router.push("/")
-        }, 1000)
-      } else {
-        router.push("/")
-      }
+      router.push("/")
     } else {
       setLoading(false) // Nếu chưa đăng nhập, dừng loading
     }
@@ -71,8 +57,7 @@ const LoginPage = () => {
     try {
       const response = await loginUser(data)
       login(response.data)
-      setSuccessMessage("Đăng nhập thành công!")
-      setShowToast(true)
+      toast.success("Đăng nhập thành công!")
       setTimeout(() => {
         router.push("/")
       }, 1000)
@@ -96,7 +81,7 @@ const LoginPage = () => {
   }
 
   // Kiểm tra xem người dùng đã đăng nhập hay chưa
-  if (user && !showToast) {
+  if (user) {
     // Nếu user đã đăng nhập, không render nội dung login
     return null // Không render gì cả, sẽ chuyển hướng ở trên
   } else {
@@ -161,20 +146,6 @@ const LoginPage = () => {
             </Row>
           </Col>
         </Row>
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-          style={{
-            position: "fixed",
-            top: "20px",
-            right: "20px",
-            zIndex: 1050,
-          }}
-        >
-          <Toast.Body>{successMessage}</Toast.Body>
-        </Toast>
       </Container>
     )
   }

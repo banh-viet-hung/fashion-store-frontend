@@ -1,10 +1,11 @@
 import { faFacebookF, faYoutube } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import React from "react"
-import { Modal, Nav, CloseButton, Toast } from "react-bootstrap"
+import { Modal, Nav, CloseButton } from "react-bootstrap"
 import Icon from "./Icon"
 import { useUser } from "./UserContext"
 import { useRouter } from "next/router"
+import { toast } from "react-toastify"
 
 const SidebarRight = (props) => {
   const router = useRouter()
@@ -17,11 +18,10 @@ const SidebarRight = (props) => {
   )
 
   const { user, logout } = useUser()
-  const [showToast, setShowToast] = React.useState(false)
 
   const handleLogout = () => {
     logout()
-    setShowToast(true)
+    toast.success("Đăng xuất thành công!")
     props.toggle()
   }
 
@@ -99,20 +99,6 @@ const SidebarRight = (props) => {
           </div>
         </Modal.Body>
       </Modal>
-      <Toast
-        onClose={() => setShowToast(false)}
-        show={showToast}
-        delay={3000}
-        autohide
-        style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000000,
-        }}
-      >
-        <Toast.Body>Đăng xuất thành công!</Toast.Body>
-      </Toast>
     </>
   )
 }

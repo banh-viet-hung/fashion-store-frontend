@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Container, Row, Col, Form, Button, Toast } from "react-bootstrap"
+import { Container, Row, Col, Form, Button } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -7,6 +7,7 @@ import { registerUser } from "../../api/UserAPI" // Cập nhật đường dẫn
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser } from "@fortawesome/free-regular-svg-icons"
 import { useRouter } from "next/router" // Import useRouter
+import { toast } from "react-toastify"
 
 // Định nghĩa schema với Yup
 const registerSchema = yup.object().shape({
@@ -45,14 +46,12 @@ const RegisterPage = () => {
 
   const [errorMessage, setErrorMessage] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
-  const [showToast, setShowToast] = useState(false)
 
   const onSubmitRegister = async (data) => {
     try {
       await registerUser(data)
-      setSuccessMessage("Đăng ký thành công!")
+      toast.success("Đăng ký tài khoản thành công")
       setErrorMessage("")
-      setShowToast(true)
     } catch (error) {
       console.error("Registration error:", error)
       setErrorMessage(
@@ -121,23 +120,15 @@ const RegisterPage = () => {
             </Button>
           </Form>
           <div className="text-center mt-3">
-            <Button variant="link" onClick={() => router.push("/account/login")}>
+            <Button
+              variant="link"
+              onClick={() => router.push("/account/login")}
+            >
               ĐĂNG NHẬP NGAY
             </Button>
           </div>
         </Col>
       </Row>
-
-      {/* Toast thông báo thành công */}
-      <Toast
-        onClose={() => setShowToast(false)}
-        show={showToast}
-        delay={3000}
-        autohide
-        style={{ position: "fixed", top: "20px", right: "20px", zIndex: 1050 }}
-      >
-        <Toast.Body>{successMessage}</Toast.Body>
-      </Toast>
     </Container>
   )
 }
