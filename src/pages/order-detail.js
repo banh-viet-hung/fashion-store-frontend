@@ -163,6 +163,12 @@ const CustomerOrder = () => {
                     <br />
                     {status.description} <br />
                     <small>{new Date(status.updateAt).toLocaleString()}</small>
+                    <br />
+                    {status.updatedBy ? (
+                      <small>Cập nhật bởi: {status.updatedBy}</small>
+                    ) : (
+                      <small>Cập nhật bởi: Không xác định</small>
+                    )}
                   </Alert>
                 ))}
                 {/* Nút Hủy đơn hàng */}
