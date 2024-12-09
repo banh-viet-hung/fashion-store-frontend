@@ -185,3 +185,33 @@ export const getFavoriteProducts = async (token) => {
     throw error // Ném lỗi để xử lý ở nơi khác nếu cần
   }
 }
+
+// Hàm kiểm tra trạng thái tài khoản người dùng
+export const checkUserStatus = async (username) => {
+  try {
+    // Gửi yêu cầu GET đến API với tham số username
+    const response = await axios.get(
+      `${BASE_URL}/check-status?username=${username}`
+    )
+
+    // Kiểm tra kết quả từ API
+    if (response.data.success) {
+      return {
+        success: true,
+        message: response.data.message, // Trả về thông báo nếu thành công
+      }
+    } else {
+      // Nếu tài khoản bị khóa
+      throw new Error(
+        response.data.message || "Tài khoản bị khóa hoặc không hợp lệ."
+      )
+    }
+  } catch (error) {
+    // Xử lý lỗi từ API hoặc các lỗi khác (mạng, server)
+    const errorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "Kiểm tra trạng thái tài khoản thất bại."
+    throw new Error(errorMessage) // Ném ra lỗi để hàm gọi xử lý
+  }
+}
