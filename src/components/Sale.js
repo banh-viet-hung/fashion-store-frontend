@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react"
 import { Container, Row, Col, Button, Badge } from "react-bootstrap"
 import Icon from "./Icon"
 import Image from "./Image"
+import { useRouter } from "next/router" // Import useRouter từ next/router
 
 const Sale = (props) => {
   const [date, setDate] = useState(false)
   const [timeLeft, setTimeLeft] = useState({})
+  const router = useRouter() // Khởi tạo useRouter hook
 
   useEffect(() => {
     const today = new Date()
@@ -23,6 +25,7 @@ const Sale = (props) => {
         seconds: Math.floor((difference / 1000) % 60),
       })
   }
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       calculateTimeLeft()
@@ -31,6 +34,11 @@ const Sale = (props) => {
       clearTimeout(timeout)
     }
   }, [timeLeft, date])
+
+  // Hàm để chuyển hướng khi bấm vào nút "KHÁM PHÁ NGAY"
+  const handleExploreClick = () => {
+    router.push("/category") // Điều hướng tới trang /category
+  }
 
   return (
     <div
@@ -55,7 +63,7 @@ const Sale = (props) => {
           style={{ left: "-200px", top: 0, color: props.blobColor }}
         />
       )}
-      <Container className=" position-relative">
+      <Container className="position-relative">
         <Row>
           <Col
             lg={props.image ? 6 : 10}
@@ -90,7 +98,9 @@ const Sale = (props) => {
                 </div>
               </div>
               <p>
-                <Button variant="outline-dark">KHÁM PHÁ NGAY</Button>
+                <Button variant="outline-dark" onClick={handleExploreClick}>
+                  KHÁM PHÁ NGAY
+                </Button>
               </p>
             </div>
           </Col>

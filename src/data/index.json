@@ -1,49 +1,49 @@
 {
-    "swiper": [
-        {
-            "name": "GIẢM GIÁ TỚI 50%",
-            "subtitle": "OUTLET SALE",
-            "text": "+100 SẢN PHẨM",
-            "button": "MUA NGAY",
-            "link": "#",
-            "img": "/img/photo/banner1.jpg",
-            "bgdirection": "right",
-            "subtitleclass": "text-dark mb-3",
-            "titleclass": "display-1 mb-3"
-        },
-        {
-            "name": "NGẬP TRÀN KHUYẾN MÃI",
-            "subtitle": "MUA SẮM THẢ GA",
-            "button": "MUA NGAY",
-            "link": "#",
-            "img": "/img/photo/banner2.jpg",
-            "rowclass": "justify-content-center text-center",
-            "subtitleclass": "text-dark mb-3",
-            "titleclass": "display-1 mb-3"
-        },
-        {
-            "name": "GYM COLLECTION",
-            "subtitle": "SỞ HỮU NGAY",
-            "button": "MUA NGAY",
-            "link": "#",
-            "img": "/img/photo/banner3.jpg",
-            "contentoffset": "6",
-            "subtitleclass": "text-primary mb-4",
-            "titleclass": "display-1 mb-5"
-        }
-    ],
-    "maincategories": [
-        {
-            "name": "Quần áo",
-            "link": "/category/quan-ao",
-            "button": "See",
-            "img": "/img/product/Quanao.webp"
-        },
-        {
-            "name": "Phụ kiện",
-            "link": "/category/phu-kien",
-            "button": "See",
-            "img": "/img/product/Phukien.webp"
-        }
-    ]
+  "swiper": [
+    {
+      "name": "GIẢM GIÁ TỚI 50%",
+      "subtitle": "OUTLET SALE",
+      "text": "+100 SẢN PHẨM",
+      "button": "MUA NGAY",
+      "link": "/category",
+      "img": "/img/photo/banner1.jpg",
+      "bgdirection": "right",
+      "subtitleclass": "text-dark mb-3",
+      "titleclass": "display-1 mb-3"
+    },
+    {
+      "name": "NGẬP TRÀN KHUYẾN MÃI",
+      "subtitle": "MUA SẮM THẢ GA",
+      "button": "MUA NGAY",
+      "link": "/category",
+      "img": "/img/photo/banner2.jpg",
+      "rowclass": "justify-content-center text-center",
+      "subtitleclass": "text-dark mb-3",
+      "titleclass": "display-1 mb-3"
+    },
+    {
+      "name": "GYM COLLECTION",
+      "subtitle": "SỞ HỮU NGAY",
+      "button": "MUA NGAY",
+      "link": "/category",
+      "img": "/img/photo/banner3.jpg",
+      "contentoffset": "6",
+      "subtitleclass": "text-primary mb-4",
+      "titleclass": "display-1 mb-5"
+    }
+  ],
+  "maincategories": [
+    {
+      "name": "Quần áo",
+      "link": "/category/quan-ao",
+      "button": "See",
+      "img": "/img/product/Quanao.webp"
+    },
+    {
+      "name": "Phụ kiện",
+      "link": "/category/phu-kien",
+      "button": "See",
+      "img": "/img/product/Phukien.webp"
+    }
+  ]
 }
