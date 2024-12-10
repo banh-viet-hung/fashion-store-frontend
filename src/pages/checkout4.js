@@ -19,6 +19,7 @@ import { FormContext } from "../components/FormContext"
 import { CartContext } from "../components/CartContext" // Import CartContext
 import { getUserFromLocalStorage } from "../utils/authUtils"
 import { createOrder } from "../api/OrderAPI"
+import { createPaymentUrl } from "../api/PaymentAPI" // Import hàm tạo URL thanh toán
 import { toast } from "react-toastify"
 
 export async function getStaticProps() {
@@ -85,7 +86,25 @@ const Checkout4 = () => {
       const response = await createOrder(modifiedFormInputs, token)
 
       if (response.success) {
-        router.push(`/checkout-confirmed?id=${response.data}`)
+        // Nếu thanh toán là COD, giữ nguyên như hiện tại
+        if (formInputs.payment === "COD") {
+          router.push(`/checkout-confirmed?id=${response.data}`)
+        } else if (
+          formInputs.payment === "INTCARD" ||
+          formInputs.payment === "VNBANK"
+        ) {
+          // Nếu thanh toán là INTcard hoặc VNBANK, gọi API tạo URL thanh toán
+          const paymentUrlResponse = await createPaymentUrl(
+            response.data,
+            formInputs.payment
+          )
+          if (paymentUrlResponse) {
+            // Chuyển hướng đến URL thanh toán
+            window.location.href = paymentUrlResponse
+          } else {
+            toast.error("Không thể tạo URL thanh toán. Vui lòng thử lại!")
+          }
+        }
       } else {
         toast.error(response.message || "Có lỗi xảy ra, vui lòng thử lại!")
       }
@@ -181,9 +200,14 @@ const Checkout4 = () => {
                       Đang xử lý{" "}
                       <Spinner animation="border" size="sm" className="ms-2" />
                     </>
-                  ) : (
+                  ) : formInputs.payment === "COD" ? (
                     <>
                       Xác nhận đặt hàng
+                      <FontAwesomeIcon icon={faAngleRight} className="ms-2" />
+                    </>
+                  ) : (
+                    <>
+                      Tiến hành thanh toán
                       <FontAwesomeIcon icon={faAngleRight} className="ms-2" />
                     </>
                   )}

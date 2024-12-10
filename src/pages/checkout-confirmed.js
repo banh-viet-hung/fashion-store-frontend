@@ -1,7 +1,6 @@
 import React, { useEffect } from "react"
 import { Container, Breadcrumb, Button, Alert } from "react-bootstrap"
 import { useRouter } from "next/router" // Import useRouter hook
-
 import { FormContext } from "../components/FormContext"
 import Icon from "../components/Icon"
 import Link from "next/link"
@@ -30,8 +29,23 @@ export async function getServerSideProps(context) {
 
 const CheckoutConfirmed = ({ id }) => {
   const [formInputs, setFormInputs] = React.useContext(FormContext) // Checkout inputs context
+  const router = useRouter() // Sử dụng router để điều hướng nếu cần thiết
 
   console.log(formInputs) // Log of filled inputs and cart items
+
+  useEffect(() => {
+    // Khi component được render, reset formInputs về giá trị mặc định (rỗng hoặc object trống)
+    setFormInputs({
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      // Thêm bất kỳ trường nào khác bạn cần reset ở đây
+    })
+
+    // Optional: Điều hướng về trang chủ hoặc trang khác nếu cần
+    // router.push('/'); // Uncomment nếu muốn điều hướng sau khi reset formInputs
+  }, [setFormInputs]) // Chạy hiệu ứng này khi component render xong
 
   return (
     <React.Fragment>

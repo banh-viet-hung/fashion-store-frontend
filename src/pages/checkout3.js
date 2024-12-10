@@ -30,12 +30,12 @@ export async function getStaticProps() {
 const Checkout3 = () => {
   const [formInputs, setFormInputs] = useContext(FormContext)
   const [multiCollapse, setMultiCollapse] = useState({
-    card: false, // Mặc định mở "Thanh toán qua thẻ"
-    paypal: false,
-    COD: true, // Mặc định phần "Thanh toán khi nhận hàng" mở
+    COD: true, // Mặc định phương thức COD mở
+    VNBANK: false, // Mặc định đóng phần "Thanh toán qua thẻ ATM"
+    INTCARD: false, // Mặc định đóng phần "Thanh toán qua thẻ quốc tế"
   })
-  const [isLoading, setIsLoading] = useState(true) // Manage loading state
-  const [isRedirecting, setIsRedirecting] = useState(false) // Track redirection state
+  const [isLoading, setIsLoading] = useState(true) // Quản lý trạng thái loading
+  const [isRedirecting, setIsRedirecting] = useState(false) // Theo dõi trạng thái chuyển hướng
   const router = useRouter()
 
   useEffect(() => {
@@ -51,14 +51,13 @@ const Checkout3 = () => {
   }, [formInputs, router]) // Chỉ chạy lại khi formInputs hoặc router thay đổi
 
   useEffect(() => {
-    // Mặc định chọn phương thức thanh toán khi nhận hàng khi trang mới tải
+    // Mặc định chọn phương thức thanh toán khi nhận hàng nếu chưa có giá trị
     if (!formInputs.payment) {
       setFormInputs((prev) => ({
         ...prev,
         payment: "COD",
       }))
     }
-    console.log(formInputs)
   }, [formInputs, setFormInputs])
 
   // Handle radio button change
@@ -74,9 +73,9 @@ const Checkout3 = () => {
   // Toggle collapse sections based on selected payment method
   const toggleCollapse = (paymentMethod) => {
     setMultiCollapse((prev) => ({
-      card: paymentMethod === "card" ? !prev.card : false,
-      paypal: paymentMethod === "paypal" ? !prev.paypal : false,
       COD: paymentMethod === "COD" ? !prev.COD : false,
+      VNBANK: paymentMethod === "VNBANK" ? !prev.VNBANK : false,
+      INTCARD: paymentMethod === "INTCARD" ? !prev.INTCARD : false,
     }))
   }
 
@@ -148,7 +147,7 @@ const Checkout3 = () => {
                       className={multiCollapse.COD ? "" : "collapsed"}
                       onClick={(e) => {
                         e.preventDefault()
-                        toggleCollapse("COD")
+                        handleRadioChange({ target: { id: "COD" } })
                       }}
                     >
                       Thanh toán khi nhận hàng
@@ -170,115 +169,153 @@ const Checkout3 = () => {
                   </Collapse>
                 </Card>
 
-                {/* Card Payment (commented out for now) */}
-                {/* <Card className="border-0 shadow mb-3">
+                {/* ATM Payment (VNBANK) */}
+                <Card className="border-0 shadow mb-3">
                   <Card.Header>
                     <a
                       href="#"
-                      className={multiCollapse.card ? "" : "collapsed"}
+                      className={multiCollapse.VNBANK ? "" : "collapsed"}
                       onClick={(e) => {
                         e.preventDefault()
-                        toggleCollapse("card")
+                        handleRadioChange({ target: { id: "VNBANK" } })
                       }}
                     >
-                      Thanh toán bằng thẻ
+                      Thanh toán qua thẻ ATM
                     </a>
                   </Card.Header>
-                  <Collapse in={multiCollapse.card}>
-                    <div>
-                      <Card.Body className="py-5">
-                        <Row>
-                          <Col md={6} className="mb-4">
-                            <Form.Label htmlFor="card-name">
-                              Name on Card
-                            </Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="card-name"
-                              placeholder="Name on card"
-                              value={formInputs["card-name"]}
-                              onChange={handleInputChange}
-                            />
-                          </Col>
-                          <Col md={6} className="mb-4">
-                            <Form.Label htmlFor="card-number">
-                              Card Number
-                            </Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="card-number"
-                              placeholder="Card number"
-                              value={formInputs["card-number"]}
-                              onChange={handleInputChange}
-                            />
-                          </Col>
-                          <Col md={4} className="mb-4">
-                            <Form.Label htmlFor="expiry-date">
-                              Expiry Date
-                            </Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="expiry-date"
-                              placeholder="MM/YY"
-                              value={formInputs["expiry-date"]}
-                              onChange={handleInputChange}
-                            />
-                          </Col>
-                          <Col md={4} className="mb-4">
-                            <Form.Label htmlFor="cvv">CVC/CVV</Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="cvv"
-                              placeholder="123"
-                              value={formInputs["cvv"]}
-                              onChange={handleInputChange}
-                            />
-                          </Col>
-                          <Col md={4} className="mb-4">
-                            <Form.Label htmlFor="zip">ZIP</Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="zip"
-                              placeholder="123"
-                              value={formInputs["zip"]}
-                              onChange={handleInputChange}
-                            />
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </div>
-                  </Collapse>
-                </Card> */}
-
-                {/* PayPal (commented out for now) */}
-                {/* <Card className="border-0 shadow mb-3">
-                  <Card.Header>
-                    <a
-                      href="#"
-                      className={multiCollapse.paypal ? "" : "collapsed"}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        toggleCollapse("paypal")
-                      }}
-                    >
-                      Thanh toán qua PayPal
-                    </a>
-                  </Card.Header>
-                  <Collapse in={multiCollapse.paypal}>
+                  <Collapse in={multiCollapse.VNBANK}>
                     <div>
                       <Card.Body className="py-5">
                         <Form.Check
                           type="radio"
-                          id="paypal"
+                          id="VNBANK"
                           name="payment"
-                          label="Pay with PayPal"
+                          label="Thẻ ATM"
                           onChange={handleRadioChange}
-                          checked={formInputs.payment === "paypal"}
+                          checked={formInputs.payment === "VNBANK"}
                         />
+                        <div className="mt-3">
+                          <div className="d-flex justify-content-start flex-wrap">
+                            {/* Các logo ngân hàng */}
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/ncb.svg"
+                              alt="NCB"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách giữa các logo
+                                marginBottom: "20px", // Tăng khoảng cách dưới các logo
+                                objectFit: "contain", // Đảm bảo hình ảnh không bị biến dạng
+                              }}
+                            />
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/eximbank.svg"
+                              alt="EXIMBANK"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách
+                                marginBottom: "20px", // Tăng khoảng cách dưới
+                                objectFit: "contain",
+                              }}
+                            />
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/vietcombank.svg"
+                              alt="Vietcombank"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách
+                                marginBottom: "20px", // Tăng khoảng cách dưới
+                                objectFit: "contain",
+                              }}
+                            />
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/techcombank.svg"
+                              alt="Techcombank"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách
+                                marginBottom: "20px", // Tăng khoảng cách dưới
+                                objectFit: "contain",
+                              }}
+                            />
+                            {/* Thêm các ngân hàng khác nếu cần */}
+                          </div>
+                        </div>
                       </Card.Body>
                     </div>
                   </Collapse>
-                </Card> */}
+                </Card>
+
+                {/* International Card Payment (INTCARD) */}
+                <Card className="border-0 shadow mb-3">
+                  <Card.Header>
+                    <a
+                      href="#"
+                      className={multiCollapse.INTCARD ? "" : "collapsed"}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleRadioChange({ target: { id: "INTCARD" } })
+                      }}
+                    >
+                      Thanh toán qua thẻ quốc tế
+                    </a>
+                  </Card.Header>
+                  <Collapse in={multiCollapse.INTCARD}>
+                    <div>
+                      <Card.Body className="py-5">
+                        <Form.Check
+                          type="radio"
+                          id="INTCARD"
+                          name="payment"
+                          label="Thẻ quốc tế"
+                          onChange={handleRadioChange}
+                          checked={formInputs.payment === "INTCARD"}
+                        />
+                        <div className="mt-3">
+                          <div className="d-flex justify-content-start flex-wrap">
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/VISA.svg"
+                              alt="VISA"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách giữa các logo
+                                marginBottom: "20px", // Tăng khoảng cách dưới
+                                objectFit: "contain", // Đảm bảo hình ảnh không bị biến dạng
+                              }}
+                            />
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/MASTERCARD.svg"
+                              alt="MasterCard"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách giữa các logo
+                                marginBottom: "20px", // Tăng khoảng cách dưới
+                                objectFit: "contain",
+                              }}
+                            />
+                            <img
+                              src="https://sandbox.vnpayment.vn/paymentv2/images/img/logos/bank/big/JCB.svg"
+                              alt="JCB"
+                              className="bank-logo"
+                              style={{
+                                width: "120px", // Tăng kích thước
+                                marginRight: "30px", // Tăng khoảng cách giữa các logo
+                                marginBottom: "20px", // Tăng khoảng cách dưới
+                                objectFit: "contain",
+                              }}
+                            />
+                            {/* Thêm các ngân hàng khác nếu cần */}
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </div>
+                  </Collapse>
+                </Card>
               </Form>
 
               {/* Navigation buttons */}
