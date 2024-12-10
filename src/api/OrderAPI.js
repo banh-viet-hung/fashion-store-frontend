@@ -126,7 +126,7 @@ export const cancelOrder = async (orderId, token) => {
     }
 
     // Gửi yêu cầu DELETE để hủy đơn hàng theo orderId
-    const response = await axios.delete(`${BASE_URL}/${orderId}`, { headers })
+    const response = await axios.delete(`${BASE_URL}/${orderId}/cancel`, { headers })
 
     // Trả về phản hồi từ server nếu API trả về thành công
     return response.data
