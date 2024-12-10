@@ -8,7 +8,8 @@ import {
   Spinner,
   Alert,
   Badge,
-  Button, // Thêm Button từ react-bootstrap
+  Button,
+  Modal, // Thêm Modal từ react-bootstrap
 } from "react-bootstrap"
 import { useRouter } from "next/router"
 import Link from "next/link"
@@ -19,6 +20,8 @@ import { getAllOrders } from "../api/OrderAPI"
 import { getOrderById } from "../api/OrderAPI"
 import ReviewOrderSummary from "../components/ReviewOrderSummary"
 import ReviewItems from "../components/ReviewItems"
+import { cancelOrder } from "../api/OrderAPI" // Import hàm hủy đơn hàng
+import { toast } from "react-toastify"
 
 export async function getStaticProps() {
   return {
@@ -34,6 +37,8 @@ const CustomerOrder = () => {
   const [orderExists, setOrderExists] = useState(null)
   const [loading, setLoading] = useState(true)
   const [orderDetails, setOrderDetails] = useState(null) // Lưu trữ chi tiết đơn hàng
+  const [showModal, setShowModal] = useState(false) // Quản lý trạng thái modal
+  const [orderIdToCancel, setOrderIdToCancel] = useState(null) // Lưu orderId cần hủy
   const { user } = useUser()
   const router = useRouter()
   const { query } = router
@@ -90,6 +95,46 @@ const CustomerOrder = () => {
     checkExistingOrder()
   }, [router, orderIdFromUrl, user])
 
+  const handleCancelOrder = () => {
+    setShowModal(true) // Hiển thị modal khi bấm vào nút hủy
+  }
+
+  const handleConfirmCancel = async () => {
+    const token = getUserFromLocalStorage()?.token
+    if (!token) {
+      console.error("Token không hợp lệ")
+      return
+    }
+
+    try {
+      // Gọi API hủy đơn hàng
+      const response = await cancelOrder(orderIdFromUrl, token)
+      console.log("Kết quả hủy đơn hàng: ", response)
+
+      // Hiển thị thông báo thành công
+      toast.success("Đã hủy đơn hàng thành công")
+
+      // Fetch lại thông tin đơn hàng sau khi hủy
+      const updatedOrderData = await getOrderById(orderIdFromUrl, token)
+      console.log("Dữ liệu đơn hàng mới: ", updatedOrderData)
+
+      // Cập nhật lại dữ liệu đơn hàng
+      setOrderDetails(updatedOrderData.data)
+
+      // Đóng modal sau khi xử lý
+      setShowModal(false)
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi hủy đơn hàng")
+    } finally {
+      // Đóng modal sau khi xử lý
+      setShowModal(false)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false) // Đóng modal nếu người dùng hủy
+  }
+
   if (loading) {
     return (
       <Container className="py-6 text-center">
@@ -119,6 +164,14 @@ const CustomerOrder = () => {
     : []
 
   const currentStatus = sortedOrderStatusDetails[0] || {}
+
+  // Kiểm tra điều kiện hủy đơn hàng
+  const canCancel =
+    !orderDetails?.orderStatusDetails.some(
+      (status) => status.statusName === "Đã thanh toán"
+    ) &&
+    (currentStatus.statusName === "Chờ thanh toán" ||
+      currentStatus.statusName === "Chờ xác nhận")
 
   return (
     <Container>
@@ -174,9 +227,10 @@ const CustomerOrder = () => {
                 {/* Nút Hủy đơn hàng */}
                 <Button
                   variant="danger"
-                  size="sm" // Thêm thuộc tính size để nút nhỏ hơn
+                  size="sm"
                   className="mt-3"
-                  onClick={() => alert("Xử lý hủy đơn hàng sẽ được thêm sau")}
+                  onClick={handleCancelOrder}
+                  disabled={!canCancel} // Chỉ hiển thị nút nếu có thể hủy
                 >
                   Hủy đơn hàng
                 </Button>
@@ -185,6 +239,25 @@ const CustomerOrder = () => {
           </Col>
         </Row>
       </section>
+
+      {/* Modal xác nhận hủy đơn hàng */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xác nhận hủy đơn hàng</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Bạn có chắc chắn muốn hủy đơn hàng này? Hành động này không thể hoàn
+          tác.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Hủy
+          </Button>
+          <Button variant="danger" onClick={handleConfirmCancel}>
+            Xác nhận hủy
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <section className="pb-6">
         <Container>
