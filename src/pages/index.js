@@ -84,7 +84,7 @@ const Index = () => {
       )}
       {/* END TRANG PHỤC VÀ PHỤ KIỆN */}
       {/* Mới về  */}
-      <NewArrivals fluid headCenter products={products} />
+      {/* <NewArrivals fluid headCenter products={products} /> */}
       {/* Sale */}
       <Sale className="py-6" backgroundImage="/img/photo/deal.webp" />
       {/* Our history */}

@@ -487,7 +487,7 @@ const ProductPage = ({ productData }) => {
         thumbnail={thumbnailImage ? thumbnailImage.url : null}
         feedbacks={feedbacks}
       />
-      <ProductBottomProducts />
+      {/* <ProductBottomProducts /> */}
     </React.Fragment>
   )
 }
