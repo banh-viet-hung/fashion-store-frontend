@@ -1,30 +1,35 @@
-import React from 'react'
-import SelectBox from './SelectBox'
+import React from "react"
+import SelectBox from "./SelectBox"
 
-const SortBy = props => {
+const SortBy = (props) => {
+  const options = [
+    {
+      value: null,
+      label: "Mặc định",
+    },
+    {
+      value: "priceAsc",
+      label: "Giá tăng dần",
+    },
+    {
+      value: "priceDesc",
+      label: "Giá giảm dần",
+    },
+    {
+      value: "newest",
+      label: "Mới nhất",
+    },
+  ]
 
-    const options = [
-        {
-            "value": "sortBy_0",
-            "label": "Default"
-        },
-        {
-            "value": "sortBy_1",
-            "label": "Popularity"
-        },
-        {
-            "value": "sortBy_2",
-            "label": "Rating"
-        },
-        {
-            "value": "sortBy_3",
-            "label": "Newest first"
-        }
-    ]
+  // Hàm xử lý sự kiện khi giá trị được chọn thay đổi
+  const handleSelectChange = (selectedOption) => {
+    console.log("Giá trị đã chọn:", selectedOption.value)
 
-    return (
-        <SelectBox options={options} />
-    )
-};
+    // Gọi hàm onFilterChange từ prop và truyền giá trị mới
+    props.onFilterChange({ sortBy: selectedOption.value })
+  }
 
-export default SortBy;
+  return <SelectBox options={options} onChange={handleSelectChange} />
+}
+
+export default SortBy

@@ -1,7 +1,7 @@
 import React from "react"
 import Select from "react-select"
 
-const SelectBox = ({ options, id }) => {
+const SelectBox = ({ options, id, onChange }) => {
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -49,6 +49,10 @@ const SelectBox = ({ options, id }) => {
       classNamePrefix="react-select"
       styles={customSelectStyles}
       isSearchable={false}
+      onChange={(selectedOption) => {
+        // Gọi hàm onChange từ prop và truyền giá trị được chọn
+        onChange(selectedOption)
+      }}
     />
   )
 }

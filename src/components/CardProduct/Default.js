@@ -49,18 +49,18 @@ const CardProductDefault = ({ product, masonry, addToCart, setQuickView }) => {
     >
       <div className="product-image mb-md-3">
         {isFresh && (
-          <Badge bg="secondary" className="product-badge">
-            New
+          <Badge bg="info" className="product-badge">
+            Mới
           </Badge>
         )}
         {isSale && (
-          <Badge bg="primary" className="product-badge">
+          <Badge bg="danger" className="product-badge">
             Sale
           </Badge>
         )}
         {isSoldOut && (
-          <Badge bg="dark" className="product-badge">
-            Sold Out
+          <Badge bg="warning" className="product-badge">
+            Hết hàng
           </Badge>
         )}
         <Link href={`/product/${product.id}`}>

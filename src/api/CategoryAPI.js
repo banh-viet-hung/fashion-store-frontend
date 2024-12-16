@@ -4,6 +4,8 @@ const API_URL = "http://localhost:8080/category"
 const PRODUCT_API_URL =
   "http://localhost:8080/category/search/findProductsByCategorySlug" // URL cho phân trang sản phẩm theo slug
 
+const API_URL2 = "http://localhost:8080/categories"
+
 class CategoryAPI {
   // Get all categories
   static async getAllCategories() {
@@ -40,35 +42,13 @@ class CategoryAPI {
     }
   }
 
-  // Create a new category
-  static async createCategory(categoryData) {
+  // Get child categories by parent category slug
+  static async getChildCategoriesBySlug(slug) {
     try {
-      const response = await axios.post(API_URL, categoryData)
-      return response.data
+      const response = await axios.get(`${API_URL2}/children/${slug}`)
+      return response.data // Trả về kết quả danh sách danh mục con
     } catch (error) {
-      console.error("Error creating category:", error)
-      throw error
-    }
-  }
-
-  // Update an existing category
-  static async updateCategory(id, categoryData) {
-    try {
-      const response = await axios.put(`${API_URL}/${id}`, categoryData)
-      return response.data
-    } catch (error) {
-      console.error(`Error updating category with ID ${id}:`, error)
-      throw error
-    }
-  }
-
-  // Delete a category
-  static async deleteCategory(id) {
-    try {
-      const response = await axios.delete(`${API_URL}/${id}`)
-      return response.data
-    } catch (error) {
-      console.error(`Error deleting category with ID ${id}:`, error)
+      console.error(`Error fetching child categories for slug ${slug}:`, error)
       throw error
     }
   }

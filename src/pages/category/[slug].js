@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react"
-import { Container, Row, Col, Breadcrumb } from "react-bootstrap"
+import { Container, Row, Col, Breadcrumb, Spinner } from "react-bootstrap"
 import Link from "next/link"
 import CardProduct from "../../components/CardProduct"
-import CategoriesMenu from "../../components/CategoriesMenu"
-import Filters from "../../components/Filters"
-import Pagination from "../../components/Pagination"
-import CategoryAPI from "../../api/CategoryAPI" // Import CategoryAPI mới
+import PaginationComponent from "../../components/Pagination" // Sử dụng PaginationComponent mới
+import CategoryTopBar from "../../components/CategoryTopBar"
+import { useRouter } from "next/router"
+import { getFilteredProducts } from "../../api/ProductAPI"
+import CategoryAPI from "../../api/CategoryAPI"
 
-// Lấy danh sách các slug từ API
+// Lấy danh sách sản phẩm từ API
 export async function getStaticPaths() {
   try {
     const response = await CategoryAPI.getAllCategories()
-    const categories = response._embedded.category // Truy cập vào danh sách danh mục
+    const categories = response._embedded.category
     const paths = categories.map((category) => ({
-      params: { slug: category.slug }, // Sử dụng slug làm tham số
+      params: { slug: category.slug },
     }))
 
     return { paths, fallback: false }
@@ -23,94 +24,189 @@ export async function getStaticPaths() {
   }
 }
 
-// Lấy thông tin danh mục và sản phẩm cho mỗi slug
+// Lấy dữ liệu danh mục và sản phẩm
 export async function getStaticProps({ params }) {
   const response = await CategoryAPI.getAllCategories()
   const categories = response._embedded.category
   const category = categories.find((cat) => cat.slug === params.slug)
 
-  // Trả về các props cần thiết cho trang
   return {
     props: {
-      title: `Danh mục ${category.name}`,
-      slug: params.slug, // Truyền slug để lấy sản phẩm theo slug
+      title: `Danh mục - ${category.name}`,
+      slug: params.slug,
     },
   }
 }
 
-const CategorySlug = ({ title, slug }) => {
-  const [products, setProducts] = useState([]) // Dữ liệu sản phẩm
-  const [totalPages, setTotalPages] = useState(1) // Tổng số trang
-  const [currentPage, setCurrentPage] = useState(0) // Trang hiện tại
+const CategoryMasonry = ({ title, slug }) => {
+  const [products, setProducts] = useState([])
+  const [totalPages, setTotalPages] = useState(1)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [filterParams, setFilterParams] = useState({
+    sizeNames: [],
+    colorNames: [],
+    minPrice: 0,
+    maxPrice: 5000000,
+    sortBy: null,
+    categorySlugs: [slug],
+  })
+  const [loading, setLoading] = useState(false) // New state for loading
 
-  // Hàm lấy sản phẩm theo phân trang
+  const router = useRouter()
+  const { child } = router.query
+
+  useEffect(() => {
+    if (child) {
+      setFilterParams((prevParams) => ({
+        ...prevParams,
+        categorySlugs: [slug, child],
+      }))
+    } else {
+      setFilterParams((prevParams) => ({
+        ...prevParams,
+        categorySlugs: [slug],
+      }))
+    }
+    setCurrentPage(0)
+  }, [slug, child])
+
   const fetchProducts = async (page) => {
+    setLoading(true) // Set loading to true before fetching
     try {
-      const size = 16 // Số sản phẩm trên mỗi trang
-      const data = await CategoryAPI.getProductsByCategorySlug(slug, page, size) // Gọi API lấy sản phẩm theo slug và trang
-      setProducts(data._embedded.product) // Lưu sản phẩm vào state
-      setTotalPages(data.page.totalPages) // Lưu tổng số trang
+      const size = 16 // số sản phẩm mỗi trang
+
+      const data = await getFilteredProducts({
+        categorySlugs: filterParams.categorySlugs,
+        sizeNames: filterParams.sizeNames,
+        colorNames: filterParams.colorNames,
+        minPrice: filterParams.minPrice,
+        maxPrice: filterParams.maxPrice,
+        page,
+        size,
+        sortBy: filterParams.sortBy,
+      })
+
+      console.log(filterParams)
+
+      setProducts(data.data.content)
+      setTotalPages(data.data.totalPages)
     } catch (error) {
       console.error("Error fetching products:", error)
+    } finally {
+      setLoading(false) // Set loading to false after fetching
     }
   }
 
-  // Gọi API để lấy sản phẩm khi component được render hoặc khi chuyển trang
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        fetchProducts(currentPage) // Gọi hàm lấy sản phẩm khi trang thay đổi
-      } catch (error) {
-        console.error("Error fetching products:", error)
-      }
-    }
+    fetchProducts(currentPage)
+  }, [currentPage, slug, child, filterParams])
 
-    fetchData()
-  }, [currentPage, slug]) // Chạy lại khi `currentPage` hoặc `slug` thay đổi
-
-  // Hàm xử lý khi người dùng chọn trang mới
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber) // Cập nhật trang hiện tại
+    setCurrentPage(pageNumber)
   }
 
-  return (
-    <Container fluid className="container-fluid-px py-6">
-      <Row>
-        <Col xl="9" lg="8" className="products-grid order-lg-2">
-          <h1>{title}</h1>
+  const handleFilterChange = (newFilters) => {
+    setFilterParams((prevParams) => ({
+      ...prevParams,
+      ...newFilters,
+    }))
+  }
+
+  if (products.length === 0) {
+    return (
+      <Container className="py-6">
+        <div className="products-grid">
+          <div className="hero-content pb-5">
+            <h1>{title}</h1>
+            <Row>
+              <Col xl="8">
+                {/* <p className="lead text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
+            do eiusmod tempor incididunt.
+          </p> */}
+              </Col>
+            </Row>
+          </div>
+
+          {/* Breadcrumb */}
           <Breadcrumb>
             <Link href="/" passHref>
               <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
             </Link>
-            <Link href="/category" passHref>
-              <Breadcrumb.Item>Sản phẩm</Breadcrumb.Item>
-            </Link>
-            <Breadcrumb.Item active>{title}</Breadcrumb.Item>
+            <Breadcrumb.Item active>Danh sách sản phẩm</Breadcrumb.Item>
           </Breadcrumb>
 
+          {/* Thanh lọc và tìm kiếm */}
+          <CategoryTopBar
+            filter
+            onFilterChange={handleFilterChange}
+            slug={slug}
+            child={child}
+          />
+
+          {/* Loading indicator */}
+          <div className="loading-container text-center py-5">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        </div>
+      </Container>
+    )
+  }
+
+  return (
+    <Container className="py-6">
+      <div className="products-grid">
+        <div className="hero-content pb-5">
+          <h1>{title}</h1>
+          <Row>
+            <Col xl="8">
+              {/* <p className="lead text-muted">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+                eiusmod tempor incididunt.
+              </p> */}
+            </Col>
+          </Row>
+        </div>
+
+        {/* Breadcrumb */}
+        <Breadcrumb>
+          <Link href="/" passHref>
+            <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
+          </Link>
+          <Breadcrumb.Item active>Danh sách sản phẩm</Breadcrumb.Item>
+        </Breadcrumb>
+
+        {/* Thanh lọc và tìm kiếm */}
+        <CategoryTopBar
+          filter
+          onFilterChange={handleFilterChange}
+          slug={slug}
+          child={child}
+        />
+
+        {/* Loading indicator */}
+        {loading ? (
+          <div className="loading-container text-center py-5">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
           <Row>
             {products.map((product, index) => (
               <Col key={index} sm="4" xl="3" xs="6">
-                <CardProduct product={product}/>
+                <CardProduct product={product} />
               </Col>
             ))}
           </Row>
+        )}
 
-          {/* Phân trang */}
-          <Pagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
-        </Col>
-
-        <Col xl="3" lg="4" className="sidebar pe-xl-5 order-lg-1">
-          <CategoriesMenu />
-          <Filters />
-        </Col>
-      </Row>
+        <PaginationComponent
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </Container>
   )
 }
 
-export default CategorySlug
+export default CategoryMasonry

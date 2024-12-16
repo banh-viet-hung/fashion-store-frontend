@@ -3,277 +3,154 @@
   "subtitle": "Category",
   "categories": [
     {
-      "name": "Trousers",
-      "productcount": 120,
+      "name": "Quần dài",
       "icon": "trousers-1",
       "link": "/category-full",
       "img": "/img/product/category-jackets-2.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
+          "name": "Quần dài nam",
+          "link": "/category/quan-dai"
         },
         {
-          "name": "Dolor",
-          "link": "#"
+          "name": "Thể thao",
+          "link": "/category/do-the-thao?child=quan-dai"
         },
         {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Mặc hàng ngày",
+          "link": "/category/mac-hang-ngay?child=quan-dai"
         }
       ]
     },
     {
-      "name": "Jackets",
-      "productcount": 55,
+      "name": "Áo khoác",
       "icon": "suit-1",
       "link": "/category-full",
       "img": "/img/product/category-coats.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
+          "name": "Áo khoác nam",
+          "link": "/category/ao-khoac"
         },
         {
-          "name": "Dolor",
-          "link": "#"
+          "name": "Thể thao",
+          "link": "/category/do-the-thao?child=ao-khoac"
         },
         {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Mặc hàng ngày",
+          "link": "/category/mac-hang-ngay?child=ao-khoac"
         }
       ]
     },
     {
-      "name": "T-Shirts",
-      "productcount": 33,
+      "name": "Áo thun",
       "icon": "shirt5-1",
       "link": "/category-full",
       "img": "/img/product/category-dresses.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
+          "name": "Áo thun nam",
+          "link": "/category/ao-thun"
         },
         {
-          "name": "Dolor",
-          "link": "#"
+          "name": "Thể thao",
+          "link": "/category/do-the-thao?child=ao-thun"
         },
         {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
-        }
-      ]
-    },
-    {
-      "name": "Pullovers",
-      "productcount": 80,
-      "icon": "pullover-1",
-      "link": "/category-full",
-      "img": "/img/product/category-overalls.jpg",
-      "subcategories": [
-        {
-          "name": "Lorem ipsum",
-          "link": "#"
-        },
-        {
-          "name": "Dolor",
-          "link": "#"
-        },
-        {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
-        }
-      ]
-    },
-    {
-      "name": "Scarfs",
-      "productcount": 120,
-      "icon": "scarf-1",
-      "link": "/category-full",
-      "img": "/img/product/category-skirts.jpg",
-      "subcategories": [
-        {
-          "name": "Lorem ipsum",
-          "link": "#"
-        },
-        {
-          "name": "Dolor",
-          "link": "#"
-        },
-        {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Mặc hàng ngày",
+          "link": "/category/mac-hang-ngay?child=ao-thun"
         }
       ]
     },
     {
       "name": "Shorts",
-      "productcount": 55,
       "icon": "shorts1-1",
       "link": "/category-full",
       "img": "/img/product/category-shirts.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
+          "name": "Quần shorts nam",
+          "link": "/category/quan-shorts"
         },
         {
-          "name": "Dolor",
-          "link": "#"
+          "name": "Thể thao",
+          "link": "/category/do-the-thao?child=quan-shorts"
         },
         {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Mặc hàng ngày",
+          "link": "/category/mac-hang-ngay?child=quan-shorts"
         }
       ]
     },
     {
       "name": "Underwear",
-      "productcount": 80,
       "icon": "underwear1-1",
       "link": "/category-full",
       "img": "/img/product/category-shoes.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
+          "name": "Brief (Tam giác)",
+          "link": "/category/brief-tam-giac"
         },
         {
-          "name": "Dolor",
-          "link": "#"
+          "name": "Trunk (Boxer)",
+          "link": "/category/trunk-boxer"
         },
         {
-          "name": "Sit amet",
-          "link": "#"
+          "name": "Boxer Brief (Boxer dài)",
+          "link": "/category/boxer-brief-boxer-dai"
         },
         {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Long Leg",
+          "link": "/category/long-leg"
+        },
+        {
+          "name": "Boxer Shorts",
+          "link": "/category/boxer-shorts"
         }
       ]
     },
     {
-      "name": "Watches",
-      "productcount": 80,
-      "icon": "watch-1",
-      "link": "/category-full",
-      "img": "/img/product/category-bags.jpg",
-      "subcategories": [
-        {
-          "name": "Lorem ipsum",
-          "link": "#"
-        },
-        {
-          "name": "Dolor",
-          "link": "#"
-        },
-        {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
-        }
-      ]
-    },
-    {
-      "name": "Bags",
-      "productcount": 80,
+      "name": "Túi",
       "icon": "portfolio-1",
       "link": "/category-full",
       "img": "/img/product/category-bijoutery-2.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
-        },
-        {
-          "name": "Dolor",
-          "link": "#"
-        },
-        {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Túi thời trang",
+          "link": "/category/tui"
         }
       ]
     },
     {
-      "name": "Caps",
-      "productcount": 80,
+      "name": "Mũ/Nón",
       "icon": "cap-1",
       "link": "/category-full",
       "img": "/img/product/category-jackets-2.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
-        },
-        {
-          "name": "Dolor",
-          "link": "#"
-        },
-        {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Mũ/nón thời trang",
+          "link": "/category/mu-non"
         }
       ]
     },
     {
-      "name": "Accessories",
-      "productcount": 80,
+      "name": "Phụ kiện",
       "icon": "bowtie-1",
       "link": "/category-full",
       "img": "/img/product/category-jackets-2.jpg",
       "subcategories": [
         {
-          "name": "Lorem ipsum",
-          "link": "#"
+          "name": "Tất cả phụ kiện",
+          "link": "/category/phu-kien"
         },
         {
-          "name": "Dolor",
-          "link": "#"
+          "name": "Thể thao",
+          "link": "/category/do-the-thao?child=phu-kien"
         },
         {
-          "name": "Sit amet",
-          "link": "#"
-        },
-        {
-          "name": "Donec vitae",
-          "link": "#"
+          "name": "Thường ngày",
+          "link": "/category/mac-hang-ngay?child=phu-kien"
         }
       ]
     }

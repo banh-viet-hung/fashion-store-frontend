@@ -33,7 +33,6 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { addCartItem } from "../hooks/UseCart"
 import { toast } from "react-toastify"
-import { set } from "nprogress"
 
 // Định nghĩa schema validate với Yup, bỏ qua trường quantity
 const quickViewSchema = (sizes, colors) =>

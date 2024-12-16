@@ -1,77 +1,156 @@
-import React from "react"
-
+import React, { useState, useEffect } from "react"
 import { Col, Collapse, Form } from "react-bootstrap"
-
-import brands from "../data/brands.json"
-import tags from "../data/tags.json"
-import colors from "../data/colors.json"
-import sizes from "../data/sizes.json"
+import { getColors } from "../api/ColorAPI" // Import hàm gọi API từ file api/colors
+import { getSizes } from "../api/SizeAPI" // Import hàm gọi API cho size
+import CategoryAPI from "../api/CategoryAPI" // Import API gọi danh mục con
 import PriceSlider from "./PriceSlider"
 
-const Filters = ({ top }) => {
-  // Filter inputs state where all inputs all stored.
-  const [filterInputs, setFilterInputs] = React.useState({
-    // Remove or customize on PROD - Some brands are preselected by "checked" property. Using reduce they're set default in state.
-    "clothes-brand": brands.reduce(
-      (a, item) => (item.checked && a.push(item.value), a),
-      []
-    ),
-
-    // Remove or customize on PROD - Set first size as default
-    size: sizes[0].value,
-
-    // Remove or customize on PROD - Set first tag as default
-    tag: [tags[0].value],
+// Filters component
+const Filters = ({ top, slug, child, onFilterChange }) => {
+  const [filterInputs, setFilterInputs] = useState({
+    "clothes-category": [], // Dùng để lưu danh sách categories đã chọn
+    size: [],
+    colour: [],
   })
 
-  // Collapse state
-  const [collapse, setCollapse] = React.useState({})
+  const [sizes, setSizes] = useState([])
+  const [colors, setColors] = useState([])
+  const [categories, setCategories] = useState([])
+  const [collapse, setCollapse] = useState({})
+
+  // Toggle collapse for sidebar
   const toggleCollapse = (name) => {
     setCollapse({ ...collapse, [name]: !collapse[name] })
   }
 
-  // On input change func
-  const onInputChange = (e) => {
-    const type = e.target.type // Input type
-    const value = e.target.id // Input value
-    const name = e.target.name // Input name
+  // Fetch colors from API
+  useEffect(() => {
+    const fetchColors = async () => {
+      try {
+        const fetchedColors = await getColors()
+        setColors(fetchedColors) // Save fetched colors to state
+      } catch (error) {
+        console.error("Error fetching colors:", error)
+      }
+    }
 
-    type === "radio" // If input type radio
-      ? setFilterInputs({ ...filterInputs, [name]: value })
-      : // If not input type radio
-      filterInputs[name] // If input group exists
-      ? filterInputs[name].some((item) => item === value) // If item exists in array > remove
-        ? setFilterInputs({
-            ...filterInputs,
-            [name]: filterInputs[name].filter((x) => x !== value),
+    fetchColors()
+  }, [])
+
+  // Fetch sizes from API
+  useEffect(() => {
+    const fetchSizes = async () => {
+      try {
+        const fetchedSizes = await getSizes() // Assume this function fetches sizes from API
+        setSizes(fetchedSizes) // Save fetched sizes to state
+      } catch (error) {
+        console.error("Error fetching sizes:", error)
+      }
+    }
+
+    fetchSizes()
+  }, [])
+
+  useEffect(() => {
+    if (slug) {
+      const fetchCategories = async () => {
+        try {
+          const fetchedCategories = await CategoryAPI.getChildCategoriesBySlug(
+            slug
+          )
+          if (fetchedCategories.data && fetchedCategories.data.length > 0) {
+            setCategories(fetchedCategories.data) // Lưu danh mục con nếu có dữ liệu
+          } else {
+            setCategories([]) // Không có danh mục con thì đặt danh mục rỗng
+          }
+        } catch (error) {
+          console.error("Error fetching categories:", error)
+          setCategories([]) // Nếu có lỗi trong quá trình fetch, cũng đặt danh mục rỗng
+        }
+      }
+
+      fetchCategories()
+    } else {
+      setCategories([]) // Nếu slug là null, không hiển thị danh mục
+    }
+  }, [slug])
+
+  // Set default selected category if child is provided
+  useEffect(() => {
+    if (child && categories.length > 0) {
+      const defaultCategory = categories.find(
+        (category) => category.slug === child
+      )
+      if (defaultCategory) {
+        setFilterInputs((prevState) => ({
+          ...prevState,
+          "clothes-category": [slug, defaultCategory.slug], // Set mảng category với slug mặc định và giá trị slug đã chọn
+        }))
+      }
+    }
+  }, [child, categories])
+
+  const onInputChange = (e) => {
+    const { type, id, name } = e.target
+    const value = id.replace(/^(color-|size-)/, "")
+
+    if (type === "radio") {
+      // Khi chọn radio button cho category, lưu cả slug và giá trị đã chọn
+      setFilterInputs((prevState) => {
+        const updatedSelection = [slug, value] // Cập nhật categorySlugs với slug mặc định và giá trị đã chọn
+        onFilterChange({
+          categorySlugs: updatedSelection, // Truyền vào filterParams.categorySlugs
+        })
+        return { ...prevState, [name]: updatedSelection }
+      })
+    } else if (type === "checkbox") {
+      // Xử lý khi chọn checkbox cho size hoặc màu
+      setFilterInputs((prevState) => {
+        const currentSelection = prevState[name] || []
+        let updatedSelection
+
+        if (currentSelection.includes(value)) {
+          updatedSelection = currentSelection.filter((x) => x !== value)
+        } else {
+          updatedSelection = [...currentSelection, value]
+        }
+
+        // Truyền giá trị mới vào filterParams với tên thuộc tính chính xác
+        if (name === "clothes-category") {
+          onFilterChange({
+            categorySlugs: updatedSelection, // Cập nhật filterParams.categorySlugs
           })
-        : setFilterInputs({
-            ...filterInputs,
-            [name]: [...filterInputs[name], value],
-          }) // If item doesn't exists in array > add it to input group
-      : setFilterInputs({ ...filterInputs, [name]: [value] }) // If input group doesn't exists > create input group and add value
+        } else if (name === "colour") {
+          onFilterChange({
+            colorNames: updatedSelection, // Cập nhật filterParams.colorNames
+          })
+        } else if (name === "size") {
+          // Lấy tên size từ ID và truyền vào filterParams.sizeNames
+          const selectedSizes = sizes
+            .filter((size) => updatedSelection.includes(size.id.toString()))
+            .map((size) => size.name)
+          onFilterChange({
+            sizeNames: selectedSizes, // Cập nhật filterParams.sizeNames
+          })
+        }
+
+        return { ...prevState, [name]: updatedSelection }
+      })
+    }
   }
 
-  // Checkbox filter component
-  const CheckboxesFilter = ({ data }) => (
+  // Radio filter component for categories
+  const RadioFilter = ({ data, name }) => (
     <Form className={top ? "" : "mt-4 mt-lg-0"}>
       {data.map((item) => (
-        <div key={item.value} className="mb-1">
+        <div key={item.slug} className="mb-1">
           <Form.Check
-            type="checkbox"
-            name={item.name}
-            id={item.value}
-            label={
-              <React.Fragment>
-                {item.label} <small>({item.productcount})</small>
-              </React.Fragment>
-            }
-            checked={
-              filterInputs[item.name]
-                ? filterInputs[item.name].includes(item.value)
-                : ""
-            }
-            onChange={(e) => onInputChange(e)}
+            type="radio"
+            name={name}
+            id={item.slug}
+            label={item.name}
+            checked={filterInputs[name]?.includes(item.slug)}
+            onChange={onInputChange}
           />
         </div>
       ))}
@@ -86,138 +165,100 @@ const Filters = ({ top }) => {
       }`}
     >
       {colors.map((color) => (
-        <li key={color.value} className="list-inline-item">
+        <li key={color.id} className="list-inline-item">
           <Form.Label
             className={`btn-colour ${
-              filterInputs["colour"] &&
-              filterInputs["colour"].some((item) => item === color.value)
-                ? "active"
-                : ""
+              filterInputs["colour"]?.includes(color.name) ? "active" : ""
             }`}
-            htmlFor={color.value}
-            style={{ backgroundColor: color.color }}
+            htmlFor={`color-${color.name}`}
+            style={{ backgroundColor: color.code.trim() }}
           />
           <Form.Check
             className="input-invisible"
             type="checkbox"
             name="colour"
-            id={color.value}
-            checked={
-              filterInputs["colour"]
-                ? filterInputs["colour"].includes(color.value)
-                : ""
-            }
-            onChange={(e) => onInputChange(e)}
+            id={`color-${color.name}`}
+            checked={filterInputs["colour"]?.includes(color.name) || false}
+            onChange={onInputChange}
           />
         </li>
       ))}
     </ul>
   )
 
-  // Sizes filter component
+  // Size filter component
   const SizeFilter = () => (
     <Form className={top ? "" : "mt-4 mt-lg-0"}>
       {sizes.map((size) => (
-        <div key={size.value} className="mb-1">
+        <div key={size.id} className="mb-1">
           <Form.Check
-            type="radio"
+            type="checkbox"
             name="size"
-            id={size.value}
+            id={`size-${size.id}`}
             label={size.name}
             checked={
-              filterInputs["size"] ? filterInputs["size"] === size.value : ""
+              filterInputs["size"]?.includes(size.id.toString()) || false
             }
-            onChange={(e) => onInputChange(e)}
+            onChange={onInputChange}
           />
         </div>
       ))}
     </Form>
   )
 
-  // Filters for sidebar
-  const sidebarFilters = [
-    {
-      component: <PriceSlider top={top} />,
-      title: "Filter by price",
-      subtitle: "Price",
-    },
-    {
-      component: <CheckboxesFilter data={brands} />,
-      title: "Filter by brand",
-      subtitle: "Brand",
-    },
-    {
-      component: <SizeFilter />,
-      title: "Filter by size",
-      subtitle: "Size",
-    },
-    {
-      component: <ColorsFilter />,
-      title: "Filter by colour",
-      subtitle: "Colour",
-    },
-  ]
-
   // Filters above product
   const topFilters = [
-    {
-      component: <CheckboxesFilter data={brands} />,
-      title: "Filter by brand",
-      subtitle: "Brand",
-    },
+    ...(categories.length > 0
+      ? [
+          {
+            component: (
+              <RadioFilter data={categories} name="clothes-category" />
+            ),
+            title: "Filter by category",
+            subtitle: "Danh mục",
+          },
+        ]
+      : []),
     {
       component: <SizeFilter />,
       title: "Filter by size",
-      subtitle: "Size",
+      subtitle: "Kích cỡ",
     },
     [
       {
-        component: <PriceSlider top={top} />,
+        component: <PriceSlider top={top} onFilterChange={onFilterChange} />,
         title: "Filter by price",
-        subtitle: "Price",
+        subtitle: "Khoảng giá",
       },
       {
         component: <ColorsFilter />,
         title: "Filter by colour",
-        subtitle: "Colour",
+        subtitle: "Màu sắc",
       },
     ],
-    {
-      component: <CheckboxesFilter data={tags} />,
-      title: "Filter by tag",
-      subtitle: "Tags",
-    },
   ]
 
-  // If top prop true, set filters above products else to sidebar
   const filtersBlocks = top ? topFilters : sidebarFilters
 
   return filtersBlocks.map((filter, index) =>
-    top ? ( // If top filters position
+    top ? (
       <Col key={index} sm="6" xl="3" className="mb-3">
-        {Array.isArray(filter) ? ( // If multiple filters in same column
+        {Array.isArray(filter) ? (
           filter.map((item) => (
             <React.Fragment key={item.subtitle}>
               <h6 className="text-dark">{item.subtitle}</h6>
-
-              {/* FILTER */}
               {item.component}
-              {/* END FILTER */}
             </React.Fragment>
           ))
         ) : (
           <React.Fragment>
             <h6 className="text-dark">{filter.subtitle}</h6>
-
-            {/* FILTER */}
             {filter.component}
-            {/* END FILTER */}
           </React.Fragment>
         )}
       </Col>
     ) : (
       <div key={index} className="sidebar-block px-3 px-lg-0">
-        {/* COLLAPSE TOGGLE */}
         <a
           className="d-lg-none block-toggler"
           data-toggle="collapse"
@@ -227,21 +268,14 @@ const Filters = ({ top }) => {
           {filter.title}
           <span className="block-toggler-icon" />
         </a>
-        {/* END COLLAPSE TOGGLE */}
-
-        {/* COLLAPSE */}
         <Collapse in={collapse[filter.subtitle]} className="expand-lg">
           <div>
             <h5 className="sidebar-heading d-none d-lg-block">
               {filter.subtitle}
             </h5>
-
-            {/* FILTER */}
             {filter.component}
-            {/* END FILTER */}
           </div>
         </Collapse>
-        {/* END COLLAPSE */}
       </div>
     )
   )

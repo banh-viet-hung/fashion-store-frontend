@@ -17,17 +17,6 @@
                 "name": "Tất cả",
                 "link": "/category",
                 "parent": "Home"
-              },
-              {
-                "name": "Sản phẩm mới",
-                "link": "/sanphammoi",
-                "parent": "Home",
-                "new": true
-              },
-              {
-                "name": "Bán chạy nhất",
-                "link": "/banchaynhat",
-                "parent": "Home"
               }
             ]
           }
@@ -139,6 +128,16 @@
                 "name": "Túi",
                 "link": "/category/tui",
                 "new": true
+              },
+              {
+                "name": "Ví/Thắt lưng",
+                "link": "/category/vi-that-lung",
+                "new": true
+              },
+              {
+                "name": "Ly/Cốc",
+                "link": "/category/ly-coc",
+                "new": true
               }
             ]
           }
@@ -154,15 +153,15 @@
         "links": [
           {
             "name": "Tất cả",
-            "link": "/category/quan-lot"
+            "link": "/category/do-lot"
           },
           {
             "name": "Brief (Tam giác)",
-            "link": "/category/quan-lot-brief-tam-giac"
+            "link": "/category/brief-tam-giac"
           },
           {
             "name": "Trunk (Boxer)",
-            "link": "/category/quan-lot-trunk-boxer"
+            "link": "/category/trunk-boxer"
           }
         ]
       },
@@ -197,31 +196,27 @@
         "links": [
           {
             "name": "Tất cả",
-            "link": "/category/the-thao"
+            "link": "/category/do-the-thao"
           },
           {
-            "name": "Sản phẩm mới",
-            "link": "/sanphammoi"
-          },
-          {
-            "name": "Áo T-shirt",
-            "link": "/category/ao-the-thao-ao-thun-the-thao"
+            "name": "Áo thun",
+            "link": "/category/do-the-thao?child=ao-thun"
           },
           {
             "name": "Áo Tanktop",
-            "link": "/category/ao-the-thao-ao-tank-top"
+            "link": "/category/do-the-thao?child=ao-tank-top"
           },
           {
             "name": "Áo polo",
-            "link": "/category/ao-the-thao-ao-polo-the-thao"
+            "link": "/category/do-the-thao?child=ao-polo"
           },
           {
             "name": "Áo dài tay",
-            "link": "/category/ao-dai-tay"
+            "link": "/category/do-the-thao?child=ao-dai-tay"
           },
           {
             "name": "Áo khoác",
-            "link": "/category/ao-khoac"
+            "link": "/category/do-the-thao?child=ao-khoac"
           }
         ]
       },
@@ -229,23 +224,23 @@
         "links": [
           {
             "name": "Quần shorts",
-            "link": "/category/quan-shorts"
+            "link": "/category/do-the-thao?child=quan-shorts"
           },
           {
             "name": "Quần Joggers",
-            "link": "/category/quan-joggers"
+            "link": "/category/do-the-thao?child=quan-joggers"
           },
           {
             "name": "Quần dài",
-            "link": "/category/quan-dai"
+            "link": "/category/do-the-thao?child=quan-dai"
           },
           {
             "name": "Quần bơi",
-            "link": "/category/quan-boi"
+            "link": "/category/do-the-thao?child=quan-boi"
           },
           {
             "name": "Phụ kiện",
-            "link": "/category/phu-kien"
+            "link": "/category/do-the-thao?child=phu-kien"
           }
         ]
       },
@@ -266,56 +261,51 @@
         "link": "/category/mac-hang-ngay"
       },
       {
-        "name": "Sản phẩm mới",
-        "link": "/sanphammoi"
-      },
-      {
-        "name": "Áo T-shirt",
-        "link": "/category/ao-thun"
+        "name": "Áo thun",
+        "link": "/category/mac-hang-ngay?child=ao-thun"
       },
       {
         "name": "Áo Tanktop",
-        "link": "/category/ao-tank-top"
+        "link": "/category/mac-hang-ngay?child=ao-tank-top"
       },
       {
         "name": "Áo polo",
-        "link": "/category/ao-polo"
+        "link": "/category/mac-hang-ngay?child=ao-polo"
       },
       {
         "name": "Áo sơ mi",
-        "link": "/category/ao-so-mi"
+        "link": "/category/mac-hang-ngay?child=ao-so-mi"
       },
       {
         "name": "Áo khoác",
-        "link": "/category/ao-khoac"
+        "link": "/category/mac-hang-ngay?child=ao-khoac"
       },
       {
         "name": "Áo dài tay",
-        "link": "/category/ao-dai-tay"
+        "link": "/category/mac-hang-ngay?child=ao-dai-tay"
       },
       {
         "divider": true
       },
       {
         "name": "Quần shorts",
-        "link": "/category/quan-shorts",
-        "divider": true
+        "link": "/category/mac-hang-ngay?child=quan-shorts"
       },
       {
         "name": "Quần Joggers",
-        "link": "/category/quan-joggers"
+        "link": "/category/mac-hang-ngay?child=quan-joggers"
       },
       {
         "name": "Quần dài",
-        "link": "/category/quan-dai"
+        "link": "/category/mac-hang-ngay?child=quan-dai"
       },
       {
         "name": "Quần jeans",
-        "link": "/category/quan-jeans"
+        "link": "/category/mac-hang-ngay?child=quan-jeans"
       },
       {
         "name": "Phụ kiện",
-        "link": "/category/phu-kien"
+        "link": "/category/mac-hang-ngay?child=phu-kien"
       }
     ]
   }
