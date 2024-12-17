@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react"
 import { getUserFromLocalStorage } from "../utils/authUtils"
 import { toast } from "react-toastify"
+import { useRouter } from "next/router"
 import axios from "axios"
 const BASE_URL = "http://localhost:8080/user" // Đảm bảo đúng URL API của bạn
 
@@ -8,6 +9,7 @@ const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const router = useRouter()
 
   useEffect(() => {
     const userData = getUserFromLocalStorage()
@@ -27,6 +29,7 @@ export const UserProvider = ({ children }) => {
             // Nếu tài khoản bị khóa
             toast.error(response.data.message) // Hiển thị thông báo tài khoản bị khóa
             logout() // Đăng xuất nếu tài khoản bị khóa
+            router.push("/account/login") // Điều hướng đến trang login
           }
         } catch (error) {
           // Xử lý lỗi khi không thể kiểm tra trạng thái tài khoản (lỗi mạng, API)
@@ -57,11 +60,11 @@ export const UserProvider = ({ children }) => {
 
   // Hàm logout
   const logout = () => {
-    setUser(null)
     localStorage.removeItem("token")
     localStorage.removeItem("email")
     localStorage.removeItem("role")
     localStorage.removeItem("expiration")
+    setUser(null)
   }
 
   return (

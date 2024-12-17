@@ -113,6 +113,7 @@ const CustomerAccount = () => {
 
   useEffect(() => {
     const userData = getUserFromLocalStorage()
+    console.log("User data from local storage:", userData)
     if (userData) {
       const fetchUserInfo = async () => {
         try {

@@ -121,7 +121,10 @@ const CustomerOrders = () => {
                           </Badge>
                         </td>
                         <td className="py-5 align-middle">
-                          <Link href={`/order-detail/?order-id=${order.id}`} passHref>
+                          <Link
+                            href={`/order-detail/?order-id=${order.id}`}
+                            passHref
+                          >
                             <Button variant="outline-dark" size="sm">
                               Xem chi tiết
                             </Button>
