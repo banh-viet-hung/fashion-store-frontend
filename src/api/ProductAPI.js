@@ -88,7 +88,7 @@ export const getFilteredProducts = async ({
       colorNames: colorNames.length > 0 ? colorNames : null,
       minPrice,
       maxPrice,
-      page,
+      page, 
       size,
       sortBy,
     })

@@ -199,11 +199,17 @@ const CategoryMasonry = ({ title, slug }) => {
           </Row>
         )}
 
-        <PaginationComponent
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
+        {loading ? (
+          <div className="loading-container text-center py-5">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
+          <PaginationComponent
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
     </Container>
   )

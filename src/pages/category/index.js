@@ -112,12 +112,17 @@ const Category = () => {
             </Row>
           )}
 
-          {/* Pagination component */}
-          <PaginationComponent
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          {loading ? (
+            <div className="loading-container text-center py-5">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          ) : (
+            <PaginationComponent
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          )}
         </Col>
 
         <Col xl="3" lg="4" className="sidebar pe-xl-5 order-lg-1">

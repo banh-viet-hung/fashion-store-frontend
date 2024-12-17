@@ -4,7 +4,7 @@ import SelectBox from "./SelectBox"
 const SortBy = (props) => {
   const options = [
     {
-      value: null,
+      value: "", // Thay null bằng chuỗi rỗng
       label: "Mặc định",
     },
     {
