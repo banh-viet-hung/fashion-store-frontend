@@ -131,7 +131,7 @@ const Header = ({ header }) => {
       {/* NAV BAR */}
       <Navbar
         expand="lg"
-        style={{ zIndex: "11" }}
+        style={{ zIndex: "9999" }}
         bg={
           header && header.transparentNavbar
             ? collapse
