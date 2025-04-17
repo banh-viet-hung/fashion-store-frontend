@@ -83,7 +83,20 @@ const Checkout4 = () => {
     const modifiedFormInputs = replaceNullWithEmptyString(formInputs)
 
     try {
-      const response = await createOrder(modifiedFormInputs, token)
+      // Tạo orderData với couponCode nếu có
+      const orderData = {
+        address: modifiedFormInputs.address,
+        shipping: modifiedFormInputs.shipping,
+        payment: modifiedFormInputs.payment,
+        cart: modifiedFormInputs.cart,
+      }
+      
+      // Thêm couponCode vào orderData nếu có
+      if (modifiedFormInputs.couponCode) {
+        orderData.couponCode = modifiedFormInputs.couponCode
+      }
+      
+      const response = await createOrder(orderData, token)
 
       if (response.success) {
         // Nếu thanh toán là COD, giữ nguyên như hiện tại

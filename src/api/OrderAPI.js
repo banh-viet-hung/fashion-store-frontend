@@ -3,6 +3,17 @@ import axios from "axios"
 
 const BASE_URL = "http://localhost:8080/orders"
 
+/**
+ * Creates a new order with the provided order data
+ * @param {Object} orderData - The order data
+ * @param {Object} orderData.address - The shipping address
+ * @param {Object} orderData.shipping - The shipping method information
+ * @param {string} orderData.payment - The payment method (COD, INTCARD, VNBANK)
+ * @param {Array} orderData.cart - The cart items
+ * @param {string} [orderData.couponCode] - Optional coupon code for discounts
+ * @param {string} [token] - Optional authentication token
+ * @returns {Promise<Object>} The response from the server
+ */
 export const createOrder = async (orderData, token = null) => {
   try {
     const headers = token
