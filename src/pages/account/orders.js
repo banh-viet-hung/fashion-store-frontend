@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Container, Row, Col, Button, Badge, Table } from "react-bootstrap"
+import { Container, Row, Col, Button, Badge, Table, Card, Spinner } from "react-bootstrap"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import CustomerSidebar from "../../components/CustomerSidebar"
@@ -16,11 +16,19 @@ export async function getStaticProps() {
 }
 
 const statusClassMapping = {
-  "Đã hủy": "bg-danger text-white", // Màu đỏ cho "Đã hủy"
-  "Đã giao": "bg-success text-white", // Màu xanh lá cho "Đã giao"
-  "Chờ giao hàng": "bg-info text-white", // Màu xanh dương cho "Chờ giao hàng"
-  "Chờ xác nhận": "bg-warning text-dark", // Màu vàng cho "Chờ xác nhận"
-  "Chờ lấy hàng": "bg-primary text-white", // Màu xanh dương đậm cho "Chờ lấy hàng"
+  "Đã hủy": "bg-danger",
+  "Đã giao": "bg-success",
+  "Chờ giao hàng": "bg-info", 
+  "Chờ xác nhận": "bg-warning",
+  "Chờ lấy hàng": "bg-primary",
+}
+
+const statusIcons = {
+  "Đã hủy": "fas fa-times-circle",
+  "Đã giao": "fas fa-check-circle",
+  "Chờ giao hàng": "fas fa-truck", 
+  "Chờ xác nhận": "fas fa-clock",
+  "Chờ lấy hàng": "fas fa-box",
 }
 
 const CustomerOrders = () => {
@@ -67,82 +75,129 @@ const CustomerOrders = () => {
     }
   }, [isAuthenticated, user])
 
-  // Nếu chưa xác định trạng thái đăng nhập hoặc đang tải, có thể hiển thị loading
+  // Render loading state
   if (!isAuthenticated || loading) {
-    return <Container className="py-6 text-center">Đang tải...</Container>
+    return (
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" variant="primary" className="mb-3" />
+          <p className="text-muted">Đang tải dữ liệu đơn hàng...</p>
+        </div>
+      </Container>
+    )
   }
 
   return (
-    <React.Fragment>
-      <section className="hero py-6">
-        <Container>
-          <div className="hero-content">
-            <h1 className="hero-heading">Danh sách đơn hàng</h1>
-            <div>
-              <p className="text-muted">Danh sách các đơn hàng của bạn</p>
+    <div className="bg-light min-vh-100 py-5">
+      <Container>
+        <Row className="mb-5">
+          <Col md={12}>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h2 className="fw-bold mb-1">Đơn hàng của bạn</h2>
+                <p className="text-muted mb-0">Quản lý và theo dõi tất cả đơn hàng của bạn</p>
+              </div>
             </div>
-          </div>
-        </Container>
-      </section>
-      <section className="pb-6">
-        <Container>
-          <Row>
-            <Col lg="8" xl="9">
-              {error ? (
-                <div className="alert alert-danger">{error}</div> // Hiển thị thông báo lỗi nếu có
-              ) : orders.length === 0 ? (
-                <div className="alert alert-info">Không có đơn hàng nào</div> // Thông báo khi không có đơn hàng
-              ) : (
-                <Table hover responsive>
-                  <thead className="bg-light">
-                    <tr>
-                      <th className="py-4 ps-4 text-sm border-0">Mã đơn #</th>
-                      <th className="py-4 text-sm border-0">Ngày đặt hàng</th>
-                      <th className="py-4 text-sm border-0">Tổng tiền</th>
-                      <th className="py-4 text-sm border-0">Trạng thái</th>
-                      <th className="py-4 text-sm border-0">Hành động</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map((order) => (
-                      <tr key={order.id}>
-                        <th className="ps-4 py-5 align-middle"># {order.id}</th>
-                        <td className="py-5 align-middle">
-                          {new Date(order.orderDate).toLocaleDateString()}
-                        </td>
-                        <td className="py-5 align-middle">
-                          {order.total.toLocaleString()} đ
-                        </td>
-                        <td className="py-5 align-middle">
-                          <Badge
-                            className={statusClassMapping[order.currentStatus]}
-                          >
-                            {order.currentStatus}
-                          </Badge>
-                        </td>
-                        <td className="py-5 align-middle">
-                          <Link
-                            href={`/order-detail/?order-id=${order.id}`}
-                            passHref
-                          >
-                            <Button variant="outline-dark" size="sm">
-                              Xem chi tiết
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              )}
-            </Col>
-            <Col xl="3" lg="4" className="mb-5">
+          </Col>
+        </Row>
+        
+        <Row>
+          <Col lg="8" xl="9" className="order-lg-1 mb-5">
+            <Card className="border-0 shadow-sm">
+              <Card.Body className="p-0">
+                {error ? (
+                  <div className="text-center p-5">
+                    <div className="mb-3 text-danger">
+                      <i className="fas fa-exclamation-circle fa-3x"></i>
+                    </div>
+                    <h5>Đã xảy ra lỗi</h5>
+                    <p className="text-muted">{error}</p>
+                    <Button 
+                      variant="outline-primary" 
+                      onClick={() => window.location.reload()}
+                      size="sm"
+                    >
+                      <i className="fas fa-sync-alt me-2"></i>
+                      Tải lại
+                    </Button>
+                  </div>
+                ) : orders.length === 0 ? (
+                  <div className="text-center p-5">
+                    <div className="mb-4">
+                      <i className="fas fa-shopping-bag fa-4x text-muted opacity-50"></i>
+                    </div>
+                    <h4>Chưa có đơn hàng nào</h4>
+                    <p className="text-muted">Bạn chưa có đơn hàng nào. Hãy khám phá các sản phẩm của chúng tôi.</p>
+                    <Link href="/products" passHref>
+                      <Button variant="primary">
+                        Bắt đầu mua sắm
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <Table hover className="mb-0">
+                      <thead>
+                        <tr className="bg-light">
+                          <th className="py-3 ps-4 fw-medium text-uppercase text-muted small">Mã đơn</th>
+                          <th className="py-3 fw-medium text-uppercase text-muted small">Ngày đặt</th>
+                          <th className="py-3 fw-medium text-uppercase text-muted small">Tổng tiền</th>
+                          <th className="py-3 fw-medium text-uppercase text-muted small">Trạng thái</th>
+                          <th className="py-3 fw-medium text-uppercase text-muted small text-end pe-4">Chi tiết</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders.map((order) => (
+                          <tr key={order.id} className="border-bottom">
+                            <td className="ps-4 py-4 align-middle fw-medium">
+                              #{order.id}
+                            </td>
+                            <td className="py-4 align-middle">
+                              {new Date(order.orderDate).toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                              })}
+                            </td>
+                            <td className="py-4 align-middle fw-medium">
+                              {order.total.toLocaleString()} ₫
+                            </td>
+                            <td className="py-4 align-middle">
+                              <Badge 
+                                className={`${statusClassMapping[order.currentStatus]} rounded-pill px-3 py-2 d-inline-flex align-items-center`}
+                              >
+                                <i className={`${statusIcons[order.currentStatus]} me-1`}></i>
+                                <span>{order.currentStatus}</span>
+                              </Badge>
+                            </td>
+                            <td className="py-4 align-middle text-end pe-4">
+                              <Link
+                                href={`/order-detail/?order-id=${order.id}`}
+                                passHref
+                              >
+                                <Button variant="link" className="p-0 text-decoration-none">
+                                  Xem chi tiết <i className="fas fa-chevron-right ms-1 small"></i>
+                                </Button>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+          
+          <Col xl="3" lg="4" className="order-lg-2">
+            <div className="sticky-top" style={{ top: '20px' }}>
               <CustomerSidebar />
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </React.Fragment>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   )
 }
 
