@@ -172,6 +172,11 @@ const CustomerSidebar = () => {
             text: "Lịch sử đơn hàng",
           },
           {
+            href: "/account/feedbacks",
+            icon: "quality-1",
+            text: "Đánh giá sản phẩm",
+          },
+          {
             href: "/account/info",
             icon: "male-user-1",
             text: "Thông tin tài khoản",

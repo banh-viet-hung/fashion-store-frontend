@@ -1,0 +1,576 @@
+/* Styles chung */
+.pageBackground {
+  background-color: #f8f9fa;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  color: #212529;
+  position: relative;
+  display: inline-block;
+}
+
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: #007bff;
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+.pageSubtitle {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+/* Hiệu ứng cho các card chung */
+.statsCard,
+.tipsCard,
+.feedbacksCard,
+.feedbackCard {
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 0.5rem;
+}
+
+.statsCard:hover,
+.tipsCard:hover,
+.feedbacksCard:hover,
+.feedbackCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Card thống kê */
+.statsCard {
+  background: linear-gradient(to right, #ffffff, #f8f9fa);
+}
+
+.statsItem {
+  transition: all 0.3s;
+  border-radius: 0.5rem;
+  min-width: 120px;
+}
+
+.statsItem:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.statsIcon {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  background: rgba(0, 123, 255, 0.1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.8rem;
+}
+
+/* Card tips */
+.tipsCard {
+  border-left: 4px solid #007bff !important;
+}
+
+.tipsIcon {
+  font-size: 1.5rem;
+  background: rgba(0, 123, 255, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tipsList li {
+  position: relative;
+  padding-left: 5px;
+}
+
+.tipsList li::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #007bff;
+}
+
+/* Card danh sách feedback */
+.feedbacksCard {
+  background-color: #ffffff;
+  position: relative;
+}
+
+.listIcon {
+  font-size: 1.3rem;
+  background: rgba(255, 193, 7, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card feedback */
+.feedbackCard {
+  overflow: hidden;
+  transition: all 0.3s;
+  border-radius: 0.75rem;
+}
+
+.feedbackCard:hover {
+  border-color: rgba(0, 123, 255, 0.3);
+  background-color: #ffffff;
+}
+
+.productImage {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+}
+
+.productImage:hover {
+  transform: scale(1.05);
+}
+
+.productName {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.productAttribute {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: rgba(108, 117, 125, 0.1);
+  font-size: 0.85rem;
+}
+
+.pendingBadge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.actionButton {
+  border-radius: 20px;
+  padding: 6px 15px;
+  font-weight: 500;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.commentBox {
+  background-color: #f8f9fa;
+  border-left: 3px solid #007bff;
+  margin-top: 10px;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.commentBox:hover {
+  background-color: #f1f4f9;
+}
+
+.disabledButton {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Empty state */
+.emptyState {
+  padding: 40px 20px;
+}
+
+.emptyStateIcon {
+  font-size: 3.5rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+  background: rgba(108, 117, 125, 0.1);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.emptyStateButton {
+  border-radius: 30px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.emptyStateButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Alerts */
+.alert {
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  animation: alertFadeIn 0.4s ease;
+}
+
+.alertIconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.successIcon {
+  font-size: 1.6rem;
+  color: #28a745;
+  filter: drop-shadow(0 0 2px rgba(40, 167, 69, 0.6));
+}
+
+.errorIcon {
+  font-size: 1.6rem;
+  color: #dc3545;
+}
+
+.alertTitle {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 3px;
+}
+
+.successAlert {
+  background-color: #e8f5e9;
+  border-left: 4px solid #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: #1e7e34;
+  position: relative;
+  overflow: hidden;
+  animation: successPulse 2s infinite;
+  z-index: 10;
+}
+
+.modalSuccessClosing .successAlert {
+  animation: successAlertGrow 1.2s ease forwards;
+  box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+  border-color: rgba(40, 167, 69, 0.5);
+}
+
+@keyframes successAlertGrow {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.successAlert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg, 
+    rgba(40, 167, 69, 0) 0%, 
+    rgba(40, 167, 69, 0.1) 50%, 
+    rgba(40, 167, 69, 0) 100%
+  );
+  animation: successSweep 2s infinite;
+  z-index: 1;
+}
+
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(40, 167, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
+}
+
+@keyframes successSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes alertFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.warningAlert {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #d39e00;
+}
+
+/* Loading container */
+.loadingContainer {
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+}
+
+/* Modal styles */
+.feedbackModal {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.modalContent {
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modalFadeIn .modalContent {
+  animation: modalFadeIn 0.3s ease-in-out;
+}
+
+.modalFadeOut .modalContent {
+  animation: modalFadeOut 0.3s ease-in-out;
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+}
+
+.modalSuccessClosing .modalContent {
+  animation: modalSuccessGlow 1.2s ease-in-out forwards;
+}
+
+.formSuccessClosing {
+  opacity: 0.7;
+  filter: blur(1px);
+  transition: all 1s ease;
+  pointer-events: none;
+}
+
+@keyframes modalSuccessGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
+  20% {
+    box-shadow: 0 0 20px 10px rgba(40, 167, 69, 0.2);
+  }
+  80% {
+    box-shadow: 0 0 20px 10px rgba(40, 167, 69, 0.2);
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+.modalHeader {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1.2rem 1.5rem;
+}
+
+.modalTitle {
+  font-weight: 600;
+  color: #212529;
+  font-size: 1.3rem;
+}
+
+.modalBody {
+  padding: 1.5rem;
+}
+
+.productInfoBox {
+  background-color: #f8f9fa;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.productModalImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.productModalAttribute {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background-color: rgba(108, 117, 125, 0.1);
+  font-size: 0.9rem;
+}
+
+.feedbackForm {
+  margin-top: 20px;
+}
+
+.formLabel {
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+.ratingInputContainer {
+  background-color: rgba(0, 123, 255, 0.03);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 123, 255, 0.1);
+}
+
+.starIcon {
+  cursor: pointer;
+}
+
+.commentTextarea {
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.commentTextarea:focus {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  border-color: rgba(0, 123, 255, 0.5);
+}
+
+.cancelButton, .submitButton {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.submitButton {
+  padding: 8px 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom tooltip */
+.customTooltip {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+}
+
+/* Indicator cho việc cập nhật danh sách */
+.listOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  border-radius: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .statsItem {
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  .productInfoBox {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .productModalImage {
+    margin-bottom: 15px;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.feedbackList > * {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Staggered animation for multiple cards */
+.feedbackList > *:nth-child(1) { animation-delay: 0.05s; }
+.feedbackList > *:nth-child(2) { animation-delay: 0.1s; }
+.feedbackList > *:nth-child(3) { animation-delay: 0.15s; }
+.feedbackList > *:nth-child(4) { animation-delay: 0.2s; }
+.feedbackList > *:nth-child(5) { animation-delay: 0.25s; }
+.feedbackList > *:nth-child(6) { animation-delay: 0.3s; }
+.feedbackList > *:nth-child(7) { animation-delay: 0.35s; }
+.feedbackList > *:nth-child(8) { animation-delay: 0.4s; }
+.feedbackList > *:nth-child(9) { animation-delay: 0.45s; }
+.feedbackList > *:nth-child(10) { animation-delay: 0.5s; } 
