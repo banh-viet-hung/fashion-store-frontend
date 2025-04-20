@@ -15,11 +15,10 @@ import {
   getProductsWithPagination,
   getProductById,
   getImagesByProductId,
-  getFeedbackByProductId,
   getSizesByProductId,
   getColorsByProductId,
 } from "../../api/ProductAPI"
-import { getUserByFeedbackId } from "../../api/FeedbackAPI"
+import { getProductFeedbacksWithUser } from "../../api/FeedbackAPI"
 import Icon from "../../components/Icon"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
@@ -93,22 +92,16 @@ const ProductPage = ({ productData }) => {
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const feedbackData = await getFeedbackByProductId(productData.id)
-        const feedbacksWithUser = await Promise.all(
-          feedbackData.map(async (feedback) => {
-            const userResponse = await getUserByFeedbackId(feedback.id)
-            return {
-              id: feedback.id,
-              rating: feedback.rating,
-              comment: feedback.comment,
-              createdAt: feedback.createdAt,
-              user: userResponse,
-            }
-          })
-        )
-        setFeedbacks(feedbacksWithUser)
+        const response = await getProductFeedbacksWithUser(productData.id)
+        if (response.success) {
+          setFeedbacks(response.data || [])
+        } else {
+          console.error("Error in feedback response:", response.message)
+          setFeedbacks([])
+        }
       } catch (error) {
         console.error("Error fetching feedbacks:", error)
+        setFeedbacks([])
       }
     }
     fetchFeedbacks()

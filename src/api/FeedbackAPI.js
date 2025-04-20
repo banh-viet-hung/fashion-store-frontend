@@ -45,3 +45,14 @@ export const updateFeedback = async (token, feedbackId, feedbackData) => {
     throw error
   }
 }
+
+// Lấy tất cả đánh giá của sản phẩm kèm thông tin người dùng trong một lần gọi API
+export const getProductFeedbacksWithUser = async (productId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/product/${productId}`)
+    return response.data
+  } catch (error) {
+    console.error("Error fetching product feedbacks with user data:", error)
+    throw error
+  }
+}
