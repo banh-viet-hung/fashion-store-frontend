@@ -88,7 +88,7 @@ export const getFilteredProducts = async ({
       colorNames: colorNames.length > 0 ? colorNames : null,
       minPrice,
       maxPrice,
-      page, 
+      page,
       size,
       sortBy,
     })
@@ -96,5 +96,16 @@ export const getFilteredProducts = async ({
   } catch (error) {
     console.error("Error fetching filtered products:", error)
     throw error
+  }
+}
+
+// Lấy danh mục của sản phẩm theo ID
+export const getCategoriesByProductId = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${id}/categories`)
+    return response.data._embedded.category || []
+  } catch (error) {
+    console.error("Error fetching product categories:", error)
+    return []
   }
 }

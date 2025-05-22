@@ -17,7 +17,7 @@ import Stars from "./Stars"
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
-import { faHeart, faKissWinkHeart } from "@fortawesome/free-regular-svg-icons"
+import { faHeart, faHeartBroken } from "@fortawesome/free-solid-svg-icons"
 import Image from "./Image"
 import "swiper/css"
 import moment from "moment"
@@ -26,6 +26,7 @@ import {
   getFeedbackByProductId,
   getSizesByProductId,
   getColorsByProductId,
+  getCategoriesByProductId,
 } from "../api/ProductAPI" // Import API
 import { getProductQuantity } from "../api/ProductVariantAPI" // Import API
 import { useForm } from "react-hook-form"
@@ -60,6 +61,7 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
   const [colors, setColors] = useState([]) // State to store color options
   const [activeSize, setActiveSize] = useState(null) // State to store selected size
   const [activeColor, setActiveColor] = useState(null) // State to store selected color
+  const [categories, setCategories] = useState([]) // State to store categories
 
   const {
     register,
@@ -107,10 +109,23 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
       }
     }
 
+    const fetchCategories = async () => {
+      if (product && product.id) {
+        try {
+          const categoriesData = await getCategoriesByProductId(product.id)
+          setCategories(categoriesData)
+        } catch (error) {
+          console.error("Error fetching categories:", error)
+          setCategories([])
+        }
+      }
+    }
+
     fetchImages()
     fetchFeedbacks()
     fetchSizes()
     fetchColors()
+    fetchCategories()
   }, [product])
 
   const addToCart = async (data) => {
@@ -392,7 +407,7 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                   ) : (
                     <a href="#" onClick={removeFromWishlist}>
                       <FontAwesomeIcon
-                        icon={faKissWinkHeart}
+                        icon={faHeartBroken}
                         className="me-2"
                       />
                       Hông thích nữa
@@ -403,27 +418,22 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
               <ul className="list-unstyled">
                 <li>
                   <strong>Danh mục:</strong>{" "}
-                  <Link
-                    href={
-                      product.category
-                        ? `/${product.category[1]}`
-                        : "/category-full"
-                    }
-                  >
-                    <a onClick={toggle} className="text-muted">
-                      {product.category ? product.category[0] : "Jeans"}
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <strong>Tính năng nỗi bật:</strong>{" "}
-                  <a className="text-muted" href="#">
-                    Leisure
-                  </a>
-                  ,{" "}
-                  <a className="text-muted" href="#">
-                    Elegant
-                  </a>
+                  {categories && categories.length > 0 ? (
+                    <span>
+                      {categories.map((category, index) => (
+                        <React.Fragment key={category.id || index}>
+                          <Link href={`/category/${category.slug || ''}`}>
+                            <a onClick={toggle} className="text-muted">
+                              {category.name}
+                            </a>
+                          </Link>
+                          {index < categories.length - 1 && ", "}
+                        </React.Fragment>
+                      ))}
+                    </span>
+                  ) : (
+                    <span className="text-muted">Chưa phân loại</span>
+                  )}
                 </li>
               </ul>
             </Form>

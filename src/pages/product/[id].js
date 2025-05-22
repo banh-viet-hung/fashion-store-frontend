@@ -18,6 +18,7 @@ import {
   getImagesByProductId,
   getSizesByProductId,
   getColorsByProductId,
+  getCategoriesByProductId,
 } from "../../api/ProductAPI"
 import { getProductFeedbacksWithUser } from "../../api/FeedbackAPI"
 import Icon from "../../components/Icon"
@@ -79,7 +80,7 @@ const ProductPage = ({ productData }) => {
   const [colors, setColors] = useState([])
   const [activeSize, setActiveSize] = useState(null)
   const [activeColor, setActiveColor] = useState(null)
-  const [category, setCategory] = useState(null) // Danh mục sản phẩm
+  const [categories, setCategories] = useState([])
   const size = useWindowSize()
 
   // Kiểm tra sản phẩm đã bị xóa hay chưa
@@ -129,20 +130,30 @@ const ProductPage = ({ productData }) => {
     fetchFeedbacks()
   }, [productData.id])
 
-  // Fetch Sizes and Colors
+  // Fetch Sizes, Colors, and Categories
   useEffect(() => {
-    const fetchSizesAndColors = async () => {
+    const fetchSizesColorsAndCategories = async () => {
       const sizesData = await getSizesByProductId(productData.id)
       setSizes(sizesData)
 
       const colorsData = await getColorsByProductId(productData.id)
       setColors(colorsData)
 
-      // Set category if available from API
-      setCategory(productData.category || "Chưa có danh mục")
+      // Fetch categories for the product
+      try {
+        const categoriesData = await getCategoriesByProductId(productData.id)
+        if (categoriesData && categoriesData.length > 0) {
+          setCategories(categoriesData)
+        } else {
+          setCategories([])
+        }
+      } catch (error) {
+        console.error("Error fetching product categories:", error)
+        setCategories([])
+      }
     }
-    fetchSizesAndColors()
-  }, [productData])
+    fetchSizesColorsAndCategories()
+  }, [productData.id])
 
   // Form Validation Schema
   const schema = yup.object().shape({
@@ -613,9 +624,9 @@ const ProductPage = ({ productData }) => {
                 {/* Category */}
                 <div className="category-section">
                   <h6 className="detail-option-heading fw-bold mb-2">Danh mục</h6>
-                  {productData.categories && productData.categories.length > 0 ? (
+                  {categories && categories.length > 0 ? (
                     <div className="mt-2 d-flex flex-wrap">
-                      {productData.categories.map((category, index) => (
+                      {categories.map((category, index) => (
                         <Link href={`/category/${category.slug || ''}`} key={category.id || index}>
                           <a className="me-2 mb-2 py-1 px-3 rounded-pill bg-light text-dark" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>
                             {category.name}

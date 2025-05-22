@@ -7,7 +7,7 @@ import Image from "./Image"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClock, faCheck, faPencilAlt, faChevronDown } from "@fortawesome/free-solid-svg-icons"
 
-const ProductBottomTabs = ({ product, feedbacks }) => {
+const ProductBottomTabs = ({ product, feedbacks = [] }) => {
   const [visibleFeedbacks, setVisibleFeedbacks] = useState(2)
   const feedbackIncrement = 3
 
@@ -57,13 +57,7 @@ const ProductBottomTabs = ({ product, feedbacks }) => {
         {!feedbacks || feedbacks.length === 0 ? (
           <div className="text-center py-5 bg-white rounded shadow-sm">
             <div className="mb-3">
-              <Image
-                src="/img/no-reviews.svg"
-                alt="Chưa có đánh giá"
-                width={80}
-                height={80}
-                fallback={<div className="text-muted" style={{ fontSize: '2rem' }}>📝</div>}
-              />
+              <div className="text-muted" style={{ fontSize: '3rem' }}>📝</div>
             </div>
             <h5 style={{ color: "#6c757d" }}>Chưa có đánh giá</h5>
             <p className="text-muted small">Hãy mua và đánh giá sản phẩm này nhé!</p>
