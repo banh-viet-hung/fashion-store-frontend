@@ -27,7 +27,7 @@ export async function getStaticProps() {
 const addressSchema = yup.object().shape({
   full_name: yup.string().required("Họ và tên không được để trống"),
   phone_number: yup.string().required("Số điện thoại không được để trống"),
-  address: yup.string().required("Địa chỉ không được để trống"),
+  address: yup.string().required("Số nhà không được để trống"),
   province: yup.string().required("Tỉnh/Thành không được để trống"),
   district: yup.string().required("Quận/Huyện không được để trống"),
   ward: yup.string().required("Phường/Xã không được để trống"),
@@ -38,7 +38,7 @@ const shippingSchema = yup.object().shape({
   shipping_phone_number: yup
     .string()
     .required("Số điện thoại không được để trống"),
-  shipping_address: yup.string().required("Địa chỉ không được để trống"),
+  shipping_address: yup.string().required("Số nhà không được để trống"),
   shipping_province: yup.string().required("Tỉnh/Thành không được để trống"),
   shipping_district: yup.string().required("Quận/Huyện không được để trống"),
   shipping_ward: yup.string().required("Phường/Xã không được để trống"),
@@ -241,10 +241,10 @@ const CustomerAddresses = () => {
   const addressFields = [
     { name: "full_name", label: "Họ và tên", placeholder: "Nguyễn Văn A" },
     { name: "phone_number", label: "Số điện thoại", placeholder: "0123456789" },
-    { name: "address", label: "Địa chỉ", placeholder: "123 Đường ABC" },
-    { name: "province", label: "Tỉnh/Thành", placeholder: "Hà Nội" },
-    { name: "district", label: "Quận/Huyện", placeholder: "Quận Hoàn Kiếm" },
+    { name: "address", label: "Số nhà", placeholder: "123 Đường ABC" },
     { name: "ward", label: "Phường/Xã", placeholder: "Phường Lý Thái Tổ" },
+    { name: "district", label: "Quận/Huyện", placeholder: "Quận Hoàn Kiếm" },
+    { name: "province", label: "Tỉnh/Thành", placeholder: "Hà Nội" },
   ]
 
   const shippingFields = [
@@ -260,19 +260,23 @@ const CustomerAddresses = () => {
     },
     {
       name: "shipping_address",
-      label: "Địa chỉ",
+      label: "Số nhà",
       placeholder: "456 Đường XYZ",
     },
-    {
-      name: "shipping_province",
-      label: "Tỉnh/Thành",
-      placeholder: "TP. Hồ Chí Minh",
-    },
-    { name: "shipping_district", label: "Quận/Huyện", placeholder: "Quận 1" },
     {
       name: "shipping_ward",
       label: "Phường/Xã",
       placeholder: "Phường Bến Nghé",
+    },
+    { 
+      name: "shipping_district", 
+      label: "Quận/Huyện", 
+      placeholder: "Quận 1" },
+
+    {
+      name: "shipping_province",
+      label: "Tỉnh/Thành",
+      placeholder: "TP. Hồ Chí Minh",
     },
   ]
 
