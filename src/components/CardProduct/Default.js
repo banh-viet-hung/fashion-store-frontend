@@ -8,6 +8,11 @@ import moment from "moment"
 import { getImagesByProductId } from "../../api/ProductAPI"
 
 const CardProductDefault = ({ product, masonry, addToCart, setQuickView }) => {
+  // Nếu sản phẩm đã bị xóa, không hiển thị gì cả
+  if (product.deleted) {
+    return null
+  }
+
   const [thumbnailImages, setThumbnailImages] = useState([])
 
   // Tính toán xem sản phẩm có mới không
@@ -153,11 +158,11 @@ const CardProductDefault = ({ product, masonry, addToCart, setQuickView }) => {
         <span className="text-gray-500 text-sm">
           {isSale
             ? `${(product.salePrice ?? 0)
-                .toLocaleString("it-IT")
-                .replace(/,/g, ".")}đ`
+              .toLocaleString("it-IT")
+              .replace(/,/g, ".")}đ`
             : `${(product.price ?? 0)
-                .toLocaleString("it-IT")
-                .replace(/,/g, ".")}đ`}
+              .toLocaleString("it-IT")
+              .replace(/,/g, ".")}đ`}
         </span>
         <Stars stars={5} className="product-stars text-xs" />
       </div>

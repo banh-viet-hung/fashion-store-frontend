@@ -39,11 +39,14 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { toast } from "react-toastify"
+import { useRouter } from "next/router"
 
 // Static Generation (SSG) - Paths and Props fetching
 export async function getStaticPaths() {
   const productsData = await getProductsWithPagination(0, 1000)
-  const paths = productsData._embedded.product.map((product) => ({
+  // Lọc bỏ sản phẩm đã bị xóa
+  const activeProducts = productsData._embedded.product.filter(product => !product.deleted)
+  const paths = activeProducts.map((product) => ({
     params: { id: product.id.toString() },
   }))
 
@@ -52,6 +55,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const productData = await getProductById(params.id)
+
   return {
     props: {
       title: productData.name,
@@ -61,6 +65,7 @@ export async function getStaticProps({ params }) {
 }
 
 const ProductPage = ({ productData }) => {
+  const router = useRouter()
   const [lightBoxOpen, setLightBoxOpen] = useState(false)
   const [activeImage, setActiveImage] = useState(0)
   const [alert, setAlert] = useState(true)
@@ -76,6 +81,23 @@ const ProductPage = ({ productData }) => {
   const [category, setCategory] = useState(null) // Danh mục sản phẩm
   const [features, setFeatures] = useState([]) // Tính năng nổi bật
   const size = useWindowSize()
+
+  // Kiểm tra sản phẩm đã bị xóa hay chưa
+  if (productData && productData.deleted) {
+    return (
+      <Container fluid className="px-xl-7 pt-5 pb-3 pb-lg-6">
+        <Alert variant="danger">
+          <h4>Sản phẩm không tồn tại</h4>
+          <p>Sản phẩm này đã bị xóa hoặc không còn tồn tại.</p>
+          <div className="mt-3">
+            <Link href="/category">
+              <a className="btn btn-outline-danger">Quay lại mua sắm</a>
+            </Link>
+          </div>
+        </Alert>
+      </Container>
+    )
+  }
 
   // Fetch Product Images
   useEffect(() => {
@@ -305,11 +327,11 @@ const ProductPage = ({ productData }) => {
                     <li className="list-inline-item h4 fw-light mb-0">
                       {productData.salePrice > 0
                         ? `${(productData.salePrice ?? 0)
-                            .toLocaleString("it-IT")
-                            .replace(/,/g, ".")}đ`
+                          .toLocaleString("it-IT")
+                          .replace(/,/g, ".")}đ`
                         : `${(productData.price ?? 0)
-                            .toLocaleString("it-IT")
-                            .replace(/,/g, ".")}đ`}
+                          .toLocaleString("it-IT")
+                          .replace(/,/g, ".")}đ`}
                     </li>
                     {productData.salePrice > 0 && (
                       <li className="list-inline-item text-muted fw-light">
@@ -399,9 +421,8 @@ const ProductPage = ({ productData }) => {
                             id={color.id}
                             label={
                               <span
-                                className={`btn-colour ${
-                                  activeColor === color.name ? "active" : ""
-                                }`}
+                                className={`btn-colour ${activeColor === color.name ? "active" : ""
+                                  }`}
                                 style={{ backgroundColor: color.code.trim() }}
                               />
                             }

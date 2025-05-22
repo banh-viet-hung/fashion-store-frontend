@@ -70,6 +70,9 @@ const Category = () => {
     setCurrentPage(0) // Reset về trang đầu khi thay đổi bộ lọc
   }
 
+  // Lọc bỏ sản phẩm đã bị xóa
+  const filteredProducts = products.filter(product => !product.deleted)
+
   return (
     <Container fluid className="container-fluid-px py-6">
       <Breadcrumb>
@@ -104,7 +107,7 @@ const Category = () => {
             </div>
           ) : (
             <Row>
-              {products.map((product, index) => (
+              {filteredProducts.map((product, index) => (
                 <Col key={index} xxl="3" xl="4" xs="6">
                   <CardProduct product={product} />
                 </Col>

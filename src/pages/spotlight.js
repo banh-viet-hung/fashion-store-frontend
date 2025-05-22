@@ -46,6 +46,10 @@ const Spotlight = ({ title }) => {
     setCurrentPage(pageNumber)
   }
 
+  // Lọc bỏ sản phẩm đã bị xóa
+  const filteredProducts = products.filter(product => !product.deleted)
+  const isNoProductsAvailable = filteredProducts.length === 0
+
   return (
     <>
       <Head>
@@ -65,7 +69,7 @@ const Spotlight = ({ title }) => {
               </Breadcrumb>
             </div>
 
-            {noProductsFound ? (
+            {noProductsFound || isNoProductsAvailable ? (
               <Alert variant="warning">
                 Không tìm thấy sản phẩm phù hợp theo yêu cầu của bạn!
                 <br />
@@ -74,7 +78,7 @@ const Spotlight = ({ title }) => {
             ) : (
               <>
                 <Row>
-                  {products.map((product, index) => (
+                  {filteredProducts.map((product, index) => (
                     <Col key={index} sm="4" xl="3" xs="6">
                       <CardProduct product={product} />
                     </Col>

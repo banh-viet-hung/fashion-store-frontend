@@ -112,7 +112,10 @@ const CategoryMasonry = ({ title, slug }) => {
     }))
   }
 
-  if (products.length === 0) {
+  // Lọc bỏ sản phẩm đã bị xóa
+  const filteredProducts = products.filter(product => !product.deleted)
+
+  if (filteredProducts.length === 0) {
     return (
       <Container className="py-6">
         <div className="products-grid">
@@ -191,7 +194,7 @@ const CategoryMasonry = ({ title, slug }) => {
           </div>
         ) : (
           <Row>
-            {products.map((product, index) => (
+            {filteredProducts.map((product, index) => (
               <Col key={index} sm="4" xl="3" xs="6">
                 <CardProduct product={product} />
               </Col>

@@ -9,11 +9,13 @@ import CardProduct from "./CardProduct"
 const NewArrivals = (props) => {
   const products = props.products
 
+  // Lọc bỏ sản phẩm đã bị xóa
+  const filteredProducts = products ? products.filter(product => !product.deleted) : []
+
   return (
     <div
-      className={`py-6 ${
-        props.masonry ? "position-relative overflow-hidden" : ""
-      }`}
+      className={`py-6 ${props.masonry ? "position-relative overflow-hidden" : ""
+        }`}
     >
       <Container
         fluid={props.fluid}
@@ -73,9 +75,8 @@ const NewArrivals = (props) => {
         <Row className="justify-content-between align-items-center mb-4">
           <Col xs="12" sm={props.fluid} md={!props.fluid}>
             <ul
-              className={`list-inline text-center text-sm-start mb-3 ${
-                props.fluid ? "mb-sm-0" : "mb-md-0"
-              }`}
+              className={`list-inline text-center text-sm-start mb-3 ${props.fluid ? "mb-sm-0" : "mb-md-0"
+                }`}
             >
               <li className="list-inline-item">
                 <a className="text-dark" href="#">
@@ -120,7 +121,7 @@ const NewArrivals = (props) => {
             columnsCountBreakPoints={{ 350: 1, 500: 2, 900: 3, 1000: 4 }}
           >
             <Masonry className="row">
-              {products.map((product, index) => (
+              {filteredProducts.map((product, index) => (
                 <Col key={index} className="item">
                   <CardProduct
                     product={product}
@@ -132,7 +133,7 @@ const NewArrivals = (props) => {
           </ResponsiveMasonry>
         ) : (
           <Row>
-            {products.map((product, index) =>
+            {filteredProducts.map((product, index) =>
               props.fluid ? (
                 <Col key={index} xl={2} lg={3} md={4} xs={6}>
                   <CardProduct product={product} />
