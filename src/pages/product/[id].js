@@ -8,6 +8,7 @@ import {
   Form,
   Button,
   InputGroup,
+  Image,
 } from "react-bootstrap"
 import InnerImageZoom from "react-inner-image-zoom"
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.min.css"
@@ -31,8 +32,8 @@ import { addCartItem } from "../../hooks/UseCart"
 import { addWishlistItem, removeWishlistItem } from "../../hooks/UseWishlist"
 import { getProductQuantity } from "../../api/ProductVariantAPI"
 import { WishlistContext } from "../../components/WishlistContext"
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
-import { faHeart, faKissWinkHeart } from "@fortawesome/free-regular-svg-icons"
+import { faShoppingCart, faSearchPlus, faHeartBroken } from "@fortawesome/free-solid-svg-icons"
+import { faHeart } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useWindowSize from "../../hooks/UseWindowSize"
 import { useForm } from "react-hook-form"
@@ -79,7 +80,6 @@ const ProductPage = ({ productData }) => {
   const [activeSize, setActiveSize] = useState(null)
   const [activeColor, setActiveColor] = useState(null)
   const [category, setCategory] = useState(null) // Danh mục sản phẩm
-  const [features, setFeatures] = useState([]) // Tính năng nổi bật
   const size = useWindowSize()
 
   // Kiểm tra sản phẩm đã bị xóa hay chưa
@@ -138,9 +138,8 @@ const ProductPage = ({ productData }) => {
       const colorsData = await getColorsByProductId(productData.id)
       setColors(colorsData)
 
-      // Giả sử sản phẩm có thuộc tính category và features
+      // Set category if available from API
       setCategory(productData.category || "Chưa có danh mục")
-      setFeatures(productData.features || ["Chưa có tính năng nổi bật"])
     }
     fetchSizesAndColors()
   }, [productData])
@@ -167,12 +166,11 @@ const ProductPage = ({ productData }) => {
     resolver: yupResolver(schema),
   })
 
-  // Handle Image Click for Lightbox
-  const onClick = (e, index) => {
-    e.preventDefault()
-    if (size.width > 1200) {
-      setActiveImage(index)
-      setLightBoxOpen(!lightBoxOpen)
+  // Handle Image Click for Lightbox and Image Selection
+  const handleImageInteraction = (index, openLightbox = false) => {
+    setActiveImage(index)
+    if (openLightbox && size.width > 1200) {
+      setLightBoxOpen(true)
     }
   }
 
@@ -283,29 +281,103 @@ const ProductPage = ({ productData }) => {
           </Breadcrumb>
 
           <Row>
-            {/* Product Images */}
+            {/* Product Images - Improved Layout */}
             <Col
               lg="6"
               xl="7"
               className="pt-4 order-2 order-lg-1 photoswipe-gallery"
             >
-              {images.map((image, index) => (
-                <a
-                  key={index}
-                  onClick={(e) => onClick(e, index)}
-                  className="d-block mb-4"
-                  href={image.url}
-                >
-                  <InnerImageZoom
-                    hideHint
-                    src={image.url}
-                    zoomSrc={image.url}
-                    alt={image.alt || "Product Image"}
-                    zoomType="hover"
-                    className="cursor-pointer"
-                  />
-                </a>
-              ))}
+              {/* Main Image with Zoom */}
+              <div
+                className="product-main-image mb-4"
+                style={{
+                  overflow: 'hidden',
+                  borderRadius: '8px',
+                  boxShadow: '0 0 15px rgba(0,0,0,0.1)',
+                  position: 'relative'
+                }}
+              >
+                {images.length > 0 && (
+                  <>
+                    <div
+                      className="zoom-indicator"
+                      style={{
+                        position: 'absolute',
+                        top: '15px',
+                        right: '15px',
+                        background: 'rgba(255,255,255,0.8)',
+                        borderRadius: '50%',
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1,
+                        boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faSearchPlus} style={{ fontSize: '18px' }} />
+                    </div>
+                    <InnerImageZoom
+                      hideHint
+                      src={images[activeImage]?.url}
+                      zoomSrc={images[activeImage]?.url}
+                      alt={images[activeImage]?.alt || "Product Image"}
+                      zoomType="hover"
+                      className="cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleImageInteraction(activeImage, true);
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+
+              {/* Thumbnails Row */}
+              <div className="product-thumbnails d-flex flex-wrap justify-content-start"
+                style={{
+                  maxWidth: '100%',
+                  overflowX: 'auto',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#aaa #f5f5f5',
+                  paddingBottom: '10px'
+                }}
+              >
+                {images.length > 0 && images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`thumbnail-item me-2 me-md-3 mb-2 mb-md-3 ${activeImage === index ? 'active' : ''}`}
+                    style={{
+                      cursor: 'pointer',
+                      width: '70px',
+                      height: '70px',
+                      minWidth: '70px',
+                      borderRadius: '6px',
+                      border: activeImage === index ? '2px solid #000' : '1px solid #ddd',
+                      padding: '3px',
+                      transition: 'all 0.2s ease-in-out',
+                      overflow: 'hidden',
+                      opacity: activeImage === index ? 1 : 0.7,
+                      flexShrink: 0
+                    }}
+                    onClick={() => handleImageInteraction(index)}
+                    onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
+                    onMouseOut={(e) => e.currentTarget.style.opacity = activeImage === index ? 1 : 0.7}
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.alt || "Product Thumbnail"}
+                      className="img-fluid"
+                      style={{
+                        objectFit: 'cover',
+                        width: '100%',
+                        height: '100%'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
 
               <Lightbox
                 open={lightBoxOpen}
@@ -376,32 +448,50 @@ const ProductPage = ({ productData }) => {
                   </div>
                 </div>
 
+                {/* Product Description - Added here from the bottom tabs */}
+                <div className="product-description mb-4">
+                  <div
+                    className="text-muted"
+                    dangerouslySetInnerHTML={{
+                      __html: productData.detail || productData.description || "Không có mô tả chi tiết",
+                    }}
+                  />
+                </div>
+
                 {/* Product Options Form */}
                 <Form onSubmit={handleSubmit(addToCart)}>
                   {/* Size selection */}
                   {sizes.length > 0 && (
                     <div className="mb-4">
-                      <h6 className="detail-option-heading">
-                        Kích thước <span>(yêu cầu)</span>
+                      <h6 className="detail-option-heading fw-bold mb-2">
+                        Kích thước <span className="ms-2 text-danger" style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>(Bắt buộc)</span>
                       </h6>
-                      <div>
+                      <div className="size-options mt-3 d-flex flex-wrap">
                         {sizes.map((size) => (
                           <Button
                             key={size.id}
-                            variant="outline-primary"
+                            variant={activeSize === size.name ? "primary" : "outline-secondary"}
                             size="sm"
                             onClick={() => {
                               setActiveSize(size.name)
                               setValue("size", size.name)
                             }}
-                            className={activeSize === size.name ? "active" : ""}
+                            className={`me-2 mb-2 px-3 rounded-pill size-option ${activeSize === size.name ? "active" : ""}`}
+                            style={{
+                              minWidth: '45px',
+                              fontSize: '0.85rem',
+                              transition: 'all 0.2s ease',
+                              boxShadow: activeSize === size.name ? '0 2px 4px rgba(0,0,0,0.15)' : 'none'
+                            }}
                           >
                             {size.name}
                           </Button>
                         ))}
                       </div>
                       {errors.size && (
-                        <p className="text-danger">{errors.size.message}</p>
+                        <p className="text-danger mt-2" style={{ fontSize: '0.8rem' }}>
+                          {errors.size.message}
+                        </p>
                       )}
                     </div>
                   )}
@@ -409,56 +499,98 @@ const ProductPage = ({ productData }) => {
                   {/* Color selection */}
                   {colors.length > 0 && (
                     <div className="mb-4">
-                      <h6 className="detail-option-heading">
-                        Màu sắc <span>(yêu cầu)</span>
+                      <h6 className="detail-option-heading fw-bold mb-2">
+                        Màu sắc <span className="ms-2 text-danger" style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>(Bắt buộc)</span>
                       </h6>
-                      <div>
-                        {colors.map((color) => (
-                          <Form.Check
-                            key={color.id}
-                            type="radio"
-                            name="color"
-                            id={color.id}
-                            label={
-                              <span
-                                className={`btn-colour ${activeColor === color.name ? "active" : ""
-                                  }`}
-                                style={{ backgroundColor: color.code.trim() }}
+                      <div className="color-options mt-3">
+                        <div className="d-flex flex-wrap">
+                          {colors.map((color) => (
+                            <div
+                              key={color.id}
+                              className="position-relative me-3 mb-3"
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => {
+                                setActiveColor(color.name)
+                                setValue("color", color.name)
+                              }}
+                            >
+                              <div
+                                className={`color-option rounded-circle d-flex align-items-center justify-content-center ${activeColor === color.name ? "border border-2 border-primary p-1" : ""}`}
+                                style={{
+                                  width: '36px',
+                                  height: '36px',
+                                  transition: 'all 0.2s ease',
+                                  transform: activeColor === color.name ? 'scale(1.08)' : 'scale(1)',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}
+                              >
+                                <span
+                                  className="rounded-circle"
+                                  style={{
+                                    backgroundColor: color.code.trim(),
+                                    width: activeColor === color.name ? '28px' : '32px',
+                                    height: activeColor === color.name ? '28px' : '32px',
+                                    border: '1px solid #ddd'
+                                  }}
+                                ></span>
+                              </div>
+                              {activeColor === color.name && (
+                                <div
+                                  className="color-name position-absolute text-center w-100"
+                                  style={{
+                                    fontSize: '0.75rem',
+                                    fontWeight: '500',
+                                    top: '40px',
+                                    left: '0',
+                                  }}
+                                >
+                                  {color.name}
+                                </div>
+                              )}
+                              <input
+                                type="radio"
+                                name="color"
+                                checked={activeColor === color.name}
+                                onChange={() => { }} // Keep empty onChange to avoid React warning while actual change happens in onClick
+                                style={{ display: 'none' }}
                               />
-                            }
-                            checked={activeColor === color.name}
-                            onChange={() => {
-                              setActiveColor(color.name)
-                              setValue("color", color.name)
-                            }}
-                          />
-                        ))}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                       {errors.color && (
-                        <p className="text-danger">{errors.color.message}</p>
+                        <p className="text-danger mt-2" style={{ fontSize: '0.8rem' }}>
+                          {errors.color.message}
+                        </p>
                       )}
                     </div>
                   )}
 
                   {/* Quantity */}
-                  <InputGroup className="w-100 mb-4">
-                    <Form.Control
-                      size="lg"
-                      name="quantity"
-                      type="number"
-                      value={quantity}
-                      onChange={(e) => setQuantity(e.target.value)}
-                      min="1"
-                    />
-                    <Button
-                      variant="dark"
-                      type="submit"
-                      className="flex-grow-1"
-                    >
-                      <FontAwesomeIcon icon={faShoppingCart} className="me-2" />
-                      Thêm vào giỏ hàng
-                    </Button>
-                  </InputGroup>
+                  <div className="quantity-section mb-4">
+                    <h6 className="detail-option-heading fw-bold mb-3">Số lượng</h6>
+                    <InputGroup className="w-100">
+                      <Form.Control
+                        size="lg"
+                        name="quantity"
+                        type="number"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                        min="1"
+                        className="text-center border-end-0"
+                        style={{ maxWidth: '80px', borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px' }}
+                      />
+                      <Button
+                        variant="dark"
+                        type="submit"
+                        className="flex-grow-1"
+                        style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }}
+                      >
+                        <FontAwesomeIcon icon={faShoppingCart} className="me-2" />
+                        Thêm vào giỏ hàng
+                      </Button>
+                    </InputGroup>
+                  </div>
                 </Form>
 
                 {/* Wishlist */}
@@ -471,34 +603,39 @@ const ProductPage = ({ productData }) => {
                     className="w-100"
                   >
                     <FontAwesomeIcon
-                      icon={!isInWishlist ? faHeart : faKissWinkHeart}
+                      icon={!isInWishlist ? faHeart : faHeartBroken}
                       className="me-2"
                     />
                     {!isInWishlist ? "Yêu thích" : "Hông thích nữa"}
                   </Button>
                 </div>
 
-                {/* Category and Features */}
-                <ul className="list-unstyled">
-                  <li>
-                    <strong>Danh mục:&nbsp;</strong>
-                    {category}
-                  </li>
-                  <li>
-                    <strong>Tính năng nổi bật:&nbsp;</strong>
-                    {features.join(", ")}
-                  </li>
-                </ul>
+                {/* Category */}
+                <div className="category-section">
+                  <h6 className="detail-option-heading fw-bold mb-2">Danh mục</h6>
+                  {productData.categories && productData.categories.length > 0 ? (
+                    <div className="mt-2 d-flex flex-wrap">
+                      {productData.categories.map((category, index) => (
+                        <Link href={`/category/${category.slug || ''}`} key={category.id || index}>
+                          <a className="me-2 mb-2 py-1 px-3 rounded-pill bg-light text-dark" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>
+                            {category.name}
+                          </a>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted" style={{ fontSize: '0.9rem' }}>Chưa phân loại</p>
+                  )}
+                </div>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
 
-      {/* Product Bottom Tabs */}
+      {/* Product Reviews Section */}
       <ProductBottomTabs
         product={productData}
-        thumbnail={thumbnailImage ? thumbnailImage.url : null}
         feedbacks={feedbacks}
       />
       {/* <ProductBottomProducts /> */}

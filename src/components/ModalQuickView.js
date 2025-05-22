@@ -189,11 +189,11 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
   const averageRating =
     feedbacks.length > 0
       ? parseFloat(
-          (
-            feedbacks.reduce((acc, feedback) => acc + feedback.rating, 0) /
-            feedbacks.length
-          ).toFixed(1)
-        )
+        (
+          feedbacks.reduce((acc, feedback) => acc + feedback.rating, 0) /
+          feedbacks.length
+        ).toFixed(1)
+      )
       : 0
   const reviewCount = feedbacks.length
 
@@ -237,9 +237,8 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                   <button
                     key={image.url}
                     onClick={() => slideTo(index)}
-                    className={`swiper-thumb-item detail-thumb-item mb-3 ${
-                      currentIndex === index ? "active" : ""
-                    }`}
+                    className={`swiper-thumb-item detail-thumb-item mb-3 ${currentIndex === index ? "active" : ""
+                      }`}
                   >
                     <Image
                       className="img-fluid"
@@ -260,11 +259,11 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                 <li className="list-inline-item h4 fw-light mb-0">
                   {isSale
                     ? `${(product.salePrice ?? 0)
-                        .toLocaleString("it-IT")
-                        .replace(/,/g, ".")}đ`
+                      .toLocaleString("it-IT")
+                      .replace(/,/g, ".")}đ`
                     : `${(product.price ?? 0)
-                        .toLocaleString("it-IT")
-                        .replace(/,/g, ".")}đ`}
+                      .toLocaleString("it-IT")
+                      .replace(/,/g, ".")}đ`}
                 </li>
                 {isSale && (
                   <li className="list-inline-item text-muted fw-light">
@@ -304,15 +303,14 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                 <Row>
                   <Col sm="6" lg="12" className="detail-option mb-4">
                     <h6 className="detail-option-heading">
-                      Kích thước <span>(yêu cầu)</span>
+                      Kích thước <span>(Bắt buộc)</span>
                     </h6>
                     {sizes.map((size) => (
                       <Button
                         key={size.id}
                         variant="outline-primary"
-                        className={`detail-option-btn-label me-1 ${
-                          activeSize === size.name ? "active" : ""
-                        }`}
+                        className={`detail-option-btn-label me-1 ${activeSize === size.name ? "active" : ""
+                          }`}
                         size="sm"
                         onClick={() => {
                           setActiveSize(size.name)
@@ -334,7 +332,7 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                 <Row>
                   <Col sm="6" lg="12" className="detail-option mb-4">
                     <h6 className="detail-option-heading">
-                      Màu sắc <span>(yêu cầu)</span>
+                      Màu sắc <span>(Bắt buộc)</span>
                     </h6>
                     <ul className="list-inline mb-0 colours-wrapper">
                       {colors.map((color) => (
@@ -345,9 +343,8 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
                             id={color.id}
                             label={
                               <span
-                                className={`btn-colour ${
-                                  activeColor === color.name ? "active" : ""
-                                }`}
+                                className={`btn-colour ${activeColor === color.name ? "active" : ""
+                                  }`}
                                 style={{ backgroundColor: color.code.trim() }}
                               />
                             }
