@@ -82,7 +82,7 @@ const orderSteps = [
   { name: "Đặt hàng", icon: "fas fa-shopping-cart" },
   { name: "Thanh toán", icon: "fas fa-money-bill-wave" },
   { name: "Xác nhận", icon: "fas fa-clipboard-check" },
-  { name: "Vận chuyển", icon: "fas fa-truck" }, 
+  { name: "Vận chuyển", icon: "fas fa-truck" },
   { name: "Hoàn tất", icon: "fas fa-flag-checkered" }
 ]
 
@@ -202,12 +202,12 @@ const CustomerOrder = () => {
 
   const sortedOrderStatusDetails = orderDetails
     ? [...orderDetails.orderStatusDetails].sort(
-        (a, b) => new Date(b.updateAt) - new Date(a.updateAt)
-      )
+      (a, b) => new Date(b.updateAt) - new Date(a.updateAt)
+    )
     : []
 
   const currentStatus = sortedOrderStatusDetails[0] || {}
-  
+
   const currentStatusConfig = statusConfig[currentStatus.statusName] || {
     icon: "fas fa-question-circle",
     color: "#6c757d",
@@ -223,12 +223,12 @@ const CustomerOrder = () => {
       currentStatus.statusName === "Chờ xác nhận")
 
   const currentStep = currentStatusConfig.step;
-  
+
   function formatDate(dateString) {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   }
-  
+
   function formatTime(dateString) {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleTimeString('vi-VN', options);
@@ -252,7 +252,7 @@ const CustomerOrder = () => {
               <span className="fw-medium">#{orderIdFromUrl}</span>
             </Breadcrumb.Item>
           </Breadcrumb>
-          
+
           <div className="d-flex justify-content-between align-items-center mt-2">
             <div>
               <h1 className="h3 fw-bold mb-1">Đơn hàng #{orderIdFromUrl}</h1>
@@ -283,9 +283,9 @@ const CustomerOrder = () => {
             <div className="order-timeline">
               <div className="position-relative">
                 <div className="progress" style={{ height: '3px', backgroundColor: '#e9ecef' }}>
-                  <div 
-                    className="progress-bar" 
-                    style={{ 
+                  <div
+                    className="progress-bar"
+                    style={{
                       width: `${currentStep >= 5 ? 100 : (currentStep - 1) * 25}%`,
                       backgroundColor: currentStatusConfig.color
                     }}
@@ -293,18 +293,18 @@ const CustomerOrder = () => {
                 </div>
                 <div className="d-flex justify-content-between position-relative" style={{ marginTop: '-12px' }}>
                   {orderSteps.map((step, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="text-center position-relative"
                       style={{ width: '120px', marginLeft: index === 0 ? '-10px' : 0, marginRight: index === 4 ? '-10px' : 0 }}
                     >
-                      <div 
+                      <div
                         className={`
                           d-flex align-items-center justify-content-center rounded-circle mx-auto
                           ${index + 1 <= currentStep ? 'bg-primary text-white' : 'bg-light text-muted border'}
                         `}
-                        style={{ 
-                          width: '40px', 
+                        style={{
+                          width: '40px',
                           height: '40px',
                           border: index + 1 <= currentStep ? 'none' : '1px solid #dee2e6',
                           zIndex: 2,
@@ -333,14 +333,14 @@ const CustomerOrder = () => {
                   <i className={`${currentStatusConfig.icon} me-2`} style={{ color: currentStatusConfig.color }}></i>
                   <h5 className="mb-0">Trạng thái đơn hàng</h5>
                 </div>
-                <Badge 
+                <Badge
                   bg={currentStatusConfig.variant}
                   className="rounded-pill px-3 py-2"
                 >
                   {currentStatus.statusName}
                 </Badge>
               </Card.Header>
-              
+
               <div className="status-timeline p-4">
                 {sortedOrderStatusDetails.map((status, index) => {
                   const statusCfg = statusConfig[status.statusName] || {
@@ -348,30 +348,29 @@ const CustomerOrder = () => {
                     color: "#6c757d",
                     variant: "secondary"
                   };
-                  
+
                   return (
-                    <div 
+                    <div
                       key={index}
-                      className={`timeline-item position-relative ps-4 pb-4 ${
-                        index === sortedOrderStatusDetails.length - 1 ? '' : 'border-start'
-                      }`}
-                      style={{ 
+                      className={`timeline-item position-relative ps-4 pb-4 ${index === sortedOrderStatusDetails.length - 1 ? '' : 'border-start'
+                        }`}
+                      style={{
                         borderColor: '#e9ecef',
                         borderLeftWidth: '2px'
                       }}
                     >
-                      <div 
+                      <div
                         className="timeline-badge position-absolute rounded-circle d-flex align-items-center justify-content-center"
-                        style={{ 
+                        style={{
                           left: '-10px',
                           top: '0px',
                           width: '20px',
                           height: '20px',
-                          background: status.statusName === currentStatus.statusName 
+                          background: status.statusName === currentStatus.statusName
                             ? statusCfg.color
                             : '#f8f9fa',
-                          border: `2px solid ${status.statusName === currentStatus.statusName 
-                            ? statusCfg.color 
+                          border: `2px solid ${status.statusName === currentStatus.statusName
+                            ? statusCfg.color
                             : '#dee2e6'}`
                         }}
                       >
@@ -379,13 +378,19 @@ const CustomerOrder = () => {
                           <i className={`${statusCfg.icon} fa-xs text-white`}></i>
                         )}
                       </div>
-                      
+
                       <div className="timeline-content bg-white rounded p-3" style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
                         <div className="d-flex justify-content-between align-items-center">
                           <h6 className="fw-bold mb-1">{status.statusName}</h6>
                           <div className="text-muted small">{formatDate(status.updateAt)}</div>
                         </div>
                         <p className="mb-2 text-muted">{status.description}</p>
+                        {status.statusName === "Đã hủy" && status.cancelReason && (
+                          <p className="mb-2 text-danger">
+                            <i className="fas fa-info-circle me-1"></i>
+                            <strong>Lí do hủy:</strong> {status.cancelReason}
+                          </p>
+                        )}
                         <div className="d-flex justify-content-between">
                           <small className="text-muted">{formatTime(status.updateAt)}</small>
                           <small className="text-muted">
@@ -426,9 +431,9 @@ const CustomerOrder = () => {
                   <Card.Body className="p-4 text-center">
                     <div className="mb-3">
                       <span className="badge-status rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
-                        style={{ 
-                          width: '60px', 
-                          height: '60px', 
+                        style={{
+                          width: '60px',
+                          height: '60px',
                           backgroundColor: '#ffebee'
                         }}
                       >
@@ -453,7 +458,7 @@ const CustomerOrder = () => {
                 </Card.Header>
                 <Card.Body className="p-4">
                   <ReviewOrderSummary priceDetails={orderDetails?.priceDetails} />
-                  
+
                   {/* Phương thức thanh toán */}
                   <div className="mt-4 pt-3 border-top">
                     <h6 className="fw-bold mb-3">
@@ -484,7 +489,7 @@ const CustomerOrder = () => {
                   <div className="d-flex mb-3">
                     <div className="flex-shrink-0 me-3">
                       <div className="bg-light rounded-circle d-flex align-items-center justify-content-center"
-                          style={{ width: '40px', height: '40px' }}>
+                        style={{ width: '40px', height: '40px' }}>
                         <i className="fas fa-user text-primary"></i>
                       </div>
                     </div>
@@ -496,7 +501,7 @@ const CustomerOrder = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="mt-3 pt-3 border-top">
                     <h6 className="fw-medium mb-3">
                       <i className="fas fa-home me-2 text-muted"></i> Địa chỉ giao hàng
@@ -519,8 +524,8 @@ const CustomerOrder = () => {
                     Nếu bạn có thắc mắc về đơn hàng, vui lòng liên hệ với chúng tôi.
                   </p>
                   <div className="d-grid">
-                    <Button 
-                      variant="outline-primary" 
+                    <Button
+                      variant="outline-primary"
                       size="sm"
                       href="https://www.facebook.com/viethungprofile.personal/?locale=vi_VN"
                       target="_blank"
@@ -547,7 +552,7 @@ const CustomerOrder = () => {
         <Modal.Body className="pt-3">
           <div className="text-center mb-4">
             <div className="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                style={{ width: '80px', height: '80px' }}>
+              style={{ width: '80px', height: '80px' }}>
               <i className="fas fa-times-circle fa-3x text-danger"></i>
             </div>
           </div>
