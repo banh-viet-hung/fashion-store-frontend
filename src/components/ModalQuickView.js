@@ -34,6 +34,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { addCartItem } from "../hooks/UseCart"
 import { toast } from "react-toastify"
+import DOMPurify from "isomorphic-dompurify"
 
 // Định nghĩa schema validate với Yup, bỏ qua trường quantity
 const quickViewSchema = (sizes, colors) =>
@@ -308,9 +309,14 @@ const ModalQuickView = ({ isOpen, toggle, product }) => {
               </div>
             </div>
 
-            <p className="mb-4 text-muted">
-              {product.description || "No description available"}
-            </p>
+            <p
+              className="mb-4 text-muted"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  product.description || "No description available"
+                ),
+              }}
+            />
 
             <Form onSubmit={handleSubmit(addToCart)}>
               {/* Size Selection */}
