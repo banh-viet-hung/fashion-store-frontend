@@ -2,7 +2,9 @@ import React from "react"
 import Image from "next/image"
 
 const CustomImage = (props) => {
-  if (process.env.production_type === "static") {
+  // Use regular img tag for external server URLs or in static production
+  if (process.env.production_type === "static" ||
+    (props.src && typeof props.src === 'string' && props.src.startsWith('http://localhost:8080'))) {
     return (
       <img
         src={props.src}
